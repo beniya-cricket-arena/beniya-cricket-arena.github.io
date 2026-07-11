@@ -189,7 +189,68 @@ $("submitPaymentBtn").onclick=async()=>{
   showReceipt(d.receipt||{...booking,paymentReference,status:"PAYMENT PENDING",paymentStatus:"VERIFICATION PENDING",paymentMethod:"UPI"});
   selected.clear();summary();await loadAvailability();
 };
+function buildDates(){
+  $("dates").innerHTML = "";
 
+  // Start from today's local date.
+  // Do not depend on config.today because an invalid/missing backend
+  // date was causing "NaN / Invalid Date".
+  const start = new Date();
+  start.setHours(12, 0, 0, 0);
+
+  const numberOfDays = Math.min(
+    Number(config?.bookingDaysAhead) || 30,
+    14
+  );
+
+  for(let i = 0; i < numberOfDays; i++){
+
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+
+    const k = key(d);
+    const b = document.createElement("button");
+
+    b.className = "date" + (i === 0 ? " active" : "");
+
+    const dayName = i === 0
+      ? "Today"
+      : d.toLocaleDateString("en-IN", {
+          weekday: "short"
+        });
+
+    const monthName = d.toLocaleDateString("en-IN", {
+      month: "short"
+    });
+
+    b.innerHTML = `
+      <b>${dayName}</b>
+      <br>
+      ${d.getDate()} ${monthName}
+    `;
+
+    b.onclick = async () => {
+
+      document
+        .querySelectorAll(".date")
+        .forEach(x => x.classList.remove("active"));
+
+      b.classList.add("active");
+
+      selectedDate = k;
+      selected.clear();
+
+      summary();
+      await loadAvailability();
+    };
+
+    $("dates").appendChild(b);
+
+    if(i === 0){
+      selectedDate = k;
+    }
+  }
+}
 function showReceipt(r){
   window.lastReceipt=r;
   $("receiptCard").innerHTML=`
