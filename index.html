@@ -90,7 +90,11 @@ function summary(){let a=[...selected].sort((x,y)=>x-y);selectedText.textContent
 async function post(x){let r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(x)});return r.json()}
 payBtn.onclick=async()=>{let n=document.getElementById("name").value.trim(),p=document.getElementById("phone").value.replace(/\D/g,"");if(!n||p.length<10)return alert("Enter your name and valid mobile number.");payBtn.disabled=true;payBtn.textContent="HOLDING SLOT...";try{let d=await post({action:"createHold",date:selectedDate,slotIndexes:[...selected],customerName:n,phone:p});if(!d.success)throw Error(d.message||"Could not hold slot");booking=d;modal.classList.add("show")}catch(e){alert(e.message);payBtn.disabled=false;summary()}};
 closeModal.onclick=()=>modal.classList.remove("show");
-upiBtn.onclick=()=>{if(!booking)return;const url=`upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent("Mr Mohammad Suhail")}&am=${Number(booking.amount).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Booking "+booking.bookingId)}`;window.location.href=url;};
+upiBtn.onclick=()=>{
+  if(!booking)return;
+  const url=`upi://pay?pa=${encodeURIComponent(upi)}&am=${encodeURIComponent(booking.amount)}&cu=INR`;
+  window.location.href=url;
+};
 confirmBtn.onclick=async()=>{if(!booking)return;let u=prompt("Enter UPI Transaction ID / UTR:");if(!u)return;try{let d=await post({action:"submitPayment",bookingId:booking.bookingId,paymentReference:u});if(!d.success)throw Error(d.message);modal.classList.remove("show");selected.clear();summary();await load();toast.textContent="Payment submitted ✓ "+booking.bookingId;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),4500);booking=null}catch(e){alert(e.message)}};
 load();summary();
 </script>
