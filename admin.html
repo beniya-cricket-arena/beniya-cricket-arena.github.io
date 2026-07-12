@@ -6,35 +6,32 @@
 <meta name="theme-color" content="#07110d">
 <title>Beniya Cricket Arena — Admin</title>
 <style>
-:root{--bg:#07110d;--card:#10251b;--card2:#0a1811;--gold:#f5b82e;--green:#35d07f;--red:#ef6262;--muted:#a9c5b5;--line:#284b3a}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,system-ui,sans-serif;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:#fff}
-.hero{max-width:1100px;margin:18px auto 0;padding:0 18px}.hero img{width:100%;max-height:420px;object-fit:cover;border-radius:20px;border:1px solid var(--line);display:block}
-header{padding:20px;text-align:center}header h1{margin:0;color:var(--gold)}header p{color:var(--muted)}
-.container{max-width:1100px;margin:auto;padding:0 18px 50px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}.hidden{display:none!important}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}.stat strong{display:block;font-size:28px;color:var(--green)}
-label{display:block;color:var(--muted);margin-top:4px}input,select,button{width:100%;padding:12px;margin:6px 0 10px;border-radius:10px;border:1px solid #466654;font-size:15px}input,select{background:#07110d;color:#fff}button{border:0;background:var(--green);color:#06120b;font-weight:800;cursor:pointer}button:hover{opacity:.92}button:disabled{opacity:.45;cursor:not-allowed}.secondary{background:#345545;color:#fff}.danger{background:var(--red);color:#fff}.gold{background:var(--gold);color:#161006}
-.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{width:auto;flex:1;min-width:125px}.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:10px 0}.slot{background:#183426;color:#fff;text-align:left}.slot.selected{outline:2px solid var(--gold);color:var(--gold)}.slot.blocked{background:#5b2c2c}.message{padding:10px;background:#1b3829;border-radius:8px;margin-top:8px;white-space:pre-wrap;color:#fff}
-.booking{background:var(--card2);border:1px solid var(--line);padding:14px;border-radius:12px;margin:10px 0}.booking p{margin:6px 0}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20382a;margin:2px;font-size:12px}.muted{color:var(--muted)}
-@media(max-width:650px){.stats{grid-template-columns:1fr}.hero{padding:0}.hero img{border-radius:0;max-height:260px}.actions button{min-width:100%}}
+:root{--bg:#07110d;--card:#0d1b14;--gold:#f5b82e;--text:#f7f4e8;--muted:#a9b6ae;--green:#35d07f;--red:#ef6262;--line:#294b3a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:var(--text);font-family:Arial,sans-serif}button,input,select{font:inherit}
+.hero{max-width:1000px;margin:auto;padding:18px 18px 0}.hero img{width:100%;max-height:360px;object-fit:cover;border-radius:20px;border:1px solid var(--line);display:block}
+header,.container{max-width:1000px;margin:auto;padding:18px}header h1{color:var(--gold);margin:4px 0}header p{color:var(--muted)}
+.card{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#10251b;border:1px solid var(--line);border-radius:14px;padding:18px}.stat strong{display:block;font-size:30px;color:var(--green)}
+label{display:block;color:var(--muted);margin:6px 0}input,select,button{width:100%;padding:12px;border-radius:10px;border:1px solid #365d49;margin:4px 0 10px}
+input,select{background:#07110d;color:white}button{background:var(--green);color:#06120b;font-weight:bold;cursor:pointer}.gold{background:var(--gold)}.danger{background:var(--red);color:white}.secondary{background:#345545;color:white}.hidden{display:none!important}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{width:auto;min-width:140px}.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}.slot{background:#10251b;color:white}.slot.selected{background:var(--gold);color:#111}.slot.blocked{background:#7b3030}.slot:disabled{opacity:.45;cursor:not-allowed}
+.booking{background:#091710;border:1px solid var(--line);padding:14px;border-radius:12px;margin-top:10px}.booking p{margin:5px 0}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20382a;font-size:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;margin-top:8px;color:var(--gold)}
+@media(max-width:650px){.stats{grid-template-columns:1fr}.hero{padding:0}.hero img{border-radius:0;max-height:260px}.actions button{width:100%}}
 </style>
 </head>
 <body>
 <div class="hero"><img src="beniya-arena-hero.png" alt="Beniya Cricket Arena"></div>
-<header><h1>🏏 Beniya Cricket Arena</h1><p>Private Admin Dashboard</p></header>
+<header><h1>🏏 Beniya Cricket Arena</h1><p>Private Admin Dashboard · 24/7 Booking Management</p></header>
 <div class="container">
   <div id="loginCard" class="card">
     <h2>Admin Login</h2>
     <input type="password" id="password" placeholder="Admin password">
-    <button id="loginBtn">LOGIN</button>
-    <div id="loginMessage"></div>
+    <button id="loginBtn">LOGIN</button><div id="loginMessage" class="message"></div>
   </div>
 
   <div id="dashboard" class="hidden">
-    <div class="card actions">
-      <button id="refreshBtn">REFRESH DASHBOARD</button>
-      <button id="logoutBtn" class="danger">LOGOUT</button>
-    </div>
-
+    <div class="card actions"><button id="refreshBtn">REFRESH DASHBOARD</button><button id="logoutBtn" class="danger">LOGOUT</button></div>
     <div class="stats">
       <div class="stat"><strong id="totalBookings">0</strong>Total rows</div>
       <div class="stat"><strong id="pendingBookings">0</strong>Payment pending</div>
@@ -42,238 +39,155 @@ label{display:block;color:var(--muted);margin-top:4px}input,select,button{width:
     </div>
 
     <div class="card">
-      <h2>Create Manual Booking</h2>
-      <p class="muted">Use this for walk-in, phone, cash or admin-assisted bookings. The selected slots are immediately confirmed.</p>
+      <h2>⚙️ Arena & Payment Settings</h2>
+      <p class="muted">The arena is now fixed at 24/7. Changing the UPI ID changes the customer payment QR automatically. Enter WhatsApp number with country code, for example 9198XXXXXXXX.</p>
       <div class="grid">
-        <div><label>Date</label><input type="date" id="manualDate"></div>
-        <div><label>Customer name</label><input id="manualName" placeholder="Customer name"></div>
-        <div><label>Phone</label><input id="manualPhone" inputmode="numeric" placeholder="Mobile number"></div>
-        <div><label>Payment method</label><select id="manualMethod"><option value="CASH">CASH</option><option value="UPI">UPI</option><option value="OTHER">OTHER</option></select></div>
-        <div><label>Payment reference (optional)</label><input id="manualReference" placeholder="UTR / reference"></div>
+        <div><label>Arena name</label><input id="arenaName"></div>
+        <div><label>Price per hour (₹)</label><input id="pricePerHour" type="number" min="1"></div>
+        <div><label>UPI ID</label><input id="upiId" placeholder="name@bank"></div>
+        <div><label>Contact number</label><input id="contactNumber"></div>
+        <div><label>Admin WhatsApp number</label><input id="whatsappNumber" placeholder="9198XXXXXXXX"></div>
+        <div><label>Booking days ahead</label><input id="bookingDaysAhead" type="number" min="1"></div>
       </div>
-      <h3>Available slots</h3>
-      <div id="manualSlots" class="slots">Choose a date.</div>
-      <button id="manualBookBtn" class="gold">BOOK & CONFIRM SELECTED SLOT(S)</button>
-      <div id="manualMessage"></div>
+      <button id="saveSettingsBtn" class="gold">SAVE SETTINGS</button><div id="settingsMessage" class="message"></div>
     </div>
 
     <div class="card">
-      <h2>Block / Unblock Slots</h2>
+      <h2>➕ Create Manual Booking</h2>
+      <p class="muted">For walk-in, phone, cash or admin-assisted bookings. Selected slots are confirmed immediately.</p>
+      <div class="grid">
+        <div><label>Date</label><input type="date" id="manualDate"></div>
+        <div><label>Customer name</label><input id="manualName"></div>
+        <div><label>Phone</label><input id="manualPhone" inputmode="numeric"></div>
+        <div><label>Payment method</label><select id="manualMethod"><option>CASH</option><option>UPI</option><option>OTHER</option></select></div>
+        <div><label>Payment reference (optional)</label><input id="manualReference"></div>
+      </div>
+      <h3>24-hour slots</h3><div id="manualSlots" class="slots"></div>
+      <button id="manualBookBtn" class="gold">BOOK & CONFIRM SELECTED SLOT(S)</button><div id="manualMessage" class="message"></div>
+    </div>
+
+    <div class="card">
+      <h2>🚫 Block / Unblock Slots</h2>
       <div class="grid">
         <div><label>Date</label><input type="date" id="blockDate"></div>
         <div><label>Reason</label><input id="blockReason" placeholder="Maintenance / private event"></div>
       </div>
       <p class="muted">Tap an available slot to block it. Tap a BLOCKED slot to unblock it.</p>
-      <div id="blockSlots" class="slots">Choose a date.</div>
-      <div id="blockMessage"></div>
+      <div id="blockSlots" class="slots"></div><div id="blockMessage" class="message"></div>
     </div>
 
     <div class="card">
-      <h2>Arena Settings</h2>
-      <div class="grid">
-        <div><label>Arena name</label><input id="arenaName"></div>
-        <div><label>Opening time</label><input id="openingTime" placeholder="5:00 AM"></div>
-        <div><label>Closing time</label><input id="closingTime" placeholder="2:00 PM"></div>
-        <div><label>Price per hour</label><input id="pricePerHour" type="number"></div>
-        <div><label>UPI ID</label><input id="upiId"></div>
-        <div><label>Contact number</label><input id="contactNumber"></div>
-      </div>
-      <button id="saveSettingsBtn">SAVE SETTINGS</button>
-      <div id="settingsMessage"></div>
-    </div>
-
-    <div class="card">
-      <h2>Bookings</h2>
-      <div id="bookings">Loading...</div>
+      <h2>📋 Bookings</h2>
+      <p class="muted">Customer payments marked “I HAVE PAID” appear as PAYMENT PENDING. Check your UPI/bank app, then confirm or reject.</p>
+      <div id="bookings">Loading…</div>
     </div>
   </div>
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
-const $=id=>document.getElementById(id);
+const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 let token=sessionStorage.getItem("beniyaAdminToken")||"";
-let config=null;
 let manualSelected=new Set();
+const $=id=>document.getElementById(id);
+const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const msg=(id,text)=>$(id).textContent=text||"";
 
 async function api(action,extra={}){
-  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token,...extra})});
-  const d=await r.json();
-  return d;
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token,...extra})});
+  const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response: "+text)}
 }
-async function get(url){const r=await fetch(url);return r.json()}
-function msg(id,text){const el=$(id);el.className="message";el.textContent=text||""}
-function localDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
-function todayKey(){return localDateKey(new Date())}
-
-$("loginBtn").onclick=async()=>{
-  try{
-    msg("loginMessage","Logging in...");
-    const d=await api("adminlogin",{password:$("password").value});
-    if(!d.success)throw Error(d.message||"Login failed.");
-    token=d.token;sessionStorage.setItem("beniyaAdminToken",token);await showDashboard();
-  }catch(e){msg("loginMessage",e.message)}
-};
+$("loginBtn").onclick=async()=>{try{msg("loginMessage","Logging in…");const d=await api("adminlogin",{password:$("password").value});if(!d.success)return msg("loginMessage",d.message);token=d.token;sessionStorage.setItem("beniyaAdminToken",token);showDashboard()}catch(e){msg("loginMessage",e.message)}};
 $("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
 $("logoutBtn").onclick=()=>{sessionStorage.removeItem("beniyaAdminToken");location.reload()};
-$("refreshBtn").onclick=()=>refreshAll();
+$("refreshBtn").onclick=refreshAll;
 
 async function showDashboard(){
   $("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");
-  const today=todayKey();
-  $("manualDate").min=today;$("blockDate").min=today;
-  if(!$("manualDate").value)$("manualDate").value=today;
-  if(!$("blockDate").value)$("blockDate").value=today;
+  const today=todayKey();$("manualDate").min=today;$("blockDate").min=today;
+  if(!$("manualDate").value)$("manualDate").value=today;if(!$("blockDate").value)$("blockDate").value=today;
   await refreshAll();
 }
-async function refreshAll(){
-  await Promise.all([loadBookings(),loadSettings(),loadManualSlots(),loadBlockSlots()]);
+async function refreshAll(){await Promise.all([loadBookings(),loadSettings(),loadManualSlots(),loadBlockSlots()])}
+
+async function loadSettings(){
+  const d=await api("admingetsettings");if(!d.success)return msg("settingsMessage",d.message);
+  const s=d.settings||{};$("arenaName").value=s.arenaName||"";$("pricePerHour").value=s.pricePerHour||"";
+  $("upiId").value=s.upiId||"";$("contactNumber").value=s.contactNumber||"";
+  $("whatsappNumber").value=s.whatsappNumber||"";$("bookingDaysAhead").value=s.bookingDaysAhead||30;
 }
+$("saveSettingsBtn").onclick=async()=>{try{
+  const d=await api("adminsavesettings",{settings:{
+    arenaName:$("arenaName").value,pricePerHour:Number($("pricePerHour").value),upiId:$("upiId").value.trim(),
+    contactNumber:$("contactNumber").value,whatsappNumber:$("whatsappNumber").value,bookingDaysAhead:Number($("bookingDaysAhead").value)
+  }});
+  msg("settingsMessage",d.message||"Done");if(d.success)await loadSettings();
+}catch(e){msg("settingsMessage",e.message)}};
 
 async function loadManualSlots(){
-  manualSelected.clear();
-  const date=$("manualDate").value;if(!date)return;
-  msg("manualMessage","Loading slots...");
-  const d=await api("adminavailability",{date});
-  if(!d.success)return msg("manualMessage",d.message);
-  $("manualMessage").textContent="";
-  $("manualSlots").innerHTML="";
-  d.slots.forEach(s=>{
-    const b=document.createElement("button");
-    b.className="slot";b.disabled=!s.available;
+  manualSelected.clear();const date=$("manualDate").value;if(!date)return;
+  msg("manualMessage","Loading slots…");const d=await api("adminavailability",{date});if(!d.success)return msg("manualMessage",d.message);
+  msg("manualMessage","");$("manualSlots").innerHTML="";
+  d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
     b.innerHTML=`<b>${esc(s.label)}</b><br><span class="muted">${esc(s.available?"AVAILABLE":s.status)}</span>`;
     b.onclick=()=>{manualSelected.has(s.index)?manualSelected.delete(s.index):manualSelected.add(s.index);b.classList.toggle("selected")};
-    $("manualSlots").appendChild(b);
-  });
+    $("manualSlots").appendChild(b)});
 }
 $("manualDate").onchange=loadManualSlots;
-$("manualBookBtn").onclick=async()=>{
-  try{
-    if(!manualSelected.size)throw Error("Select at least one available slot.");
-    if(!confirm("Create and immediately confirm this booking?"))return;
-    msg("manualMessage","Creating booking...");
-    const d=await api("admincreatebooking",{
-      date:$("manualDate").value,
-      slotIndexes:[...manualSelected],
-      customerName:$("manualName").value,
-      phone:$("manualPhone").value,
-      paymentMethod:$("manualMethod").value,
-      paymentReference:$("manualReference").value
-    });
-    msg("manualMessage",d.message||"Done");
-    if(d.success){
-      $("manualName").value="";$("manualPhone").value="";$("manualReference").value="";
-      await Promise.all([loadManualSlots(),loadBookings(),loadBlockSlots()]);
-    }
-  }catch(e){msg("manualMessage",e.message)}
-};
+$("manualBookBtn").onclick=async()=>{try{
+  if(!manualSelected.size)throw Error("Select at least one available slot.");
+  if(!confirm("Create and immediately confirm this booking?"))return;
+  const d=await api("admincreatebooking",{date:$("manualDate").value,slotIndexes:[...manualSelected],customerName:$("manualName").value,
+    phone:$("manualPhone").value,paymentMethod:$("manualMethod").value,paymentReference:$("manualReference").value});
+  msg("manualMessage",d.message||"Done");if(d.success){$("manualName").value="";$("manualPhone").value="";$("manualReference").value="";await refreshAll()}
+}catch(e){msg("manualMessage",e.message)}};
 
 async function loadBlockSlots(){
-  const date=$("blockDate").value;if(!date)return;
-  msg("blockMessage","Loading slots...");
-  const d=await api("adminavailability",{date});
-  if(!d.success)return msg("blockMessage",d.message);
-  $("blockMessage").textContent="";$("blockSlots").innerHTML="";
-  d.slots.forEach(s=>{
-    const b=document.createElement("button");
-    b.className="slot"+(s.status==="BLOCKED"?" blocked":"");
-    b.innerHTML=`<b>${esc(s.label)}</b><br><span>${esc(s.status)}</span>`;
-    b.disabled=!s.available&&s.status!=="BLOCKED";
-    b.onclick=async()=>{
-      try{
-        let x;
-        if(s.status==="BLOCKED"){
-          if(!confirm("Unblock "+s.label+"?"))return;
-          x=await api("adminunblockslot",{date,slotIndex:s.index});
-        }else{
-          if(!confirm("Block "+s.label+"?"))return;
-          x=await api("adminblockslot",{date,slotIndex:s.index,reason:$("blockReason").value});
-        }
-        msg("blockMessage",x.message);
-        if(x.success)await Promise.all([loadBlockSlots(),loadManualSlots()]);
-      }catch(e){msg("blockMessage",e.message)}
-    };
-    $("blockSlots").appendChild(b);
-  });
+  const date=$("blockDate").value;if(!date)return;const d=await api("adminavailability",{date});
+  if(!d.success)return msg("blockMessage",d.message);$("blockSlots").innerHTML="";msg("blockMessage","");
+  d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot"+(s.status==="BLOCKED"?" blocked":"");
+    b.innerHTML=`<b>${esc(s.label)}</b><br><span>${esc(s.status)}</span>`;b.disabled=!s.available&&s.status!=="BLOCKED";
+    b.onclick=async()=>{try{let x;if(s.status==="BLOCKED"){if(!confirm("Unblock "+s.label+"?"))return;x=await api("adminunblockslot",{date,slotIndex:s.index})}
+      else{if(!confirm("Block "+s.label+"?"))return;x=await api("adminblockslot",{date,slotIndex:s.index,reason:$("blockReason").value})}
+      msg("blockMessage",x.message);if(x.success)await Promise.all([loadBlockSlots(),loadManualSlots()])
+    }catch(e){msg("blockMessage",e.message)}};$("blockSlots").appendChild(b)});
 }
 $("blockDate").onchange=loadBlockSlots;
 
 async function loadBookings(){
-  const d=await api("adminlistbookings");
-  if(!d.success){
-    if((d.message||"").toLowerCase().includes("unauthorized")){sessionStorage.removeItem("beniyaAdminToken");location.reload();return}
-    $("bookings").textContent=d.message||"Could not load bookings.";return;
-  }
-  const list=d.bookings||[];
-  $("totalBookings").textContent=list.length;
+  const d=await api("adminlistbookings");if(!d.success){msg("bookings",d.message);return}
+  const list=d.bookings||[];$("totalBookings").textContent=list.length;
   $("pendingBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="PAYMENT PENDING").length;
   $("confirmedBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="CONFIRMED").length;
-  $("bookings").innerHTML=list.length?list.map(b=>`
-    <div class="booking">
-      <p><b>${esc(b.bookingId)}</b> <span class="badge">${esc(b.status||"-")}</span></p>
-      <p><b>${esc(b.name||"-")}</b> · ${esc(b.phone||"-")}</p>
-      <p>${esc(b.date||"-")} · ${esc(b.slot||"-")}</p>
-      <p>₹${Number(b.amount||0).toLocaleString("en-IN")} · ${esc(b.paymentMethod||"-")} · ${esc(b.bookingSource||"-")}</p>
-      <p>Payment: ${esc(b.paymentStatus||"-")} ${b.paymentReference?"· Ref "+esc(b.paymentReference):""}</p>
-      ${b.refundStatus?`<p>Refund: ${esc(b.refundStatus)} · ₹${Number(b.refundAmount||0).toLocaleString("en-IN")} ${b.refundReference?"· "+esc(b.refundReference):""}</p>`:""}
-      <div class="actions">
-        ${String(b.status).toUpperCase()==="PAYMENT PENDING"?`<button onclick="confirmBooking('${js(b.bookingId)}')">CONFIRM PAYMENT</button><button class="danger" onclick="rejectBooking('${js(b.bookingId)}')">REJECT</button>`:""}
-        ${String(b.status).toUpperCase()!=="CANCELLED"?`<button class="danger" onclick="cancelAdmin('${js(b.bookingId)}','${js(b.paymentStatus||"")}')">CANCEL / REFUND</button>`:""}
-        <button class="secondary" onclick='downloadAdminReceipt(${JSON.stringify(b)})'>RECEIPT</button>
-      </div>
-    </div>`).join(""):"<p>No bookings found.</p>";
+  $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking">
+    <p><b>${esc(b.bookingId)}</b> <span class="badge">${esc(b.status||"-")}</span></p>
+    <p><b>${esc(b.name||"-")}</b> · ${esc(b.phone||"-")}</p><p>${esc(b.date||"-")} · ${esc(b.slot||"-")}</p>
+    <p>₹${Number(b.amount||0).toLocaleString("en-IN")} · ${esc(b.paymentMethod||"-")} · ${esc(b.bookingSource||"-")}</p>
+    <p>Payment: ${esc(b.paymentStatus||"-")}</p>
+    ${b.refundStatus?`<p>Refund: ${esc(b.refundStatus)} · ₹${Number(b.refundAmount||0).toLocaleString("en-IN")} ${b.refundReference?"· "+esc(b.refundReference):""}</p>`:""}
+    <div class="actions">
+      ${String(b.status).toUpperCase()==="PAYMENT PENDING"?`<button onclick="confirmBooking('${js(b.bookingId)}')">CONFIRM PAYMENT</button><button class="danger" onclick="rejectBooking('${js(b.bookingId)}')">REJECT PAYMENT</button>`:""}
+      ${String(b.status).toUpperCase()!=="CANCELLED"?`<button class="danger" onclick="cancelAdmin('${js(b.bookingId)}','${js(b.paymentStatus||"")}')">CANCEL / REFUND</button>`:""}
+      <button class="secondary" onclick='downloadAdminReceipt(${JSON.stringify(b)})'>RECEIPT</button>
+    </div></div>`).join(""):"<p>No bookings found.</p>";
 }
-async function confirmBooking(id){
-  if(!confirm("Confirm payment and booking "+id+"?"))return;
-  const d=await api("adminconfirmbooking",{bookingId:id});alert(d.message||"Done");await loadBookings();
-}
-async function rejectBooking(id){
-  if(!confirm("Reject payment and release the slot(s)?"))return;
-  const d=await api("adminrejectbooking",{bookingId:id});alert(d.message||"Done");await Promise.all([loadBookings(),loadManualSlots(),loadBlockSlots()]);
-}
+async function confirmBooking(id){if(!confirm("Confirm payment and booking "+id+"?"))return;const d=await api("adminconfirmbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
+async function rejectBooking(id){if(!confirm("Reject payment and release the slot?"))return;const d=await api("adminrejectbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
 async function cancelAdmin(id,paymentStatus){
   if(!confirm("Cancel booking "+id+"?"))return;
   let refundStatus="NOT REQUIRED",refundAmount=0,refundReference="";
-  const paid=["PAID","VERIFICATION PENDING"].includes(String(paymentStatus).toUpperCase());
-  if(paid){
+  if(String(paymentStatus).toUpperCase()==="PAID"){
     refundStatus=(prompt("Refund status: NOT REQUIRED, REFUND PENDING, or REFUNDED","REFUND PENDING")||"REFUND PENDING").toUpperCase();
     refundAmount=Number(prompt("Refund amount (₹):","0")||0);
     if(refundStatus==="REFUNDED")refundReference=prompt("Refund UTR / reference:","")||"";
   }
-  const d=await api("admincancelbooking",{bookingId:id,refundStatus,refundAmount,refundReference});
-  alert(d.message||"Done");await Promise.all([loadBookings(),loadManualSlots(),loadBlockSlots()]);
+  const d=await api("admincancelbooking",{bookingId:id,refundStatus,refundAmount,refundReference});alert(d.message||"Done");await refreshAll();
 }
-
-async function loadSettings(){
-  const d=await api("admingetsettings");if(!d.success)return msg("settingsMessage",d.message);
-  const s=d.settings||{};
-  $("arenaName").value=s.arenaName??"";
-  $("openingTime").value=s.openingTime??"";
-  $("closingTime").value=s.closingTime??"";
-  $("pricePerHour").value=s.pricePerHour??"";
-  $("upiId").value=s.upiId??"";
-  $("contactNumber").value=s.contactNumber??"";
-}
-$("saveSettingsBtn").onclick=async()=>{
-  const settings={
-    arenaName:$("arenaName").value,
-    openingTime:$("openingTime").value,
-    closingTime:$("closingTime").value,
-    pricePerHour:Number($("pricePerHour").value),
-    upiId:$("upiId").value,
-    contactNumber:$("contactNumber").value
-  };
-  const d=await api("adminsavesettings",{settings});msg("settingsMessage",d.message||"Done");
-  if(d.success)await Promise.all([loadSettings(),loadManualSlots(),loadBlockSlots()]);
-};
-
 function downloadAdminReceipt(b){
-  const receipt=`<!doctype html><html><head><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style></head><body><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.name||"-")}</p><p><b>Phone:</b> ${esc(b.phone||"-")}</p><p><b>Date:</b> ${esc(b.date||"-")}</p><p><b>Slot:</b> ${esc(b.slot||"-")}</p><p><b>Amount:</b> ₹${Number(b.amount||0).toLocaleString("en-IN")}</p><p><b>Payment method:</b> ${esc(b.paymentMethod||"-")}</p><p><b>Payment status:</b> ${esc(b.paymentStatus||"-")}</p><p><b>Booking status:</b> ${esc(b.status||"-")}</p></div></body></html>`;
-  const blob=new Blob([receipt],{type:"text/html"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.name||"-")}</p><p><b>Phone:</b> ${esc(b.phone||"-")}</p><p><b>Date:</b> ${esc(b.date||"-")}</p><p><b>Slot:</b> ${esc(b.slot||"-")}</p><p><b>Amount:</b> ₹${Number(b.amount||0).toLocaleString("en-IN")}</p><p><b>Payment method:</b> ${esc(b.paymentMethod||"-")}</p><p><b>Payment status:</b> ${esc(b.paymentStatus||"-")}</p><p><b>Booking status:</b> ${esc(b.status||"-")}</p></div>`;
+  const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function js(x){return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
-
 if(token)showDashboard();
 </script>
 </body>
