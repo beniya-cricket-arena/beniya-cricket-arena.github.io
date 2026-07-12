@@ -16,7 +16,7 @@ header,.container{max-width:1000px;margin:auto;padding:18px}header h1{color:var(
 label{display:block;color:var(--muted);margin:6px 0}input,select,button{width:100%;padding:12px;border-radius:10px;border:1px solid #365d49;margin:4px 0 10px}
 input,select{background:#07110d;color:white}button{background:var(--green);color:#06120b;font-weight:bold;cursor:pointer}.gold{background:var(--gold)}.danger{background:var(--red);color:white}.secondary{background:#345545;color:white}.hidden{display:none!important}
 .actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{width:auto;min-width:140px}.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}.slot{background:#10251b;color:white}.slot.selected{background:var(--gold);color:#111}.slot.blocked{background:#7b3030}.slot:disabled{opacity:.45;cursor:not-allowed}
-.booking{background:#091710;border:1px solid var(--line);padding:14px;border-radius:12px;margin-top:10px}.booking p{margin:5px 0}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20382a;font-size:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;margin-top:8px;color:var(--gold)}
+.booking{background:#091710;border:1px solid var(--line);padding:14px;border-radius:12px;margin-top:10px}.pricingRule{background:#091710;border:1px solid var(--line);padding:12px;border-radius:12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}.pricingRule button{width:auto;margin:0}.booking p{margin:5px 0}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20382a;font-size:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;margin-top:8px;color:var(--gold)}
 @media(max-width:650px){.stats{grid-template-columns:1fr}.hero{padding:0}.hero img{border-radius:0;max-height:260px}.actions button{width:100%}}
 </style>
 </head>
@@ -50,6 +50,19 @@ input,select{background:#07110d;color:white}button{background:var(--green);color
         <div><label>Booking days ahead</label><input id="bookingDaysAhead" type="number" min="1"></div>
       </div>
       <button id="saveSettingsBtn" class="gold">SAVE SETTINGS</button><div id="settingsMessage" class="message"></div>
+    </div>
+
+    <div class="card">
+      <h2>💰 Time-Based Pricing</h2>
+      <p class="muted">Set different hourly charges for different times. Any hour not covered by a rule uses the default “Price per hour” above. Overnight ranges are supported, for example 22:00 to 06:00.</p>
+      <div class="grid">
+        <div><label>Start time</label><input id="priceStartTime" type="time" step="3600" value="06:00"></div>
+        <div><label>End time</label><input id="priceEndTime" type="time" step="3600" value="10:00"></div>
+        <div><label>Price per hour (₹)</label><input id="rulePrice" type="number" min="1" placeholder="1000"></div>
+      </div>
+      <button id="addPricingRuleBtn" class="gold">ADD PRICE RULE</button>
+      <div id="pricingMessage" class="message"></div>
+      <div id="pricingRules"></div>
     </div>
 
     <div class="card">
@@ -107,7 +120,7 @@ async function showDashboard(){
   if(!$("manualDate").value)$("manualDate").value=today;if(!$("blockDate").value)$("blockDate").value=today;
   await refreshAll();
 }
-async function refreshAll(){await Promise.all([loadBookings(),loadSettings(),loadManualSlots(),loadBlockSlots()])}
+async function refreshAll(){await Promise.all([loadBookings(),loadSettings(),loadPricingRules(),loadManualSlots(),loadBlockSlots()])}
 
 async function loadSettings(){
   const d=await api("admingetsettings");if(!d.success)return msg("settingsMessage",d.message);
@@ -123,12 +136,43 @@ $("saveSettingsBtn").onclick=async()=>{try{
   msg("settingsMessage",d.message||"Done");if(d.success)await loadSettings();
 }catch(e){msg("settingsMessage",e.message)}};
 
+
+async function loadPricingRules(){
+  try{
+    const d=await api("admingetpricingrules");
+    if(!d.success)throw Error(d.message||"Could not load pricing rules.");
+    const rules=d.rules||[];
+    $("pricingRules").innerHTML=rules.length?rules.map(r=>`<div class="pricingRule">
+      <div><b>${esc(r.startTime)} → ${esc(r.endTime)}</b><br><span class="muted">₹${Number(r.price||0).toLocaleString("en-IN")} per hour</span></div>
+      <button class="danger" onclick="deletePricingRule('${js(r.ruleId)}')">DELETE</button>
+    </div>`).join(""):'<p class="muted">No special pricing rules. The default hourly price applies all day.</p>';
+  }catch(e){msg("pricingMessage",e.message)}
+}
+$("addPricingRuleBtn").onclick=async()=>{try{
+  const startTime=$("priceStartTime").value,endTime=$("priceEndTime").value,price=Number($("rulePrice").value);
+  if(!startTime||!endTime)throw Error("Choose start and end times.");
+  if(!price||price<=0)throw Error("Enter a valid price.");
+  const d=await api("adminaddpricingrule",{startTime,endTime,price});
+  if(!d.success)throw Error(d.message||"Could not add pricing rule.");
+  msg("pricingMessage",d.message);$("rulePrice").value="";
+  await Promise.all([loadPricingRules(),loadManualSlots(),loadBlockSlots()]);
+}catch(e){msg("pricingMessage",e.message)}};
+async function deletePricingRule(ruleId){
+  if(!confirm("Delete this pricing rule?"))return;
+  try{
+    const d=await api("admindeletepricingrule",{ruleId});
+    if(!d.success)throw Error(d.message||"Could not delete pricing rule.");
+    msg("pricingMessage",d.message);
+    await Promise.all([loadPricingRules(),loadManualSlots(),loadBlockSlots()]);
+  }catch(e){msg("pricingMessage",e.message)}
+}
+
 async function loadManualSlots(){
   manualSelected.clear();const date=$("manualDate").value;if(!date)return;
   msg("manualMessage","Loading slots…");const d=await api("adminavailability",{date});if(!d.success)return msg("manualMessage",d.message);
   msg("manualMessage","");$("manualSlots").innerHTML="";
   d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
-    b.innerHTML=`<b>${esc(s.label)}</b><br><span class="muted">${esc(s.available?"AVAILABLE":s.status)}</span>`;
+    b.innerHTML=`<b>${esc(s.label)}</b><br><span class="muted">${esc(s.available?"AVAILABLE · ₹"+Number(s.price||0).toLocaleString("en-IN"):s.status)}</span>`;
     b.onclick=()=>{manualSelected.has(s.index)?manualSelected.delete(s.index):manualSelected.add(s.index);b.classList.toggle("selected")};
     $("manualSlots").appendChild(b)});
 }
@@ -145,7 +189,7 @@ async function loadBlockSlots(){
   const date=$("blockDate").value;if(!date)return;const d=await api("adminavailability",{date});
   if(!d.success)return msg("blockMessage",d.message);$("blockSlots").innerHTML="";msg("blockMessage","");
   d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot"+(s.status==="BLOCKED"?" blocked":"");
-    b.innerHTML=`<b>${esc(s.label)}</b><br><span>${esc(s.status)}</span>`;b.disabled=!s.available&&s.status!=="BLOCKED";
+    b.innerHTML=`<b>${esc(s.label)}</b><br><span>${esc(s.status==="AVAILABLE"?s.status+" · ₹"+Number(s.price||0).toLocaleString("en-IN"):s.status)}</span>`;b.disabled=!s.available&&s.status!=="BLOCKED";
     b.onclick=async()=>{try{let x;if(s.status==="BLOCKED"){if(!confirm("Unblock "+s.label+"?"))return;x=await api("adminunblockslot",{date,slotIndex:s.index})}
       else{if(!confirm("Block "+s.label+"?"))return;x=await api("adminblockslot",{date,slotIndex:s.index,reason:$("blockReason").value})}
       msg("blockMessage",x.message);if(x.success)await Promise.all([loadBlockSlots(),loadManualSlots()])
