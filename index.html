@@ -7,301 +7,216 @@
 <title>Beniya Cricket Arena — Book Your Slot</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--bg:#07110d;--card:#0d1b14;--gold:#f5b82e;--text:#f7f4e8;--muted:#a9b6ae;--green:#35d07f;--red:#ef6262;--line:rgba(245,184,46,.2)}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:var(--text)}
-.wrap{max-width:620px;margin:auto;padding:22px 16px 90px}h1{margin:8px 0;color:var(--gold)}.sub{color:var(--muted);margin-bottom:24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0}
-.dates{display:flex;gap:8px;overflow:auto;padding-bottom:4px}.date{min-width:72px;background:#13231a;color:white;border:1px solid #294332;border-radius:14px;padding:10px;cursor:pointer}.date.active{border-color:var(--gold);color:var(--gold)}
-.slots{display:grid;grid-template-columns:1fr 1fr;gap:10px}.slot{background:#13231a;color:white;border:1px solid #294332;border-radius:14px;padding:13px;text-align:left;cursor:pointer}.slot.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}.slot:disabled{opacity:.45;cursor:not-allowed}.slot small{display:block;color:var(--muted);margin-top:5px}
-input,select{width:100%;padding:13px;border-radius:12px;border:1px solid #365542;background:#07110d;color:white;margin:6px 0 12px}
-button{font:inherit}.cta,.secondary,.danger{width:100%;padding:14px;border:0;border-radius:14px;font-weight:800;cursor:pointer}.cta{background:var(--gold);color:#161006}.secondary{background:#20382a;color:white;border:1px solid #3b5c48}.danger{background:var(--red);color:white}.cta:disabled{opacity:.45;cursor:not-allowed}
-.summary p{display:flex;justify-content:space-between;gap:16px}.muted{color:var(--muted)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-end;justify-content:center;z-index:20}.modal.show{display:flex}.sheet{width:min(620px,100%);max-height:92vh;overflow:auto;background:#0b1711;border-radius:26px 26px 0 0;padding:20px}
-.paybox{background:#07110d;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}#qr{display:flex;justify-content:center;background:white;padding:12px;border-radius:14px;width:max-content;margin:14px auto}.upirow{display:flex;gap:8px;align-items:center}.upiid{flex:1;word-break:break-all;font-family:monospace;background:#10251b;padding:12px;border-radius:10px}.mini{width:auto;padding:10px 12px;border:0;border-radius:10px;background:#345545;color:white;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none}.success{border-color:var(--green)}@media(max-width:480px){.slots{grid-template-columns:1fr}}
-@media(max-width:480px){.slots{grid-template-columns:1fr}}
-
-.hero{
-  width:100%;
-  margin:0 0 22px;
-  border-radius:20px;
-  overflow:hidden;
-  border:1px solid rgba(245,184,46,.25);
-  box-shadow:0 12px 35px rgba(0,0,0,.35);
-}
-
-.hero img{
-  display:block;
-  width:100%;
-  height:auto;
-  object-fit:cover;
-}
-
+:root{--bg:#07110d;--card:#0d1b14;--gold:#f5b82e;--text:#f7f4e8;--muted:#a9b6ae;--green:#35d07f;--red:#ef6262;--line:#294b3a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:var(--text);font-family:Arial,sans-serif}button,input{font:inherit}
+.hero,.wrap{max-width:760px;margin:auto}.hero{padding:18px 18px 0}.hero img{width:100%;max-height:360px;object-fit:cover;border-radius:20px;border:1px solid var(--line);display:block}
+.wrap{padding:18px 18px 80px}h1{color:var(--gold);margin:10px 0 5px}.sub{color:var(--muted);margin-bottom:20px}
+.card{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+.dates{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}.dateBtn{min-width:105px;background:#10251b;color:white}.dateBtn.selected,.slot.selected{background:var(--gold);color:#111}
+.slots{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.slot{background:#10251b;color:white}.slot:disabled{opacity:.42;cursor:not-allowed}
+button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49;margin:5px 0 10px}button{background:var(--green);color:#06120b;font-weight:bold;cursor:pointer}input{background:#07110d;color:white}.gold{background:var(--gold)}.danger{background:var(--red);color:white}.secondary{background:#345545;color:white}.hidden{display:none!important}
+.summary p{display:flex;justify-content:space-between;gap:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;color:var(--gold);margin-top:8px}
+.paybox{text-align:center}.qr{display:flex;justify-content:center;background:white;padding:14px;width:max-content;margin:14px auto;border-radius:14px}.upi{font-size:18px;word-break:break-all;color:var(--gold)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{padding:12px;border:1px solid var(--line);border-radius:12px;background:#10251b}
+@media(max-width:560px){.slots,.actions{grid-template-columns:1fr}.hero{padding:0}.hero img{border-radius:0;max-height:260px}}
 </style>
 </head>
 <body>
-
-</style>
-</head>
-<body>
+<div class="hero"><img src="beniya-arena-hero.png" alt="Beniya Cricket Arena"></div>
 <div class="wrap">
-  <div class="hero">
-  <img src="beniya-arena-hero.png" alt="Beniya Cricket Arena">
-</div>
   <h1>🏏 Beniya Cricket Arena</h1>
   <div class="sub">Choose an available date and time. Past dates and already-started slots are automatically unavailable.</div>
 
-  <div class="card"><h3>1. Select date</h3><div id="dates" class="dates"></div></div>
-  <div class="card"><h3>2. Select time slot</h3><div id="slots" class="slots">Loading…</div></div>
+  <div id="bookingFlow">
+    <div class="card">
+      <h2>1. Select date</h2>
+      <div id="dates" class="dates"></div>
+    </div>
 
-  <div class="card">
-    <h3>3. Your details</h3>
-    <label>Name</label><input id="name" placeholder="Customer name">
-    <label>Mobile number</label><input id="phone" inputmode="numeric" placeholder="10-digit mobile number">
-  </div>
+    <div class="card">
+      <h2>2. Select time slot</h2>
+      <div id="slots" class="slots"><p class="muted">Loading slots…</p></div>
+    </div>
 
-  <div class="card summary">
-    <h3>Booking summary</h3>
-    <p><span class="muted">Selected</span><span id="selectedText">None</span></p>
-    <p><span class="muted">Duration</span><span id="duration">0 hr</span></p>
-    <p><span class="muted">Total</span><strong id="total">₹0</strong></p>
-    <button id="payBtn" class="cta" disabled>SELECT A SLOT TO CONTINUE</button>
-  </div>
-</div>
-
-<div class="modal" id="modal">
-  <div class="sheet">
-    <h2>Complete your booking</h2>
-    <div id="paymentSummary" class="muted"></div>
-
-    <div class="paybox">
-      <h3>Pay by UPI</h3>
-      <div id="qr"></div>
-      <div class="upirow">
-        <div id="upiIdText" class="upiid"></div>
-        <button id="copyUpi" class="mini">Copy</button>
+    <div class="card">
+      <h2>3. Your details</h2>
+      <label>Name</label><input id="customerName" placeholder="Customer name" autocomplete="name">
+      <label>Mobile number</label><input id="phone" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
+      <div class="summary">
+        <p><span>Selected slots</span><b id="selectedCount">0</b></p>
+        <p><span>Total amount</span><b id="totalAmount">₹0</b></p>
       </div>
-      <button id="upiBtn" class="cta" style="margin-top:12px">OPEN UPI APP</button>
-      <p class="muted">You can scan the QR from another phone, copy the UPI ID, or try the UPI app button.</p>
+      <button id="continueBtn" class="gold">CONTINUE TO PAYMENT</button>
+      <div id="bookingMessage" class="message"></div>
     </div>
-
-    <label>UPI Transaction ID / UTR</label>
-    <input id="utr" placeholder="Enter UTR after successful payment">
-
-    <button id="submitPaymentBtn" class="cta">SUBMIT PAYMENT FOR VERIFICATION</button>
-    <div class="actions" style="margin-top:10px">
-      <button id="backBtn" class="secondary">GO BACK</button>
-      <button id="cancelBtn" class="danger">CANCEL BOOKING</button>
-    </div>
-    <p class="muted">Cancellation is available only before you submit payment. After submitting the UTR, only the admin can cancel the booking.</p>
   </div>
-</div>
 
-<div class="modal" id="receiptModal">
-  <div class="sheet">
-    <div id="receiptCard" class="card success"></div>
-    <button id="downloadReceipt" class="cta">DOWNLOAD RECEIPT</button>
-    <button id="closeReceipt" class="secondary" style="margin-top:10px">CLOSE</button>
+  <div id="paymentCard" class="card hidden">
+    <h2>4. Pay by UPI</h2>
+    <div class="paybox">
+      <p>Scan the QR code or pay to the UPI ID below.</p>
+      <div id="qr" class="qr"></div>
+      <div id="upiText" class="upi"></div>
+      <p><b id="payAmount"></b></p>
+      <p class="muted">After completing payment in your UPI app, tap <b>I HAVE PAID</b>. No UTR entry is required.</p>
+    </div>
+    <button id="paidBtn">I HAVE PAID</button>
+    <button id="cancelBeforePaymentBtn" class="danger">CANCEL BOOKING</button>
+    <div id="paymentMessage" class="message"></div>
+  </div>
+
+  <div id="pendingCard" class="card hidden">
+    <h2>Payment submitted</h2>
+    <div class="status"><b>Status: <span id="currentStatus">PAYMENT PENDING</span></b></div>
+    <p>Your slot is reserved while the arena verifies the payment. Please send the prepared booking message to the admin on WhatsApp.</p>
+    <button id="whatsappBtn">SEND BOOKING DETAILS ON WHATSAPP</button>
+    <button id="checkStatusBtn" class="secondary">CHECK BOOKING STATUS</button>
+    <div id="pendingMessage" class="message"></div>
+  </div>
+
+  <div id="confirmedCard" class="card hidden">
+    <h2>✅ Booking Confirmed</h2>
+    <div id="confirmedDetails"></div>
+    <button id="receiptBtn" class="gold">DOWNLOAD RECEIPT</button>
+    <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
   </div>
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec';
-let config=null, selectedDate="", selected=new Set(), live=[], booking=null;
-
+const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 const $=id=>document.getElementById(id);
-const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+let config=null,selectedDate="",selectedSlots=new Set(),currentBooking=null;
 
-async function getJson(url){const r=await fetch(url,{cache:"no-store"});return r.json()}
-async function post(data){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});return r.json()}
+function localDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function msg(id,t){$(id).textContent=t||""}
+async function get(action,params={}){
+  const u=new URL(API_URL);u.searchParams.set("action",action);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u);const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response.")}
+}
+async function post(action,extra={}){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...extra})});
+  const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response.")}
+}
 
 async function init(){
-  config=await getJson(`${API}?action=config`);
-  if(!config.success) throw Error(config.message);
-  buildDates();
-  await loadAvailability();
-  summary();
+  try{
+    config=await get("config");if(!config.success)throw Error(config.message||"Could not load booking settings.");
+    buildDates();selectedDate=config.today||localDateKey(new Date());await loadSlots();restoreBooking();
+  }catch(e){msg("bookingMessage",e.message)}
 }
-
 function buildDates(){
-  $("dates").innerHTML="";
-  const start=new Date(config.today+"T12:00:00");
-  for(let i=0;i<Math.min(config.bookingDaysAhead||30,14);i++){
-    const d=new Date(start); d.setDate(start.getDate()+i);
-    const k=key(d), b=document.createElement("button");
-    b.className="date"+(i===0?" active":"");
-    b.innerHTML=`<b>${i===0?"Today":d.toLocaleDateString("en-IN",{weekday:"short"})}</b><br>${d.getDate()} ${d.toLocaleDateString("en-IN",{month:"short"})}`;
-    b.onclick=async()=>{document.querySelectorAll(".date").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedDate=k;selected.clear();summary();await loadAvailability()};
+  $("dates").innerHTML="";const start=new Date((config.today||localDateKey(new Date()))+"T00:00:00");
+  const days=Math.max(1,Number(config.bookingDaysAhead||30));
+  for(let i=0;i<days;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const key=localDateKey(d);
+    const b=document.createElement("button");b.className="dateBtn"+(i===0?" selected":"");
+    b.innerHTML=`${i===0?"Today<br>":""}<b>${d.toLocaleDateString("en-IN",{weekday:"short"})}</b><br>${d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})}`;
+    b.onclick=async()=>{selectedDate=key;selectedSlots.clear();document.querySelectorAll(".dateBtn").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");updateTotal();await loadSlots()};
     $("dates").appendChild(b);
-    if(i===0) selectedDate=k;
   }
 }
-
-async function loadAvailability(){
-  $("slots").innerHTML="Checking live availability…";
-  try{
-    const d=await getJson(`${API}?action=availability&date=${encodeURIComponent(selectedDate)}`);
-    if(!d.success) throw Error(d.message);
-    live=d.slots; renderSlots();
-  }catch(e){$("slots").innerHTML=`<div style="color:#ef9b9b">${e.message}</div>`}
-}
-
-function renderSlots(){
+async function loadSlots(){
+  $("slots").innerHTML='<p class="muted">Loading slots…</p>';
+  const d=await get("availability",{date:selectedDate});if(!d.success){$("slots").innerHTML=`<p>${esc(d.message)}</p>`;return}
   $("slots").innerHTML="";
-  live.forEach(s=>{
-    const b=document.createElement("button");
-    b.className="slot"+(selected.has(s.index)?" selected":"");
-    b.disabled=!s.available;
-    const status=s.available?`₹${Number(s.price).toLocaleString("en-IN")} · Available`:s.status==="PAST"?"Time passed":s.status==="HELD"?"Temporarily held":s.status==="PAYMENT PENDING"?"Payment pending":s.status==="BLOCKED"?"Blocked":"Booked";
-    b.innerHTML=`<strong>${s.label}</strong><small>${status}</small>`;
-    b.onclick=()=>{selected.has(s.index)?selected.delete(s.index):selected.add(s.index);renderSlots();summary()};
+  d.slots.forEach(s=>{
+    const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
+    b.innerHTML=`<b>${esc(s.label)}</b><br><small>${esc(s.available?money(s.price):s.status)}</small>`;
+    b.onclick=()=>{selectedSlots.has(s.index)?selectedSlots.delete(s.index):selectedSlots.add(s.index);b.classList.toggle("selected");updateTotal()};
     $("slots").appendChild(b);
   });
 }
-
-function summary(){
-  const ids=[...selected].sort((a,b)=>a-b);
-  const labels=ids.map(i=>live.find(s=>s.index===i)?.label).filter(Boolean);
-  $("selectedText").textContent=labels.length?labels.join(", "):"None";
-  $("duration").textContent=labels.length+" hr";
-  const amount=labels.length*(config?.pricePerHour||0);
-  $("total").textContent="₹"+amount.toLocaleString("en-IN");
-  $("payBtn").disabled=!labels.length;
-  $("payBtn").textContent=labels.length?`HOLD & CONTINUE · ₹${amount.toLocaleString("en-IN")}`:"SELECT A SLOT TO CONTINUE";
+function updateTotal(){
+  $("selectedCount").textContent=selectedSlots.size;
+  $("totalAmount").textContent=money(selectedSlots.size*Number(config?.pricePerHour||0));
 }
 
-$("payBtn").onclick=async()=>{
-  const customerName=$("name").value.trim(), phone=$("phone").value.replace(/\D/g,"");
-  if(customerName.length<2||phone.length<10) return alert("Enter your name and valid mobile number.");
-  $("payBtn").disabled=true;$("payBtn").textContent="HOLDING SLOT…";
+$("continueBtn").onclick=async()=>{
   try{
-    const d=await post({action:"createHold",date:selectedDate,slotIndexes:[...selected],customerName,phone});
-    if(!d.success) throw Error(d.message);
-    booking=d; openPayment();
-  }catch(e){alert(e.message);summary()}
+    msg("bookingMessage","");
+    const name=$("customerName").value.trim(),phone=$("phone").value.replace(/\D/g,"");
+    if(name.length<2)throw Error("Please enter your name.");
+    if(phone.length<10||phone.length>15)throw Error("Please enter a valid mobile number.");
+    if(!selectedSlots.size)throw Error("Please select at least one slot.");
+    $("continueBtn").disabled=true;$("continueBtn").textContent="PREPARING PAYMENT…";
+    const d=await post("createbooking",{date:selectedDate,slotIndexes:[...selectedSlots],customerName:name,phone});
+    if(!d.success)throw Error(d.message||"Could not prepare payment.");
+    currentBooking=d;saveBooking();showPayment();
+  }catch(e){msg("bookingMessage",e.message)}
+  finally{$("continueBtn").disabled=false;$("continueBtn").textContent="CONTINUE TO PAYMENT"}
 };
 
-function upiUri(){
-  if(!booking)return"";
-  return `upi://pay?pa=${encodeURIComponent(booking.upiId)}&pn=${encodeURIComponent(booking.arenaName)}&am=${Number(booking.amount).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Booking "+booking.bookingId)}`;
-}
-
-function openPayment(){
-  $("paymentSummary").innerHTML=`Booking <b>${booking.bookingId}</b><br>${booking.date}<br>${booking.slots.join("<br>")}<br><b>Amount: ₹${Number(booking.amount).toLocaleString("en-IN")}</b>`;
-  $("upiIdText").textContent=booking.upiId;
+function showPayment(){
+  $("bookingFlow").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("paymentCard").classList.remove("hidden");
+  $("upiText").textContent=currentBooking.upiId;$("payAmount").textContent="Amount to pay: "+money(currentBooking.amount);
   $("qr").innerHTML="";
-  new QRCode($("qr"),{text:upiUri(),width:190,height:190});
-  $("modal").classList.add("show");
+  const upi=`upi://pay?pa=${encodeURIComponent(currentBooking.upiId)}&pn=${encodeURIComponent(currentBooking.arenaName||"Beniya Cricket Arena")}&am=${encodeURIComponent(currentBooking.amount)}&cu=INR&tn=${encodeURIComponent("Booking "+currentBooking.bookingId)}`;
+  if(window.QRCode)new QRCode($("qr"),{text:upi,width:220,height:220});
+  else $("qr").textContent="QR could not load. Pay using the UPI ID shown below.";
 }
-
-$("copyUpi").onclick=async()=>{await navigator.clipboard.writeText(booking.upiId);$("copyUpi").textContent="Copied";setTimeout(()=>$("copyUpi").textContent="Copy",1500)};
-$("upiBtn").onclick=()=>{if(booking) location.href=upiUri()};
-$("backBtn").onclick=()=>$("modal").classList.remove("show");
-
-$("cancelBtn").onclick=async()=>{
-  if(!booking||!confirm("Cancel this held booking and release the slots?"))return;
-  const d=await post({action:"cancelBooking",bookingId:booking.bookingId});
-  if(!d.success)return alert(d.message);
-  $("modal").classList.remove("show");booking=null;selected.clear();summary();await loadAvailability();alert("Booking cancelled.");
+$("cancelBeforePaymentBtn").onclick=async()=>{
+  if(!currentBooking||!confirm("Cancel this unpaid booking?"))return;
+  try{const d=await post("cancelbooking",{bookingId:currentBooking.bookingId});if(!d.success)throw Error(d.message);clearBooking();location.reload()}catch(e){msg("paymentMessage",e.message)}
+};
+$("paidBtn").onclick=async()=>{
+  if(!currentBooking)return;
+  try{
+    $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
+    const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
+    if(!d.success)throw Error(d.message||"Could not submit payment.");
+    currentBooking={...currentBooking,...d,status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
+  }catch(e){msg("paymentMessage",e.message)}
+  finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
 };
 
-$("submitPaymentBtn").onclick=async()=>{
-  if(!booking)return;
-  const paymentReference=$("utr").value.trim();
-  if(paymentReference.length<6)return alert("Enter a valid UPI Transaction ID / UTR.");
-  if(!confirm("Submit this payment reference? After submission, you cannot cancel the booking yourself."))return;
-  const d=await post({action:"submitPayment",bookingId:booking.bookingId,paymentReference});
-  if(!d.success)return alert(d.message);
-  $("modal").classList.remove("show");
-  showReceipt(d.receipt||{...booking,paymentReference,status:"PAYMENT PENDING",paymentStatus:"VERIFICATION PENDING",paymentMethod:"UPI"});
-  selected.clear();summary();await loadAvailability();
-};
-function buildDates(){
-  $("dates").innerHTML = "";
-
-  // Start from today's local date.
-  // Do not depend on config.today because an invalid/missing backend
-  // date was causing "NaN / Invalid Date".
-  const start = new Date();
-  start.setHours(12, 0, 0, 0);
-
-  const numberOfDays = Math.min(
-    Number(config?.bookingDaysAhead) || 30,
-    14
-  );
-
-  for(let i = 0; i < numberOfDays; i++){
-
-    const d = new Date(start);
-    d.setDate(start.getDate() + i);
-
-    const k = key(d);
-    const b = document.createElement("button");
-
-    b.className = "date" + (i === 0 ? " active" : "");
-
-    const dayName = i === 0
-      ? "Today"
-      : d.toLocaleDateString("en-IN", {
-          weekday: "short"
-        });
-
-    const monthName = d.toLocaleDateString("en-IN", {
-      month: "short"
-    });
-
-    b.innerHTML = `
-      <b>${dayName}</b>
-      <br>
-      ${d.getDate()} ${monthName}
-    `;
-
-    b.onclick = async () => {
-
-      document
-        .querySelectorAll(".date")
-        .forEach(x => x.classList.remove("active"));
-
-      b.classList.add("active");
-
-      selectedDate = k;
-      selected.clear();
-
-      summary();
-      await loadAvailability();
-    };
-
-    $("dates").appendChild(b);
-
-    if(i === 0){
-      selectedDate = k;
-    }
-  }
+function showPending(){
+  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("pendingCard").classList.remove("hidden");
+  $("currentStatus").textContent=currentBooking.status||"PAYMENT PENDING";
 }
-function showReceipt(r){
-  window.lastReceipt=r;
-  $("receiptCard").innerHTML=`
-    <h2>🏏 ${config.arenaName}</h2>
-    <h3>Payment Submission Receipt</h3>
-    <p><b>Booking ID:</b> ${r.bookingId}</p>
-    <p><b>Customer:</b> ${r.customerName}</p>
-    <p><b>Phone:</b> ${r.phone}</p>
-    <p><b>Date:</b> ${r.date}</p>
-    <p><b>Slot(s):</b><br>${(r.slots||booking.slots).join("<br>")}</p>
-    <p><b>Amount:</b> ₹${Number(r.amount).toLocaleString("en-IN")}</p>
-    <p><b>Payment method:</b> ${r.paymentMethod||"UPI"}</p>
-    <p><b>UTR:</b> ${r.paymentReference||$("utr").value}</p>
-    <p><b>Status:</b> ${r.status||"PAYMENT PENDING"}</p>
-    <p class="muted">Payment is awaiting admin verification. This receipt records your submission and is not proof of final payment confirmation.</p>`;
-  $("receiptModal").classList.add("show");
-}
-
-$("downloadReceipt").onclick=()=>{
-  const html=`<!doctype html><meta charset="utf-8"><title>Receipt ${window.lastReceipt.bookingId}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}h1{color:#946900}.box{border:1px solid #ccc;padding:24px;border-radius:12px}</style><div class="box">${$("receiptCard").innerHTML}</div>`;
-  const blob=new Blob([html],{type:"text/html"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${window.lastReceipt.bookingId}.html`;a.click();URL.revokeObjectURL(a.href);
+$("whatsappBtn").onclick=()=>{
+  const b=currentBooking;if(!b)return;
+  const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
+  const text=`Hello Beniya Cricket Arena,\n\nI have made the UPI payment for my booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nPlease verify the payment and confirm my booking.`;
+  window.open(`https://wa.me/${number}?text=${encodeURIComponent(text)}`,"_blank");
 };
-$("closeReceipt").onclick=()=>{$("receiptModal").classList.remove("show");booking=null;$("utr").value=""};
+$("checkStatusBtn").onclick=checkStatus;
 
-init().catch(e=>alert("Could not load booking system: "+e.message));
+async function checkStatus(){
+  if(!currentBooking)return;
+  try{
+    msg("pendingMessage","Checking…");
+    const d=await post("bookingstatus",{bookingId:currentBooking.bookingId,phone:currentBooking.phone});
+    if(!d.success)throw Error(d.message||"Could not check status.");
+    currentBooking={...currentBooking,...d};saveBooking();
+    const status=String(d.status||"").toUpperCase();$("currentStatus").textContent=status;
+    if(status==="CONFIRMED")showConfirmed();
+    else if(status==="CANCELLED"){msg("pendingMessage","This booking was cancelled or payment was rejected. Please contact the arena if money was deducted.");}
+    else msg("pendingMessage","Current status: "+status);
+  }catch(e){msg("pendingMessage",e.message)}
+}
+function showConfirmed(){
+  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.remove("hidden");
+  const b=currentBooking;
+  $("confirmedDetails").innerHTML=`<p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Name:</b> ${esc(b.customerName)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p>`;
+}
+$("receiptBtn").onclick=()=>{
+  const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
+  const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.customerName)}</p><p><b>Phone:</b> ${esc(b.phone)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount Paid:</b> ${money(b.amount)}</p><p><b>Payment:</b> PAID</p><p><b>Booking Status:</b> CONFIRMED</p></div>`;
+  const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+function saveBooking(){localStorage.setItem("beniyaCurrentBooking",JSON.stringify(currentBooking))}
+function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentBooking=null}
+function restoreBooking(){
+  try{
+    const b=JSON.parse(localStorage.getItem("beniyaCurrentBooking")||"null");if(!b||!b.bookingId)return;
+    currentBooking=b;
+    const s=String(b.status||"").toUpperCase();
+    if(s==="CONFIRMED")showConfirmed();else if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
+  }catch(e){}
+}
+init();
 </script>
 </body>
 </html>
