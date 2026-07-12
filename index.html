@@ -85,7 +85,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 const $=id=>document.getElementById(id);
-let config=null,selectedDate="",selectedSlots=new Set(),currentBooking=null;
+let config=null,selectedDate="",selectedSlots=new Set(),currentBooking=null,currentSlotData=[];
 
 function localDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
@@ -120,7 +120,7 @@ function buildDates(){
 async function loadSlots(){
   $("slots").innerHTML='<p class="muted">Loading slots…</p>';
   const d=await get("availability",{date:selectedDate});if(!d.success){$("slots").innerHTML=`<p>${esc(d.message)}</p>`;return}
-  $("slots").innerHTML="";
+  $("slots").innerHTML="";currentSlotData=d.slots||[];
   d.slots.forEach(s=>{
     const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
     b.innerHTML=`<b>${esc(s.label)}</b><br><small>${esc(s.available?money(s.price):s.status)}</small>`;
@@ -130,7 +130,8 @@ async function loadSlots(){
 }
 function updateTotal(){
   $("selectedCount").textContent=selectedSlots.size;
-  $("totalAmount").textContent=money(selectedSlots.size*Number(config?.pricePerHour||0));
+  const total=[...selectedSlots].reduce((sum,i)=>sum+Number((currentSlotData.find(s=>s.index===i)||{}).price||config?.pricePerHour||0),0);
+  $("totalAmount").textContent=money(total);
 }
 
 $("continueBtn").onclick=async()=>{
