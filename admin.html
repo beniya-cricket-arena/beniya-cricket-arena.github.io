@@ -155,7 +155,12 @@ $("blockDate").onchange=loadBlockSlots;
 
 async function loadBookings(){
   const d=await api("adminlistbookings");if(!d.success){msg("bookings",d.message);return}
-  const list=d.bookings||[];$("totalBookings").textContent=list.length;
+  const today=todayKey();
+  const list=(d.bookings||[]).filter(b=>{
+    const bookingDate=String(b.date||"").trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(bookingDate)&&bookingDate>=today;
+  });
+  $("totalBookings").textContent=list.length;
   $("pendingBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="PAYMENT PENDING").length;
   $("confirmedBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="CONFIRMED").length;
   $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking">
@@ -167,6 +172,7 @@ async function loadBookings(){
     <div class="actions">
       ${String(b.status).toUpperCase()==="PAYMENT PENDING"?`<button onclick="confirmBooking('${js(b.bookingId)}')">CONFIRM PAYMENT</button><button class="danger" onclick="rejectBooking('${js(b.bookingId)}')">REJECT PAYMENT</button>`:""}
       ${String(b.status).toUpperCase()!=="CANCELLED"?`<button class="danger" onclick="cancelAdmin('${js(b.bookingId)}','${js(b.paymentStatus||"")}')">CANCEL / REFUND</button>`:""}
+      ${(String(b.status).toUpperCase()==="CANCELLED"||String(b.status).toUpperCase()==="REJECTED"||String(b.paymentStatus).toUpperCase()==="REJECTED"||String(b.paymentStatus).toUpperCase()==="PAYMENT REJECTED")?`<button class="danger" onclick="deleteBookingRecord('${js(b.bookingId)}')">DELETE RECORD</button>`:""}
       <button class="secondary" onclick='downloadAdminReceipt(${JSON.stringify(b)})'>RECEIPT</button>
     </div></div>`).join(""):"<p>No bookings found.</p>";
 }
@@ -181,6 +187,15 @@ async function cancelAdmin(id,paymentStatus){
     if(refundStatus==="REFUNDED")refundReference=prompt("Refund UTR / reference:","")||"";
   }
   const d=await api("admincancelbooking",{bookingId:id,refundStatus,refundAmount,refundReference});alert(d.message||"Done");await refreshAll();
+}
+async function deleteBookingRecord(id){
+  if(!confirm("Permanently delete booking "+id+"? This cannot be undone."))return;
+  try{
+    const d=await api("admindeletebooking",{bookingId:id});
+    if(!d.success)throw Error(d.message||"Could not delete booking.");
+    alert(d.message||"Booking record deleted.");
+    await refreshAll();
+  }catch(e){alert(e.message)}
 }
 function downloadAdminReceipt(b){
   const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.name||"-")}</p><p><b>Phone:</b> ${esc(b.phone||"-")}</p><p><b>Date:</b> ${esc(b.date||"-")}</p><p><b>Slot:</b> ${esc(b.slot||"-")}</p><p><b>Amount:</b> ₹${Number(b.amount||0).toLocaleString("en-IN")}</p><p><b>Payment method:</b> ${esc(b.paymentMethod||"-")}</p><p><b>Payment status:</b> ${esc(b.paymentStatus||"-")}</p><p><b>Booking status:</b> ${esc(b.status||"-")}</p></div>`;
