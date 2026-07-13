@@ -27,10 +27,21 @@ input,select{background:#07110d;color:white}button{background:var(--green);color
   <div id="loginCard" class="card">
     <h2>Admin Login</h2>
     <input type="password" id="password" placeholder="Admin password">
-    <button id="loginBtn">LOGIN</button><div id="loginMessage" class="message"></div>
+    <button id="loginBtn">LOGIN</button><button id="forgotPasswordBtn" class="secondary">FORGOT PASSWORD? CONTACT ON WHATSAPP</button><div id="loginMessage" class="message"></div>
   </div>
 
   <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2>🔐 Admin Security</h2>
+      <p class="muted">For security, the admin password can only be changed after you are logged in.</p>
+      <div class="grid">
+        <div><label>Current password</label><input id="currentAdminPassword" type="password"></div>
+        <div><label>New password</label><input id="newAdminPassword" type="password" placeholder="At least 8 characters"></div>
+        <div><label>Confirm new password</label><input id="confirmAdminPassword" type="password"></div>
+      </div>
+      <button id="changeAdminPasswordBtn" class="gold">CHANGE ADMIN PASSWORD</button>
+      <div id="adminSecurityMessage" class="message"></div>
+    </div>
     <div class="card actions"><button id="refreshBtn">REFRESH DASHBOARD</button><button id="logoutBtn" class="danger">LOGOUT</button></div>
     <div class="stats">
       <div class="stat"><strong id="totalBookings">0</strong>Total rows</div>
@@ -118,6 +129,32 @@ async function api(action,extra={}){
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token,...extra})});
   const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response: "+text)}
 }
+
+$("forgotPasswordBtn").onclick=async()=>{
+  try{
+    const u=new URL(API_URL);u.searchParams.set("action","config");
+    const r=await fetch(u),d=await r.json();
+    const number=String(d.whatsappNumber||d.contactNumber||"").replace(/\D/g,"");
+    if(!number)throw Error("Recovery WhatsApp number is not configured.");
+    const text="Hello Beniya Cricket Arena, I am the admin and I forgot the admin-panel password. Please help me with manual password recovery.";
+    window.open(`https://wa.me/${number}?text=${encodeURIComponent(text)}`,"_blank");
+  }catch(e){msg("loginMessage",e.message)}
+};
+$("changeAdminPasswordBtn").onclick=async()=>{
+  try{
+    const currentPassword=$("currentAdminPassword").value;
+    const newPassword=$("newAdminPassword").value;
+    const confirmPassword=$("confirmAdminPassword").value;
+    if(newPassword!==confirmPassword)throw Error("New passwords do not match.");
+    if(newPassword.length<8)throw Error("New password must be at least 8 characters.");
+    msg("adminSecurityMessage","Changing password…");
+    const d=await api("adminchangepassword",{currentPassword,newPassword});
+    if(!d.success)throw Error(d.message);
+    alert(d.message);
+    sessionStorage.removeItem("beniyaAdminToken");token="";location.reload();
+  }catch(e){msg("adminSecurityMessage",e.message)}
+};
+
 $("loginBtn").onclick=async()=>{try{msg("loginMessage","Logging in…");const d=await api("adminlogin",{password:$("password").value});if(!d.success)return msg("loginMessage",d.message);token=d.token;sessionStorage.setItem("beniyaAdminToken",token);showDashboard()}catch(e){msg("loginMessage",e.message)}};
 $("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
 $("logoutBtn").onclick=()=>{sessionStorage.removeItem("beniyaAdminToken");location.reload()};
@@ -180,7 +217,116 @@ async function deletePricingRule(ruleId){
 let galleryAlbums=[],galleryPhotos=[];
 async function loadGalleryManager(){try{const d=await api("admingetgallery");if(!d.success)throw Error(d.message);galleryAlbums=d.albums||[];galleryPhotos=d.photos||[];$("uploadAlbum").innerHTML=galleryAlbums.map(a=>`<option value="${esc(a.albumId)}">${esc(a.albumName)}</option>`).join("");$("galleryManager").innerHTML=galleryAlbums.map(a=>{const photos=galleryPhotos.filter(p=>p.albumId===a.albumId);return `<div class="albumBox"><h3>${esc(a.albumName)} <span class="muted">(${photos.length})</span></h3>${a.albumId!=="UNCATEGORIZED"?`<div class="actions"><button class="secondary" onclick="renameAlbum('${js(a.albumId)}','${js(a.albumName)}')">RENAME ALBUM</button><button class="danger" onclick="deleteAlbum('${js(a.albumId)}')">DELETE ALBUM</button></div>`:""}${photos.map(p=>`<div class="galleryPhoto"><img src="${p.imageData||""}" alt="${esc(p.fileName)}"><div><b>${esc(p.fileName)}</b><p class="muted">${p.showInSlider?"Shown in homepage slider":"Not in homepage slider"}</p><div class="actions"><button class="${p.showInSlider?"secondary":"gold"}" onclick="togglePhotoSlider('${js(p.photoId)}',${p.showInSlider?"false":"true"})">${p.showInSlider?"REMOVE FROM SLIDER":"SHOW IN SLIDER"}</button><button class="danger" onclick="deletePhoto('${js(p.photoId)}')">DELETE PHOTO</button></div></div></div>`).join("")||'<p class="muted">No photos in this album.</p>'}</div>`}).join("")}catch(e){msg("galleryMessage",e.message)}}
 $("createAlbumBtn").onclick=async()=>{try{const albumName=$("newAlbumName").value.trim();if(!albumName)throw Error("Enter an album name.");const d=await api("admincreatealbum",{albumName});if(!d.success)throw Error(d.message);$("newAlbumName").value="";msg("galleryMessage",d.message);await loadGalleryManager()}catch(e){msg("galleryMessage",e.message)}};
-$("uploadPhotoBtn").onclick=async()=>{try{const file=$("galleryFile").files[0];if(!file)throw Error("Choose a photo first.");if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("Only JPEG, PNG and WebP images are allowed.");if(file.size>5*1024*1024)throw Error("Photo must be 15 MB or smaller.");$("uploadPhotoBtn").disabled=true;$("uploadPhotoBtn").textContent="UPLOADING…";const base64=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(",")[1]);r.onerror=reject;r.readAsDataURL(file)});const d=await api("adminuploadphoto",{albumId:$("uploadAlbum").value,fileName:file.name,mimeType:file.type,base64});if(!d.success)throw Error(d.message);$("galleryFile").value="";msg("galleryMessage",d.message);await loadGalleryManager()}catch(e){msg("galleryMessage",e.message)}finally{$("uploadPhotoBtn").disabled=false;$("uploadPhotoBtn").textContent="UPLOAD PHOTO"}};
+
+function readFileAsDataURL_(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(String(r.result||""));
+    r.onerror=()=>reject(new Error("Could not read the selected photo."));
+    r.readAsDataURL(file);
+  });
+}
+function loadImage_(dataUrl){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error("The selected image could not be opened."));
+    img.src=dataUrl;
+  });
+}
+function canvasToBlob_(canvas,type,quality){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Could not prepare the image for upload.")),type,quality);
+  });
+}
+async function prepareGalleryPhoto_(file){
+  const MAX_INPUT=15*1024*1024;
+  const TARGET_UPLOAD=4.5*1024*1024;
+  const MAX_DIMENSION=3000;
+  if(file.size>MAX_INPUT)throw Error("Photo must be 15 MB or smaller.");
+
+  // Small images are sent unchanged.
+  if(file.size<=TARGET_UPLOAD)return {blob:file,fileName:file.name,mimeType:file.type,compressed:false};
+
+  msg("galleryMessage","Preparing and compressing photo…");
+  const dataUrl=await readFileAsDataURL_(file);
+  const img=await loadImage_(dataUrl);
+  let width=img.naturalWidth,height=img.naturalHeight;
+  const scale=Math.min(1,MAX_DIMENSION/Math.max(width,height));
+  width=Math.max(1,Math.round(width*scale));
+  height=Math.max(1,Math.round(height*scale));
+
+  const canvas=document.createElement("canvas");
+  canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext("2d");
+  if(!ctx)throw Error("Your browser could not prepare this image.");
+  ctx.drawImage(img,0,0,width,height);
+
+  // JPEG is used for large uploads to keep the request reliable on mobile/Apps Script.
+  let quality=.88;
+  let blob=await canvasToBlob_(canvas,"image/jpeg",quality);
+  while(blob.size>TARGET_UPLOAD&&quality>.5){
+    quality-=.08;
+    blob=await canvasToBlob_(canvas,"image/jpeg",quality);
+  }
+  if(blob.size>TARGET_UPLOAD)throw Error("The image is still too large after compression. Please choose a smaller image.");
+
+  const base=(file.name||"photo").replace(/\.[^.]+$/,"");
+  return {blob,fileName:base+".jpg",mimeType:"image/jpeg",compressed:true};
+}
+
+$("uploadPhotoBtn").onclick=async()=>{
+  const btn=$("uploadPhotoBtn");
+  try{
+    const file=$("galleryFile").files[0];
+    if(!file)throw Error("Choose a photo first.");
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("Only JPEG, PNG and WebP images are allowed.");
+    if(file.size>15*1024*1024)throw Error("Photo must be 15 MB or smaller.");
+    if(!$("uploadAlbum").value)throw Error("Choose an album first.");
+
+    btn.disabled=true;
+    btn.textContent="PREPARING…";
+    msg("galleryMessage","Preparing photo…");
+
+    const prepared=await prepareGalleryPhoto_(file);
+    btn.textContent="UPLOADING…";
+    msg("galleryMessage",prepared.compressed?"Photo compressed. Uploading…":"Uploading photo…");
+
+    const base64=await new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>{
+        const result=String(r.result||"");
+        const comma=result.indexOf(",");
+        if(comma<0)return reject(new Error("Could not encode the selected photo."));
+        resolve(result.slice(comma+1));
+      };
+      r.onerror=()=>reject(new Error("Could not read the prepared photo."));
+      r.readAsDataURL(prepared.blob);
+    });
+
+    msg("galleryMessage","Saving photo to gallery…");
+    const d=await api("adminuploadphoto",{
+      albumId:$("uploadAlbum").value,
+      fileName:prepared.fileName,
+      mimeType:prepared.mimeType,
+      base64
+    });
+    if(!d.success)throw Error(d.message||"Upload failed.");
+
+    $("galleryFile").value="";
+    msg("galleryMessage",d.message+(prepared.compressed?" The large image was compressed automatically.":""));
+    await loadGalleryManager();
+  }catch(e){
+    console.error("Gallery upload failed:",e);
+    msg("galleryMessage","UPLOAD ERROR: "+(e&&e.message?e.message:String(e)));
+    alert("Photo upload failed:
+
+"+(e&&e.message?e.message:String(e)));
+  }finally{
+    btn.disabled=false;
+    btn.textContent="UPLOAD PHOTO";
+  }
+};
 async function renameAlbum(albumId,currentName){const albumName=prompt("New album name:",currentName);if(albumName===null)return;const d=await api("adminrenamealbum",{albumId,albumName});if(!d.success)return msg("galleryMessage",d.message);await loadGalleryManager()}
 async function deleteAlbum(albumId){if(!confirm("Delete this album? Its photos will move to Uncategorized."))return;const d=await api("admindeletealbum",{albumId});msg("galleryMessage",d.message);if(d.success)await loadGalleryManager()}
 async function togglePhotoSlider(photoId,showInSlider){const d=await api("admintogglephotoslider",{photoId,showInSlider});msg("galleryMessage",d.message);if(d.success)await loadGalleryManager()}
