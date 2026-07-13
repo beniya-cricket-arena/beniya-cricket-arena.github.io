@@ -18,6 +18,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 .summary p{display:flex;justify-content:space-between;gap:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;color:var(--gold);margin-top:8px}
 .paybox{text-align:center}.qr{display:flex;justify-content:center;background:white;padding:14px;width:max-content;margin:14px auto;border-radius:14px}.upi{font-size:18px;word-break:break-all;color:var(--gold)}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{padding:12px;border:1px solid var(--line);border-radius:12px;background:#10251b}
+.bookingItem{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#091710}.bookingItem p{margin:7px 0}.bookingTop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#244b37;font-size:12px}
 @media(max-width:560px){.slots,.actions{grid-template-columns:1fr}.hero{padding:0}.slider{border-radius:0}.slide{height:260px}.albumGrid{grid-template-columns:1fr}.albumGrid img{height:230px}}
 </style>
 </head>
@@ -27,6 +28,17 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
   <h1>🏏 Beniya Cricket Arena</h1>
   <div class="sub">Choose an available date and time. Past dates and already-started slots are automatically unavailable.</div>
 
+  <div id="currentBookingCard" class="card hidden">
+    <h2>🏏 Current Booking</h2><div id="currentBookingList"></div>
+    <button id="bookAnotherTopBtn" class="gold">BOOK ANOTHER SLOT</button>
+  </div>
+  <div id="historyCard" class="card">
+    <h2>📋 Booking History</h2>
+    <p class="muted">Enter your mobile number to see your bookings.</p>
+    <input id="historyPhone" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
+    <button id="historyBtn" class="secondary">SHOW MY BOOKINGS</button>
+    <div id="historyMessage" class="message"></div><div id="historyList"></div>
+  </div>
   <div id="bookingFlow">
     <div class="card">
       <h2>1. Select date</h2>
@@ -78,6 +90,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
     <h2>✅ Booking Confirmed</h2>
     <div id="confirmedDetails"></div>
     <button id="receiptBtn" class="gold">DOWNLOAD RECEIPT</button>
+    <button id="bookAnotherBtn" class="secondary">BOOK ANOTHER SLOT</button>
     <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
   </div>
   <div id="galleryCard" class="card hidden"><h2>📸 Gallery</h2><div id="customerAlbums"></div></div>
@@ -112,6 +125,8 @@ async function init(){
   try{
     config=await get("config");if(!config.success)throw Error(config.message||"Could not load booking settings.");loadGallery();
     buildDates();selectedDate=config.today||localDateKey(new Date());await loadSlots();restoreBooking();
+    const savedPhone=localStorage.getItem("beniyaCustomerPhone")||"";
+    if(savedPhone){$("historyPhone").value=savedPhone;if(!$("phone").value)$("phone").value=savedPhone;await loadBookingHistory(savedPhone);}
   }catch(e){msg("bookingMessage",e.message)}
 }
 function buildDates(){
@@ -152,7 +167,7 @@ $("continueBtn").onclick=async()=>{
     $("continueBtn").disabled=true;$("continueBtn").textContent="PREPARING PAYMENT…";
     const d=await post("createbooking",{date:selectedDate,slotIndexes:[...selectedSlots],customerName:name,phone});
     if(!d.success)throw Error(d.message||"Could not prepare payment.");
-    currentBooking=d;saveBooking();showPayment();
+    currentBooking=d;localStorage.setItem("beniyaCustomerPhone",phone);$("historyPhone").value=phone;saveBooking();showPayment();
   }catch(e){msg("bookingMessage",e.message)}
   finally{$("continueBtn").disabled=false;$("continueBtn").textContent="CONTINUE TO PAYMENT"}
 };
@@ -215,6 +230,41 @@ $("receiptBtn").onclick=()=>{
   const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.customerName)}</p><p><b>Phone:</b> ${esc(b.phone)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount Paid:</b> ${money(b.amount)}</p><p><b>Payment:</b> PAID</p><p><b>Booking Status:</b> CONFIRMED</p></div>`;
   const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
+function statusLabel(b){
+  const s=String(b.status||"").toUpperCase();
+  if(s==="CONFIRMED"&&b.isCurrent)return "CURRENT";
+  if(s==="CONFIRMED")return "COMPLETED";
+  return s||"UNKNOWN";
+}
+function bookingHtml(b){
+  return `<div class="bookingItem"><div class="bookingTop"><b>${esc(b.bookingId)}</b><span class="badge">${esc(statusLabel(b))}</span></div><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p><p><b>Payment:</b> ${esc(b.paymentStatus||"")}</p></div>`;
+}
+async function loadBookingHistory(phoneValue){
+  const phone=String(phoneValue||$("historyPhone").value||"").replace(/\D/g,"");
+  if(phone.length<10||phone.length>15){msg("historyMessage","Enter a valid mobile number.");return}
+  try{
+    msg("historyMessage","Loading…");
+    const d=await post("customerbookinghistory",{phone});
+    if(!d.success)throw Error(d.message||"Could not load booking history.");
+    localStorage.setItem("beniyaCustomerPhone",phone);$("historyPhone").value=phone;
+    if(!$("phone").value)$("phone").value=phone;
+    const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
+    $("currentBookingCard").classList.toggle("hidden",!current.length);
+    $("currentBookingList").innerHTML=current.map(bookingHtml).join("");
+    $("historyList").innerHTML=all.length?all.map(bookingHtml).join(""):'<p class="muted">No bookings found for this mobile number.</p>';
+    msg("historyMessage","");
+  }catch(e){msg("historyMessage",e.message)}
+}
+function startAnotherBooking(){
+  $("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");
+  $("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");
+  selectedSlots.clear();updateTotal();document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));
+  $("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("historyBtn").onclick=()=>loadBookingHistory();
+$("bookAnotherBtn").onclick=startAnotherBooking;
+$("bookAnotherTopBtn").onclick=startAnotherBooking;
+
 function saveBooking(){localStorage.setItem("beniyaCurrentBooking",JSON.stringify(currentBooking))}
 function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentBooking=null}
 function restoreBooking(){
