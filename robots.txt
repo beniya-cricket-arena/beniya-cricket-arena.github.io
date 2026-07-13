@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://beniya-cricket-arena.github.io/sitemap.xml
