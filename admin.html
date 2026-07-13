@@ -155,7 +155,19 @@ $("changeAdminPasswordBtn").onclick=async()=>{
   }catch(e){msg("adminSecurityMessage",e.message)}
 };
 
-$("loginBtn").onclick=async()=>{try{msg("loginMessage","Logging in…");const d=await api("adminlogin",{password:$("password").value});if(!d.success)return msg("loginMessage",d.message);token=d.token;sessionStorage.setItem("beniyaAdminToken",token);showDashboard()}catch(e){msg("loginMessage",e.message)}};
+$("loginBtn").onclick=async()=>{
+  try{
+    const password=$("password").value.trim();
+    if(!password)return msg("loginMessage","Enter the admin password.");
+    msg("loginMessage","Logging in…");
+    const d=await api("adminlogin",{password});
+    if(!d.success)return msg("loginMessage",d.message||"Login failed.");
+    token=d.token;
+    sessionStorage.setItem("beniyaAdminToken",token);
+    msg("loginMessage","");
+    showDashboard();
+  }catch(e){msg("loginMessage",e.message)}
+};
 $("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
 $("logoutBtn").onclick=()=>{sessionStorage.removeItem("beniyaAdminToken");location.reload()};
 $("refreshBtn").onclick=refreshAll;
