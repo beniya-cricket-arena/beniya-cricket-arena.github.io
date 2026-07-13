@@ -20,25 +20,18 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{padding:12px;border:1px solid var(--line);border-radius:12px;background:#10251b}
 .bookingItem{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#091710}.bookingItem p{margin:7px 0}.bookingTop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#244b37;font-size:12px}
 @media(max-width:560px){.slots,.actions{grid-template-columns:1fr}.hero{padding:0}.slider{border-radius:0}.slide{height:260px}.albumGrid{grid-template-columns:1fr}.albumGrid img{height:230px}}
+
+.topbar{max-width:760px;margin:auto;padding:14px 18px 0;display:flex;justify-content:flex-end}.accountBtn{width:auto;min-width:145px;margin:0;background:var(--gold);color:#111}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:center;justify-content:center;padding:18px}.modalPanel{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}.modalHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.closeBtn{width:44px;margin:0;background:#345545;color:white}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.accountBooking{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#091710}.adminAccess{max-width:760px;margin:0 auto;padding:0 18px 28px}.adminAccess a{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:12px;background:#345545;color:white;text-decoration:none;font-weight:bold;border:1px solid #4d7863}
+
 </style>
 </head>
 <body>
+<div class="topbar"><button id="accountBtn" class="accountBtn">👤 ACCOUNT</button></div>
 <div class="hero"><div class="slider" id="homeSlider"><div class="slides" id="slides"><img class="slide" src="beniya-arena-hero.png" alt="Beniya Cricket Arena"></div><button class="sliderBtn sliderPrev" id="sliderPrev">‹</button><button class="sliderBtn sliderNext" id="sliderNext">›</button><div class="sliderDots" id="sliderDots"></div></div></div>
 <div class="wrap">
   <h1>🏏 Beniya Cricket Arena</h1>
   <div class="sub">Choose an available date and time. Past dates and already-started slots are automatically unavailable.</div>
-
-  <div id="currentBookingCard" class="card hidden">
-    <h2>🏏 Current Booking</h2><div id="currentBookingList"></div>
-    <button id="bookAnotherTopBtn" class="gold">BOOK ANOTHER SLOT</button>
-  </div>
-  <div id="historyCard" class="card">
-    <h2>📋 Booking History</h2>
-    <p class="muted">Enter your mobile number to see your bookings.</p>
-    <input id="historyPhone" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
-    <button id="historyBtn" class="secondary">SHOW MY BOOKINGS</button>
-    <div id="historyMessage" class="message"></div><div id="historyList"></div>
-  </div>
   <div id="bookingFlow">
     <div class="card">
       <h2>1. Select date</h2>
@@ -90,11 +83,53 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
     <h2>✅ Booking Confirmed</h2>
     <div id="confirmedDetails"></div>
     <button id="receiptBtn" class="gold">DOWNLOAD RECEIPT</button>
-    <button id="bookAnotherBtn" class="secondary">BOOK ANOTHER SLOT</button>
     <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
   </div>
   <div id="galleryCard" class="card hidden"><h2>📸 Gallery</h2><div id="customerAlbums"></div></div>
 </div>
+
+<div id="accountModal" class="modal hidden">
+  <div class="modalPanel">
+    <div class="modalHead"><h2 id="accountTitle">👤 My Account</h2><button id="closeAccountBtn" class="closeBtn">✕</button></div>
+
+    <div id="accountLoggedOut">
+      <div class="tabs"><button id="showLoginBtn" class="gold">LOGIN</button><button id="showRegisterBtn" class="secondary">CREATE ACCOUNT</button></div>
+
+      <div id="loginPane">
+        <h3>Welcome back</h3>
+        <label>Mobile number</label><input id="accountLoginPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
+        <label>4-digit PIN</label><input id="accountLoginPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <button id="customerLoginBtn" class="gold">LOGIN</button>
+      </div>
+
+      <div id="registerPane" class="hidden">
+        <h3>Create your account</h3>
+        <label>Name</label><input id="accountRegisterName" autocomplete="name" placeholder="Your name">
+        <label>Mobile number</label><input id="accountRegisterPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
+        <label>Create 4-digit PIN</label><input id="accountRegisterPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <label>Confirm 4-digit PIN</label><input id="accountRegisterPin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <button id="customerRegisterBtn" class="gold">CREATE ACCOUNT</button>
+      </div>
+      <div id="accountAuthMessage" class="message"></div>
+    </div>
+
+    <div id="accountLoggedIn" class="hidden">
+      <div class="status"><p><b id="accountName"></b></p><p class="muted" id="accountPhone"></p></div>
+      <h3>🏏 Current Booking</h3><div id="accountCurrentBookings"></div>
+      <h3>📋 Booking History</h3><div id="accountBookingHistory"></div>
+      <details>
+        <summary><b>🔒 Change 4-digit PIN</b></summary>
+        <label>Current PIN</label><input id="currentPin" type="password" inputmode="numeric" maxlength="4">
+        <label>New 4-digit PIN</label><input id="newPin" type="password" inputmode="numeric" maxlength="4">
+        <button id="changePinBtn" class="secondary">CHANGE PIN</button>
+      </details>
+      <button id="customerLogoutBtn" class="danger">LOGOUT</button>
+      <div id="accountMessage" class="message"></div>
+    </div>
+  </div>
+</div>
+
+<div class="adminAccess"><a href="admin.html">🔐 ADMIN LOGIN</a></div>
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
@@ -125,8 +160,7 @@ async function init(){
   try{
     config=await get("config");if(!config.success)throw Error(config.message||"Could not load booking settings.");loadGallery();
     buildDates();selectedDate=config.today||localDateKey(new Date());await loadSlots();restoreBooking();
-    const savedPhone=localStorage.getItem("beniyaCustomerPhone")||"";
-    if(savedPhone){$("historyPhone").value=savedPhone;if(!$("phone").value)$("phone").value=savedPhone;await loadBookingHistory(savedPhone);}
+    await restoreCustomerSession();
   }catch(e){msg("bookingMessage",e.message)}
 }
 function buildDates(){
@@ -167,7 +201,7 @@ $("continueBtn").onclick=async()=>{
     $("continueBtn").disabled=true;$("continueBtn").textContent="PREPARING PAYMENT…";
     const d=await post("createbooking",{date:selectedDate,slotIndexes:[...selectedSlots],customerName:name,phone});
     if(!d.success)throw Error(d.message||"Could not prepare payment.");
-    currentBooking=d;localStorage.setItem("beniyaCustomerPhone",phone);$("historyPhone").value=phone;saveBooking();showPayment();
+    currentBooking=d;localStorage.setItem("beniyaCustomerPhone",phone);saveBooking();showPayment();
   }catch(e){msg("bookingMessage",e.message)}
   finally{$("continueBtn").disabled=false;$("continueBtn").textContent="CONTINUE TO PAYMENT"}
 };
@@ -230,41 +264,6 @@ $("receiptBtn").onclick=()=>{
   const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.customerName)}</p><p><b>Phone:</b> ${esc(b.phone)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount Paid:</b> ${money(b.amount)}</p><p><b>Payment:</b> PAID</p><p><b>Booking Status:</b> CONFIRMED</p></div>`;
   const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
-function statusLabel(b){
-  const s=String(b.status||"").toUpperCase();
-  if(s==="CONFIRMED"&&b.isCurrent)return "CURRENT";
-  if(s==="CONFIRMED")return "COMPLETED";
-  return s||"UNKNOWN";
-}
-function bookingHtml(b){
-  return `<div class="bookingItem"><div class="bookingTop"><b>${esc(b.bookingId)}</b><span class="badge">${esc(statusLabel(b))}</span></div><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p><p><b>Payment:</b> ${esc(b.paymentStatus||"")}</p></div>`;
-}
-async function loadBookingHistory(phoneValue){
-  const phone=String(phoneValue||$("historyPhone").value||"").replace(/\D/g,"");
-  if(phone.length<10||phone.length>15){msg("historyMessage","Enter a valid mobile number.");return}
-  try{
-    msg("historyMessage","Loading…");
-    const d=await post("customerbookinghistory",{phone});
-    if(!d.success)throw Error(d.message||"Could not load booking history.");
-    localStorage.setItem("beniyaCustomerPhone",phone);$("historyPhone").value=phone;
-    if(!$("phone").value)$("phone").value=phone;
-    const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
-    $("currentBookingCard").classList.toggle("hidden",!current.length);
-    $("currentBookingList").innerHTML=current.map(bookingHtml).join("");
-    $("historyList").innerHTML=all.length?all.map(bookingHtml).join(""):'<p class="muted">No bookings found for this mobile number.</p>';
-    msg("historyMessage","");
-  }catch(e){msg("historyMessage",e.message)}
-}
-function startAnotherBooking(){
-  $("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");
-  $("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");
-  selectedSlots.clear();updateTotal();document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));
-  $("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"});
-}
-$("historyBtn").onclick=()=>loadBookingHistory();
-$("bookAnotherBtn").onclick=startAnotherBooking;
-$("bookAnotherTopBtn").onclick=startAnotherBooking;
-
 function saveBooking(){localStorage.setItem("beniyaCurrentBooking",JSON.stringify(currentBooking))}
 function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentBooking=null}
 function restoreBooking(){
@@ -275,6 +274,75 @@ function restoreBooking(){
     if(s==="CONFIRMED")showConfirmed();else if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
   }catch(e){}
 }
+
+let customerToken=localStorage.getItem("beniyaCustomerToken")||"";
+let customerProfile=null;
+
+function accountBookingHtml(b){
+  const s=String(b.status||"").toUpperCase();
+  const label=s==="CONFIRMED"?(b.isCurrent?"CURRENT":"COMPLETED"):(s||"UNKNOWN");
+  return `<div class="accountBooking"><div class="bookingTop"><b>${esc(b.bookingId)}</b><span class="badge">${esc(label)}</span></div><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p><p><b>Payment:</b> ${esc(b.paymentStatus||"")}</p></div>`;
+}
+function openAccount(){$("accountModal").classList.remove("hidden");if(customerToken)loadCustomerAccount()}
+function closeAccount(){$("accountModal").classList.add("hidden")}
+$("accountBtn").onclick=openAccount;$("closeAccountBtn").onclick=closeAccount;
+$("accountModal").addEventListener("click",e=>{if(e.target===$("accountModal"))closeAccount()});
+$("showLoginBtn").onclick=()=>{$("loginPane").classList.remove("hidden");$("registerPane").classList.add("hidden")};
+$("showRegisterBtn").onclick=()=>{$("registerPane").classList.remove("hidden");$("loginPane").classList.add("hidden")};
+
+async function restoreCustomerSession(){
+  if(!customerToken)return;
+  try{await loadCustomerAccount()}catch(e){customerToken="";customerProfile=null;localStorage.removeItem("beniyaCustomerToken");updateAccountButton()}
+}
+function updateAccountButton(){
+  $("accountBtn").textContent=customerProfile?`👤 ${customerProfile.name.split(" ")[0]}`:"👤 ACCOUNT";
+}
+async function loadCustomerAccount(){
+  const d=await post("customeraccount",{token:customerToken});
+  if(!d.success)throw Error(d.message||"Could not load account.");
+  customerProfile=d.customer;
+  $("accountLoggedOut").classList.add("hidden");$("accountLoggedIn").classList.remove("hidden");
+  $("accountName").textContent=customerProfile.name;$("accountPhone").textContent=customerProfile.phone;
+  $("customerName").value=customerProfile.name;$("phone").value=customerProfile.phone;
+  const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
+  $("accountCurrentBookings").innerHTML=current.length?current.map(accountBookingHtml).join(""):'<p class="muted">No current or upcoming bookings.</p>';
+  $("accountBookingHistory").innerHTML=all.length?all.map(accountBookingHtml).join(""):'<p class="muted">No booking history yet.</p>';
+  updateAccountButton();
+}
+$("customerLoginBtn").onclick=async()=>{
+  try{
+    msg("accountAuthMessage","Logging in…");
+    const phone=$("accountLoginPhone").value.replace(/\D/g,""),pin=$("accountLoginPin").value;
+    const d=await post("customerlogin",{phone,pin});if(!d.success)throw Error(d.message);
+    customerToken=d.token;customerProfile=d.customer;localStorage.setItem("beniyaCustomerToken",customerToken);
+    msg("accountAuthMessage","");await loadCustomerAccount();
+  }catch(e){msg("accountAuthMessage",e.message)}
+};
+$("customerRegisterBtn").onclick=async()=>{
+  try{
+    const name=$("accountRegisterName").value.trim(),phone=$("accountRegisterPhone").value.replace(/\D/g,"");
+    const pin=$("accountRegisterPin").value,pin2=$("accountRegisterPin2").value;
+    if(!/^\d{4}$/.test(pin))throw Error("PIN must be exactly 4 digits.");
+    if(pin!==pin2)throw Error("PINs do not match.");
+    msg("accountAuthMessage","Creating account…");
+    const d=await post("customerregister",{name,phone,pin});if(!d.success)throw Error(d.message);
+    customerToken=d.token;customerProfile=d.customer;localStorage.setItem("beniyaCustomerToken",customerToken);
+    msg("accountAuthMessage","");await loadCustomerAccount();
+  }catch(e){msg("accountAuthMessage",e.message)}
+};
+$("changePinBtn").onclick=async()=>{
+  try{
+    const currentPin=$("currentPin").value,newPin=$("newPin").value;
+    const d=await post("customerchangepin",{token:customerToken,currentPin,newPin});if(!d.success)throw Error(d.message);
+    $("currentPin").value="";$("newPin").value="";msg("accountMessage",d.message);
+  }catch(e){msg("accountMessage",e.message)}
+};
+$("customerLogoutBtn").onclick=async()=>{
+  try{if(customerToken)await post("customerlogout",{token:customerToken})}catch(e){}
+  customerToken="";customerProfile=null;localStorage.removeItem("beniyaCustomerToken");
+  $("accountLoggedIn").classList.add("hidden");$("accountLoggedOut").classList.remove("hidden");updateAccountButton();closeAccount();
+};
+
 init();
 </script>
 </body>
