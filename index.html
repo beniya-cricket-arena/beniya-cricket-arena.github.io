@@ -24,11 +24,18 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 .topbar{max-width:760px;margin:auto;padding:14px 18px 0;display:flex;justify-content:flex-end}.accountBtn{width:auto;min-width:145px;margin:0;background:var(--gold);color:#111}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:center;justify-content:center;padding:18px}.modalPanel{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}.modalHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.closeBtn{width:44px;margin:0;background:#345545;color:white}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.accountBooking{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#091710}.adminAccess{max-width:760px;margin:0 auto;padding:0 18px 28px}.adminAccess a{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:12px;background:#345545;color:white;text-decoration:none;font-weight:bold;border:1px solid #4d7863}
 
+
+.premiumActions{max-width:760px;margin:0 auto;padding:0 18px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.premiumActions button{background:#10251b;color:white;border:1px solid var(--line)}
+.accountHero{padding:16px;border-radius:16px;background:linear-gradient(135deg,#183b28,#10251b);border:1px solid var(--line);margin-bottom:14px}.accountHero h3{margin:0;color:var(--gold)}
+.accountStats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0 18px}.accountStat{padding:13px;border-radius:13px;background:#091710;border:1px solid var(--line)}.accountStat strong{display:block;color:var(--gold);font-size:22px}
+.visitGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.visitCard{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px}.reviewQuote{padding:12px;border-left:3px solid var(--gold);background:#091710;border-radius:8px;margin:10px 0}
+@media(max-width:560px){.premiumActions{grid-template-columns:1fr}.visitGrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="topbar"><button id="accountBtn" class="accountBtn">👤 ACCOUNT</button></div>
 <div class="hero"><div class="slider" id="homeSlider"><div class="slides" id="slides"><img class="slide" src="beniya-arena-hero.png" alt="Beniya Cricket Arena"></div><button class="sliderBtn sliderPrev" id="sliderPrev">‹</button><button class="sliderBtn sliderNext" id="sliderNext">›</button><div class="sliderDots" id="sliderDots"></div></div></div>
+<div class="premiumActions"><button id="quickBookBtn">🏏 BOOK A SLOT</button><button id="quickWhatsappBtn">💬 WHATSAPP</button><button id="shareArenaBtn">📤 SHARE ARENA</button></div>
 <div class="wrap">
   <h1>🏏 Beniya Cricket Arena</h1>
   <div class="sub">Choose an available date and time. Past dates and already-started slots are automatically unavailable.</div>
@@ -86,6 +93,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
     <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
   </div>
   <div id="galleryCard" class="card hidden"><h2>📸 Gallery</h2><div id="customerAlbums"></div></div>
+  <div class="visitGrid"><div class="visitCard"><h2>📍 Find Us</h2><p>Beniya Bagh, Varanasi 221001, Uttar Pradesh</p><button id="directionsBtn" class="gold">GET DIRECTIONS</button></div><div class="visitCard"><h2>⭐ Player Reviews</h2><div class="reviewQuote">“A simple, fast way to reserve your cricket slot.”</div><div class="reviewQuote">“Great for practice sessions and matches with friends.”</div></div></div>
 </div>
 
 <div id="accountModal" class="modal hidden">
@@ -114,7 +122,8 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
     </div>
 
     <div id="accountLoggedIn" class="hidden">
-      <div class="status"><p><b id="accountName"></b></p><p class="muted" id="accountPhone"></p></div>
+      <div class="accountHero"><h3>🏏 Beniya Player Profile</h3><p><b id="accountName"></b></p><p class="muted" id="accountPhone"></p></div>
+      <div class="accountStats"><div class="accountStat"><strong id="statTotalBookings">0</strong>Total bookings</div><div class="accountStat"><strong id="statHoursPlayed">0</strong>Hours booked</div><div class="accountStat"><strong id="statTotalSpent">₹0</strong>Total spent</div><div class="accountStat"><strong id="statMemberSince">—</strong>Member since</div></div>
       <h3>🏏 Current Booking</h3><div id="accountCurrentBookings"></div>
       <h3>📋 Booking History</h3><div id="accountBookingHistory"></div>
       <details>
@@ -303,6 +312,7 @@ async function loadCustomerAccount(){
   customerProfile=d.customer;
   $("accountLoggedOut").classList.add("hidden");$("accountLoggedIn").classList.remove("hidden");
   $("accountName").textContent=customerProfile.name;$("accountPhone").textContent=customerProfile.phone;
+  const stats=d.stats||{};$("statTotalBookings").textContent=stats.totalBookings||0;$("statHoursPlayed").textContent=stats.hoursPlayed||0;$("statTotalSpent").textContent=money(stats.totalSpent||0);$("statMemberSince").textContent=stats.memberSince||"—";
   $("customerName").value=customerProfile.name;$("phone").value=customerProfile.phone;
   const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
   $("accountCurrentBookings").innerHTML=current.length?current.map(accountBookingHtml).join(""):'<p class="muted">No current or upcoming bookings.</p>';
@@ -343,6 +353,10 @@ $("customerLogoutBtn").onclick=async()=>{
   $("accountLoggedIn").classList.add("hidden");$("accountLoggedOut").classList.remove("hidden");updateAccountButton();closeAccount();
 };
 
+$("quickBookBtn").onclick=()=>$("bookingFlow").scrollIntoView({behavior:"smooth"});
+$("quickWhatsappBtn").onclick=()=>{const n=String(config?.whatsappNumber||"").replace(/\D/g,"");if(n)window.open(`https://wa.me/${n}?text=${encodeURIComponent("Hello Beniya Cricket Arena, I have an enquiry about booking a cricket slot.")}`,"_blank")};
+$("shareArenaBtn").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"Beniya Cricket Arena",text:"Book your cricket slot at Beniya Cricket Arena, Beniya Bagh, Varanasi.",url:location.href});else{await navigator.clipboard.writeText(location.href);alert("Website link copied.")}}catch(e){}};
+$("directionsBtn").onclick=()=>window.open("https://www.google.com/maps/search/?api=1&query=Beniya+Bagh+Varanasi+221001","_blank");
 init();
 </script>
 </body>
