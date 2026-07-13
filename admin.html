@@ -331,9 +331,7 @@ $("uploadPhotoBtn").onclick=async()=>{
   }catch(e){
     console.error("Gallery upload failed:",e);
     msg("galleryMessage","UPLOAD ERROR: "+(e&&e.message?e.message:String(e)));
-    alert("Photo upload failed:
-
-"+(e&&e.message?e.message:String(e)));
+    alert("Photo upload failed:\n\n"+(e&&e.message?e.message:String(e)));
   }finally{
     btn.disabled=false;
     btn.textContent="UPLOAD PHOTO";
