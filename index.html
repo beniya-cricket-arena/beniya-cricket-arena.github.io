@@ -175,6 +175,19 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
         <label>New 4-digit PIN</label><input id="newPin" type="password" inputmode="numeric" maxlength="4">
         <button id="changePinBtn" class="secondary">CHANGE PIN</button>
       </details>
+      <div id="recoveryEmailCard" class="card">
+        <h3>📧 Recovery Email</h3>
+        <p id="recoveryEmailStatus" class="muted">Add and verify an email address so you can reset your PIN if you forget it.</p>
+        <div id="recoveryEmailAddPane">
+          <label>Email address</label><input id="recoveryEmailInput" type="email" autocomplete="email" placeholder="you@example.com">
+          <button id="sendRecoveryEmailCodeBtn" class="gold" type="button">SEND VERIFICATION CODE</button>
+          <div id="recoveryEmailCodePane" class="hidden">
+            <label>6-digit verification code</label><input id="recoveryEmailCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456">
+            <button id="verifyRecoveryEmailBtn" class="gold" type="button">VERIFY & SAVE EMAIL</button>
+          </div>
+        </div>
+        <div id="recoveryEmailMessage" class="message"></div>
+      </div>
       <button id="customerLogoutBtn" class="danger">LOGOUT</button>
       <div id="accountMessage" class="message"></div>
     </div>
@@ -357,6 +370,17 @@ async function loadCustomerAccount(){
   customerProfile=d.customer;
   $("accountLoggedOut").classList.add("hidden");$("accountLoggedIn").classList.remove("hidden");
   $("accountName").textContent=customerProfile.name;$("accountPhone").textContent=customerProfile.phone;
+  const recoveryEmail=String(customerProfile.email||"").trim();
+  if(recoveryEmail){
+    $("recoveryEmailStatus").textContent="Verified recovery email: "+recoveryEmail;
+    $("recoveryEmailInput").value=recoveryEmail;
+    $("recoveryEmailAddPane").classList.add("hidden");
+  }else{
+    $("recoveryEmailStatus").textContent="No recovery email is linked yet. Add and verify one to enable email PIN reset.";
+    $("recoveryEmailInput").value="";
+    $("recoveryEmailAddPane").classList.remove("hidden");
+    $("recoveryEmailCodePane").classList.add("hidden");
+  }
   const stats=d.stats||{};$("statTotalBookings").textContent=stats.totalBookings||0;$("statHoursPlayed").textContent=stats.hoursPlayed||0;$("statTotalSpent").textContent=money(stats.totalSpent||0);$("statMemberSince").textContent=stats.memberSince||"—";
   $("customerName").value=customerProfile.name;$("phone").value=customerProfile.phone;
   const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
@@ -384,6 +408,35 @@ $("customerRegisterBtn").onclick=async()=>{
     customerToken=d.token;customerProfile=d.customer;localStorage.setItem("beniyaCustomerToken",customerToken);
     msg("accountAuthMessage","");await loadCustomerAccount();
   }catch(e){msg("accountAuthMessage",e.message)}
+};
+
+$("sendRecoveryEmailCodeBtn").onclick=async()=>{
+  try{
+    const email=$("recoveryEmailInput").value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error("Please enter a valid email address.");
+    $("sendRecoveryEmailCodeBtn").disabled=true;
+    msg("recoveryEmailMessage","Sending verification code…");
+    const d=await post("customerrequestemailcode",{token:customerToken,email});
+    if(!d.success)throw Error(d.message);
+    if(d.alreadyVerified){msg("recoveryEmailMessage",d.message);await loadCustomerAccount();return}
+    $("recoveryEmailCodePane").classList.remove("hidden");
+    msg("recoveryEmailMessage",d.message);
+  }catch(e){msg("recoveryEmailMessage",e.message)}
+  finally{$("sendRecoveryEmailCodeBtn").disabled=false}
+};
+$("verifyRecoveryEmailBtn").onclick=async()=>{
+  try{
+    const email=$("recoveryEmailInput").value.trim().toLowerCase();
+    const code=$("recoveryEmailCode").value.replace(/\D/g,"");
+    if(!/^\d{6}$/.test(code))throw Error("Enter the 6-digit verification code.");
+    $("verifyRecoveryEmailBtn").disabled=true;
+    msg("recoveryEmailMessage","Verifying email…");
+    const d=await post("customerverifyemail",{token:customerToken,email,code});
+    if(!d.success)throw Error(d.message);
+    msg("recoveryEmailMessage",d.message);
+    await loadCustomerAccount();
+  }catch(e){msg("recoveryEmailMessage",e.message)}
+  finally{$("verifyRecoveryEmailBtn").disabled=false}
 };
 $("changePinBtn").onclick=async()=>{
   try{
