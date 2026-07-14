@@ -20,6 +20,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 .paybox{text-align:center}.qr{display:flex;justify-content:center;background:white;padding:14px;width:max-content;margin:14px auto;border-radius:14px}.upi{font-size:18px;word-break:break-all;color:var(--gold)}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{padding:12px;border:1px solid var(--line);border-radius:12px;background:#10251b}
 .bookingItem{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#091710}.bookingItem p{margin:7px 0}.bookingTop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#244b37;font-size:12px}
+.biggestTurfBadge{max-width:760px;margin:12px auto 16px;padding:0 18px}.biggestTurfInner{text-align:center;padding:18px 16px;border-radius:18px;border:2px solid var(--gold);background:linear-gradient(135deg,#0d1b14,#183b28);box-shadow:0 10px 30px rgba(0,0,0,.28)}.biggestTurfInner .crown{font-size:30px}.biggestTurfInner .bigText{display:block;color:var(--gold);font-size:28px;font-weight:900;margin-top:5px}.biggestTurfInner .sizeText{display:block;color:white;font-size:18px;font-weight:800;margin-top:4px}.featureGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}.featureItem{background:#091710;border:1px solid var(--line);border-radius:13px;padding:13px;font-weight:bold}@media(max-width:560px){.biggestTurfInner .bigText{font-size:23px}.featureGrid{grid-template-columns:1fr}}
 @media(max-width:560px){.slots,.actions{grid-template-columns:1fr}.hero{padding:0}.slider{border-radius:0}.slide{height:260px}.albumGrid{grid-template-columns:1fr}.albumGrid img{height:230px}}
 
 .topbar{max-width:760px;margin:auto;padding:14px 18px 0;display:flex;justify-content:flex-end}.accountBtn{width:auto;min-width:145px;margin:0;background:var(--gold);color:#111}
@@ -48,6 +49,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 <body>
 <div class="topbar"><button id="accountBtn" class="accountBtn">👤 ACCOUNT</button></div>
 <div class="hero"><div class="slider" id="homeSlider"><div class="slides" id="slides"><img class="slide" src="beniya-arena-hero.png" alt="Beniya Cricket Arena in Beniya Bagh, Varanasi"></div><button class="sliderBtn sliderPrev" id="sliderPrev">‹</button><button class="sliderBtn sliderNext" id="sliderNext">›</button><div class="sliderDots" id="sliderDots"></div></div></div>
+<div class="biggestTurfBadge"><div class="biggestTurfInner"><div class="crown">👑</div><span class="bigText">VARANASI'S BIGGEST TURF</span><span class="sizeText">🏏 60 × 120 FT CRICKET TURF</span></div></div>
 <div class="premiumActions"><button id="quickBookBtn">🏏 BOOK A SLOT</button><button id="quickWhatsappBtn">💬 WHATSAPP</button><button id="shareArenaBtn">📤 SHARE ARENA</button></div>
 <div class="wrap">
   <h1>🏏 Beniya Cricket Arena</h1>
@@ -105,7 +107,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
     <button id="receiptBtn" class="gold">DOWNLOAD RECEIPT</button>
     <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
   </div>
-<section class="card" aria-labelledby="about-beniya-arena"><h2 id="about-beniya-arena">🏏 Beniya Cricket Arena, Varanasi</h2><p>Beniya Cricket Arena is a 24/7 cricket booking venue in Beniya Bagh, Varanasi, Uttar Pradesh 221001. Check available time slots and book your cricket session online.</p></section>
+<section class="card" aria-labelledby="about-beniya-arena"><h2 id="about-beniya-arena">🏏 About Beniya Cricket Arena</h2><p><b>Beniya Cricket Arena</b> is a premium cricket turf in Beniya Bagh, Varanasi, built for practice sessions, friendly matches and group games. Book available slots online and enjoy cricket day or night.</p><div class="featureGrid"><div class="featureItem">👑 Varanasi's Biggest Turf</div><div class="featureItem">📐 Ground Size: 60 × 120 Feet</div><div class="featureItem">🥅 Net Height: 35 Feet</div><div class="featureItem">🌱 Premium Artificial Turf</div><div class="featureItem">💡 Powerful LED Floodlights</div><div class="featureItem">🌙 Day & Night Matches</div><div class="featureItem">🏏 Spacious Playing Area</div><div class="featureItem">🛡️ Strong Safety Net</div><div class="featureItem">👥 Group Bookings Available</div><div class="featureItem">🎯 Friendly Matches & Practice</div><div class="featureItem">🕐 24/7 Booking Availability</div><div class="featureItem">📍 Beniya Bagh, Varanasi</div></div></section>
   <div id="galleryCard" class="card hidden"><h2>📸 Gallery</h2><div id="customerAlbums"></div></div>
   <div class="visitGrid"><div class="visitCard"><h2>📍 Find Us</h2><p>Beniya Bagh, Varanasi 221001, Uttar Pradesh</p><button id="directionsBtn" class="gold">GET DIRECTIONS</button></div><div class="visitCard"><h2>⭐ Player Reviews</h2><div class="reviewQuote">“A simple, fast way to reserve your cricket slot.”</div><div class="reviewQuote">“Great for practice sessions and matches with friends.”</div></div></div>
 </div>
@@ -278,9 +280,10 @@ async function checkStatus(){
   }catch(e){msg("pendingMessage",e.message)}
 }
 function showConfirmed(){
-  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.remove("hidden");
-  const b=currentBooking;
-  $("confirmedDetails").innerHTML=`<p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Name:</b> ${esc(b.customerName)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p>`;
+  $("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("bookingFlow").classList.remove("hidden");
+  clearBooking();selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
+  if(customerToken)loadCustomerAccount().catch(()=>{});
+  alert("✅ Booking confirmed! You can see it in ACCOUNT → Current Booking / Booking History.");
 }
 $("receiptBtn").onclick=()=>{
   const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
@@ -292,9 +295,10 @@ function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentB
 function restoreBooking(){
   try{
     const b=JSON.parse(localStorage.getItem("beniyaCurrentBooking")||"null");if(!b||!b.bookingId)return;
-    currentBooking=b;
     const s=String(b.status||"").toUpperCase();
-    if(s==="CONFIRMED")showConfirmed();else if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
+    if(s==="CONFIRMED"||s==="CANCELLED"){clearBooking();$("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");return}
+    currentBooking=b;
+    if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
   }catch(e){}
 }
 
@@ -367,7 +371,7 @@ $("customerLogoutBtn").onclick=async()=>{
   $("accountLoggedIn").classList.add("hidden");$("accountLoggedOut").classList.remove("hidden");updateAccountButton();closeAccount();
 };
 
-$("quickBookBtn").onclick=()=>$("bookingFlow").scrollIntoView({behavior:"smooth"});
+$("quickBookBtn").onclick=async()=>{$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("bookingFlow").classList.remove("hidden");selectedSlots.clear();updateTotal();try{await loadSlots()}catch(e){}$("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"});};
 $("quickWhatsappBtn").onclick=()=>{const n=String(config?.whatsappNumber||"").replace(/\D/g,"");if(n)window.open(`https://wa.me/${n}?text=${encodeURIComponent("Hello Beniya Cricket Arena, I have an enquiry about booking a cricket slot.")}`,"_blank")};
 $("shareArenaBtn").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"Beniya Cricket Arena",text:"Book your cricket slot at Beniya Cricket Arena, Beniya Bagh, Varanasi.",url:location.href});else{await navigator.clipboard.writeText(location.href);alert("Website link copied.")}}catch(e){}};
 $("directionsBtn").onclick=()=>window.open("https://www.google.com/maps/search/?api=1&query=Beniya+Bagh+Varanasi+221001","_blank");
