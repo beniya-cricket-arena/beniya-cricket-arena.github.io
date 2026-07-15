@@ -51,9 +51,10 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 <div class="hero"><div class="slider" id="homeSlider"><div class="slides" id="slides"><img class="slide" src="beniya-arena-hero.png" alt="Beniya Cricket Arena in Beniya Bagh, Varanasi"></div><button class="sliderBtn sliderPrev" id="sliderPrev">‹</button><button class="sliderBtn sliderNext" id="sliderNext">›</button><div class="sliderDots" id="sliderDots"></div></div></div>
 <div class="biggestTurfBadge"><div class="biggestTurfInner"><div class="crown">👑</div><span class="bigText">VARANASI'S BIGGEST TURF</span><span class="sizeText">🏏 60 × 120 FT CRICKET TURF</span></div></div>
 <div class="premiumActions"><button id="quickBookBtn">🏏 BOOK A SLOT</button><button id="quickWhatsappBtn">💬 WHATSAPP</button><button id="shareArenaBtn">📤 SHARE ARENA</button><button id="aboutUsBtn">ℹ️ ABOUT US</button></div>
-<section id="aboutUsSection" class="wrap" style="padding-top:0;padding-bottom:18px">
+<section id="aboutUsSection" class="wrap hidden" style="padding-top:0;padding-bottom:18px">
   <div class="card" style="margin-bottom:0">
     <h2 style="color:var(--gold);margin-top:0">ℹ️ About Beniya Cricket Arena</h2>
+    <p style="font-size:18px"><b>📏 Tallest Cricket Turf in Varanasi with a height of 35 feet</b></p>
     <p>Beniya Cricket Arena is a 24/7 cricket turf in Beniya Bagh, Varanasi, built for practice sessions, friendly matches and competitive cricket.</p>
     <p><b>🏏 Turf size:</b> 60 × 120 ft &nbsp; · &nbsp; <b>🕐 Open:</b> 24 hours, 7 days a week</p>
     <p><b>📍 Location:</b> Beniya Bagh, Varanasi, Uttar Pradesh 221001</p>
@@ -134,29 +135,13 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
         <label>Mobile number</label><input id="accountLoginPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
         <label>4-digit PIN</label><input id="accountLoginPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
         <button id="customerLoginBtn" class="gold">LOGIN</button>
-        <button id="showForgotPinBtn" class="secondary" type="button">FORGOT PIN?</button>
 
-        <div id="forgotPinPane" class="hidden" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-          <h3>Reset your PIN</h3>
-          <p class="muted">Enter the email address registered with your account. We will send a 6-digit verification code to your email.</p>
-          <label>Registered email address</label>
-          <input id="forgotPinEmail" type="email" autocomplete="email" placeholder="you@example.com">
-          <button id="sendResetCodeBtn" class="gold" type="button">SEND CODE TO EMAIL</button>
-          <div id="resetPinFields" class="hidden">
-            <label>6-digit verification code</label><input id="resetPinCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456">
-            <label>New 4-digit PIN</label><input id="resetNewPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
-            <label>Confirm new PIN</label><input id="resetNewPin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
-            <button id="resetPinBtn" class="gold" type="button">RESET PIN</button>
-          </div>
-          <div id="forgotPinMessage" class="message"></div>
-        </div>
       </div>
 
       <div id="registerPane" class="hidden">
         <h3>Create your account</h3>
         <label>Name</label><input id="accountRegisterName" autocomplete="name" placeholder="Your name">
         <label>Mobile number</label><input id="accountRegisterPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
-        <label>Email address</label><input id="accountRegisterEmail" type="email" autocomplete="email" placeholder="you@example.com">
         <label>Create 4-digit PIN</label><input id="accountRegisterPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
         <label>Confirm 4-digit PIN</label><input id="accountRegisterPin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
         <button id="customerRegisterBtn" class="gold">CREATE ACCOUNT</button>
@@ -175,19 +160,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
         <label>New 4-digit PIN</label><input id="newPin" type="password" inputmode="numeric" maxlength="4">
         <button id="changePinBtn" class="secondary">CHANGE PIN</button>
       </details>
-      <div id="recoveryEmailCard" class="card">
-        <h3>📧 Recovery Email</h3>
-        <p id="recoveryEmailStatus" class="muted">Add and verify an email address so you can reset your PIN if you forget it.</p>
-        <div id="recoveryEmailAddPane">
-          <label>Email address</label><input id="recoveryEmailInput" type="email" autocomplete="email" placeholder="you@example.com">
-          <button id="sendRecoveryEmailCodeBtn" class="gold" type="button">SEND VERIFICATION CODE</button>
-          <div id="recoveryEmailCodePane" class="hidden">
-            <label>6-digit verification code</label><input id="recoveryEmailCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456">
-            <button id="verifyRecoveryEmailBtn" class="gold" type="button">VERIFY & SAVE EMAIL</button>
-          </div>
-        </div>
-        <div id="recoveryEmailMessage" class="message"></div>
-      </div>
+
       <button id="customerLogoutBtn" class="danger">LOGOUT</button>
       <div id="accountMessage" class="message"></div>
     </div>
@@ -370,17 +343,6 @@ async function loadCustomerAccount(){
   customerProfile=d.customer;
   $("accountLoggedOut").classList.add("hidden");$("accountLoggedIn").classList.remove("hidden");
   $("accountName").textContent=customerProfile.name;$("accountPhone").textContent=customerProfile.phone;
-  const recoveryEmail=String(customerProfile.email||"").trim();
-  if(recoveryEmail){
-    $("recoveryEmailStatus").textContent="Verified recovery email: "+recoveryEmail;
-    $("recoveryEmailInput").value=recoveryEmail;
-    $("recoveryEmailAddPane").classList.add("hidden");
-  }else{
-    $("recoveryEmailStatus").textContent="No recovery email is linked yet. Add and verify one to enable email PIN reset.";
-    $("recoveryEmailInput").value="";
-    $("recoveryEmailAddPane").classList.remove("hidden");
-    $("recoveryEmailCodePane").classList.add("hidden");
-  }
   const stats=d.stats||{};$("statTotalBookings").textContent=stats.totalBookings||0;$("statHoursPlayed").textContent=stats.hoursPlayed||0;$("statTotalSpent").textContent=money(stats.totalSpent||0);$("statMemberSince").textContent=stats.memberSince||"—";
   $("customerName").value=customerProfile.name;$("phone").value=customerProfile.phone;
   const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
@@ -410,34 +372,6 @@ $("customerRegisterBtn").onclick=async()=>{
   }catch(e){msg("accountAuthMessage",e.message)}
 };
 
-$("sendRecoveryEmailCodeBtn").onclick=async()=>{
-  try{
-    const email=$("recoveryEmailInput").value.trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error("Please enter a valid email address.");
-    $("sendRecoveryEmailCodeBtn").disabled=true;
-    msg("recoveryEmailMessage","Sending verification code…");
-    const d=await post("customerrequestemailcode",{token:customerToken,email});
-    if(!d.success)throw Error(d.message);
-    if(d.alreadyVerified){msg("recoveryEmailMessage",d.message);await loadCustomerAccount();return}
-    $("recoveryEmailCodePane").classList.remove("hidden");
-    msg("recoveryEmailMessage",d.message);
-  }catch(e){msg("recoveryEmailMessage",e.message)}
-  finally{$("sendRecoveryEmailCodeBtn").disabled=false}
-};
-$("verifyRecoveryEmailBtn").onclick=async()=>{
-  try{
-    const email=$("recoveryEmailInput").value.trim().toLowerCase();
-    const code=$("recoveryEmailCode").value.replace(/\D/g,"");
-    if(!/^\d{6}$/.test(code))throw Error("Enter the 6-digit verification code.");
-    $("verifyRecoveryEmailBtn").disabled=true;
-    msg("recoveryEmailMessage","Verifying email…");
-    const d=await post("customerverifyemail",{token:customerToken,email,code});
-    if(!d.success)throw Error(d.message);
-    msg("recoveryEmailMessage",d.message);
-    await loadCustomerAccount();
-  }catch(e){msg("recoveryEmailMessage",e.message)}
-  finally{$("verifyRecoveryEmailBtn").disabled=false}
-};
 $("changePinBtn").onclick=async()=>{
   try{
     const currentPin=$("currentPin").value,newPin=$("newPin").value;
@@ -451,34 +385,26 @@ $("customerLogoutBtn").onclick=async()=>{
   $("accountLoggedIn").classList.add("hidden");$("accountLoggedOut").classList.remove("hidden");updateAccountButton();closeAccount();
 };
 
-$("quickBookBtn").onclick=async()=>{$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("bookingFlow").classList.remove("hidden");selectedSlots.clear();updateTotal();try{await loadSlots()}catch(e){}$("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"});};
+$("quickBookBtn").onclick=async()=>{
+  $("paymentCard").classList.add("hidden");
+  $("pendingCard").classList.add("hidden");
+  $("confirmedCard").classList.add("hidden");
+  $("bookingFlow").classList.remove("hidden");
+  selectedSlots.clear();
+  updateTotal();
+  try{await loadSlots()}catch(e){msg("bookingMessage",e.message||"Could not load slots.");}
+  requestAnimationFrame(()=>$("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"}));
+};
 $("quickWhatsappBtn").onclick=()=>{const n=String(config?.whatsappNumber||"").replace(/\D/g,"");if(n)window.open(`https://wa.me/${n}?text=${encodeURIComponent("Hello Beniya Cricket Arena, I have an enquiry about booking a cricket slot.")}`,"_blank")};
 $("shareArenaBtn").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"Beniya Cricket Arena",text:"Book your cricket slot at Beniya Cricket Arena, Beniya Bagh, Varanasi.",url:location.href});else{await navigator.clipboard.writeText(location.href);alert("Website link copied.")}}catch(e){}};
 
-$("aboutUsBtn").onclick=()=>$("aboutUsSection").scrollIntoView({behavior:"smooth",block:"start"});
+$("aboutUsBtn").onclick=()=>{
+  const section=$("aboutUsSection");
+  const opening=section.classList.contains("hidden");
+  section.classList.toggle("hidden");
+  if(opening)section.scrollIntoView({behavior:"smooth",block:"start"});
+};
 
-$("showForgotPinBtn").onclick=()=>{$("forgotPinPane").classList.toggle("hidden");msg("forgotPinMessage","")};
-$("sendResetCodeBtn").onclick=async()=>{
-  try{
-    const email=$("forgotPinEmail").value.trim().toLowerCase();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error("Enter your registered email address.");
-    $("sendResetCodeBtn").disabled=true;msg("forgotPinMessage","Sending verification code to your email…");
-    const d=await post("customerforgotpin",{email});if(!d.success)throw Error(d.message);
-    $("resetPinFields").classList.remove("hidden");msg("forgotPinMessage",d.message);
-  }catch(e){msg("forgotPinMessage",e.message)}finally{$("sendResetCodeBtn").disabled=false}
-};
-$("resetPinBtn").onclick=async()=>{
-  try{
-    const email=$("forgotPinEmail").value.trim().toLowerCase(),code=$("resetPinCode").value.replace(/\D/g,""),newPin=$("resetNewPin").value,newPin2=$("resetNewPin2").value;
-    if(!/^\d{6}$/.test(code))throw Error("Enter the 6-digit verification code.");
-    if(!/^\d{4}$/.test(newPin))throw Error("New PIN must be exactly 4 digits.");
-    if(newPin!==newPin2)throw Error("New PINs do not match.");
-    $("resetPinBtn").disabled=true;msg("forgotPinMessage","Resetting your PIN…");
-    const d=await post("customerresetpin",{email,code,newPin});if(!d.success)throw Error(d.message);
-    $("resetPinFields").classList.add("hidden");$("forgotPinPane").classList.add("hidden");
-    msg("accountAuthMessage",d.message);
-  }catch(e){msg("forgotPinMessage",e.message)}finally{$("resetPinBtn").disabled=false}
-};
 $("directionsBtn").onclick=()=>window.open("https://www.google.com/maps/search/?api=1&query=Beniya+Bagh+Varanasi+221001","_blank");
 init();
 </script>
