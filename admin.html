@@ -130,6 +130,8 @@ input,select,textarea{background:#07110d;color:white}textarea{min-height:150px;r
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 let token=sessionStorage.getItem("beniyaAdminToken")||"";
+const requestedApprovalId=(new URLSearchParams(location.search).get("approve")||"").trim();
+let currentBookings=[];
 let manualSelected=new Set();
 const $=id=>document.getElementById(id);
 const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
@@ -187,6 +189,7 @@ async function showDashboard(){
   const today=todayKey();$("manualDate").min=today;$("blockDate").min=today;
   if(!$("manualDate").value)$("manualDate").value=today;if(!$("blockDate").value)$("blockDate").value=today;
   await refreshAll();
+  openApprovalRequest();
 }
 async function refreshAll(){await Promise.all([loadBookings(),loadSettings(),loadPricingRules(),loadGalleryManager(),loadManualSlots(),loadBlockSlots(),loadNotificationAudience()])}
 
@@ -415,10 +418,11 @@ async function loadBookings(){
     const bookingDate=String(b.date||"").trim();
     return /^\d{4}-\d{2}-\d{2}$/.test(bookingDate)&&bookingDate>=today;
   });
+  currentBookings=list;
   $("totalBookings").textContent=list.length;
   $("pendingBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="PAYMENT PENDING").length;
   $("confirmedBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="CONFIRMED").length;
-  $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking">
+  $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking" id="booking-${esc(b.bookingId)}">
     <p><b>${esc(b.bookingId)}</b> <span class="badge">${esc(b.status||"-")}</span></p>
     <p><b>${esc(b.name||"-")}</b> · ${esc(b.phone||"-")}</p><p>${esc(b.date||"-")} · ${esc(b.slot||"-")}</p>
     <p>₹${Number(b.amount||0).toLocaleString("en-IN")} · ${esc(b.paymentMethod||"-")} · ${esc(b.bookingSource||"-")}</p>
@@ -431,7 +435,18 @@ async function loadBookings(){
       <button class="secondary" onclick='downloadAdminReceipt(${JSON.stringify(b)})'>RECEIPT</button>
     </div></div>`).join(""):"<p>No bookings found.</p>";
 }
-async function confirmBooking(id){if(!confirm("Confirm payment and booking "+id+"?"))return;const d=await api("adminconfirmbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
+function openApprovalRequest(){
+  if(!requestedApprovalId)return;
+  const booking=currentBookings.find(b=>String(b.bookingId)===requestedApprovalId);
+  if(!booking){alert("This booking is not available. It may have been cancelled or already confirmed.");return;}
+  const card=$("booking-"+requestedApprovalId);
+  if(card){card.scrollIntoView({behavior:"smooth",block:"center"});card.style.outline="3px solid #f5b82e";}
+  if(String(booking.status||"").toUpperCase()!=="PAYMENT PENDING"){
+    alert("Booking "+requestedApprovalId+" is already "+String(booking.status||"updated")+".");return;
+  }
+  if(confirm("Verify the UPI payment in your bank/UPI app first. Confirm booking "+requestedApprovalId+" now?"))confirmBooking(requestedApprovalId,true);
+}
+async function confirmBooking(id,alreadyApproved){if(!alreadyApproved&&!confirm("Confirm payment and booking "+id+"?"))return;const d=await api("adminconfirmbooking",{bookingId:id});if(!d.success)return alert(d.message||"Could not confirm booking.");alert(d.message||"Done");await refreshAll()}
 async function rejectBooking(id){if(!confirm("Reject payment and release the slot?"))return;const d=await api("adminrejectbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
 async function cancelAdmin(id,paymentStatus){
   if(!confirm("Cancel booking "+id+"?"))return;
