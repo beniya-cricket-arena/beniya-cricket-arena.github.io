@@ -275,7 +275,7 @@ $("paidBtn").onclick=async()=>{
     $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
     const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
     if(!d.success)throw Error(d.message||"Could not submit payment.");
-    currentBooking={...currentBooking,...d,status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
+    currentBooking={...currentBooking,...d,approvalToken:d.approvalToken||currentBooking.approvalToken||"",status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
     openWhatsAppForApproval();
   }catch(e){msg("paymentMessage",e.message)}
   finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
@@ -294,9 +294,16 @@ function openWhatsAppForApproval(){
   const b=currentBooking;if(!b)return;
   const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
   if(!number)return msg("pendingMessage","Arena WhatsApp number is not configured.");
-  const adminApprovalUrl=new URL("admin.html",location.href);
-  adminApprovalUrl.searchParams.set("approve",b.bookingId);
-  const text=`Hello Beniya Cricket Arena,\n\nI have made the UPI payment for my booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nAdmin quick-approval link (check payment first):\n${adminApprovalUrl.href}`;
+  if(!b.approvalToken)return msg("pendingMessage","Approval link is unavailable. Please tap I HAVE PAID again or contact the arena.");
+  const approveUrl=new URL(API_URL);
+  approveUrl.searchParams.set("action","approve");
+  approveUrl.searchParams.set("id",b.bookingId);
+  approveUrl.searchParams.set("token",b.approvalToken);
+  const rejectUrl=new URL(API_URL);
+  rejectUrl.searchParams.set("action","reject");
+  rejectUrl.searchParams.set("id",b.bookingId);
+  rejectUrl.searchParams.set("token",b.approvalToken);
+  const text=`Hello Beniya Cricket Arena,\n\nBooking details\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nApprove:\n${approveUrl.href}\n\nReject:\n${rejectUrl.href}`;
   window.location.href=`https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 }
 $("whatsappBtn").onclick=openWhatsAppForApproval;
