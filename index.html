@@ -185,7 +185,6 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 const $=id=>document.getElementById(id);
 let config=null,selectedDate="",selectedSlots=new Set(),currentBooking=null,currentSlotData=[];
-let statusPollTimer=null;
 
 function localDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
@@ -275,8 +274,7 @@ $("paidBtn").onclick=async()=>{
     $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
     const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
     if(!d.success)throw Error(d.message||"Could not submit payment.");
-    currentBooking={...currentBooking,...d,approvalToken:d.approvalToken||currentBooking.approvalToken||"",status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
-    openWhatsAppForApproval();
+    currentBooking={...currentBooking,...d,status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
   }catch(e){msg("paymentMessage",e.message)}
   finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
 };
@@ -284,29 +282,13 @@ $("paidBtn").onclick=async()=>{
 function showPending(){
   $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("pendingCard").classList.remove("hidden");
   $("currentStatus").textContent=currentBooking.status||"PAYMENT PENDING";
-  startStatusPolling();
 }
-function startStatusPolling(){
-  if(statusPollTimer)clearInterval(statusPollTimer);
-  statusPollTimer=setInterval(checkStatus,5000);
-}
-function openWhatsAppForApproval(){
+$("whatsappBtn").onclick=()=>{
   const b=currentBooking;if(!b)return;
   const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
-  if(!number)return msg("pendingMessage","Arena WhatsApp number is not configured.");
-  if(!b.approvalToken)return msg("pendingMessage","Approval link is unavailable. Please tap I HAVE PAID again or contact the arena.");
-  const approveUrl=new URL(API_URL);
-  approveUrl.searchParams.set("action","approve");
-  approveUrl.searchParams.set("id",b.bookingId);
-  approveUrl.searchParams.set("token",b.approvalToken);
-  const rejectUrl=new URL(API_URL);
-  rejectUrl.searchParams.set("action","reject");
-  rejectUrl.searchParams.set("id",b.bookingId);
-  rejectUrl.searchParams.set("token",b.approvalToken);
-  const text=`Hello Beniya Cricket Arena,\n\nBooking details\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nApprove:\n${approveUrl.href}\n\nReject:\n${rejectUrl.href}`;
-  window.location.href=`https://wa.me/${number}?text=${encodeURIComponent(text)}`;
-}
-$("whatsappBtn").onclick=openWhatsAppForApproval;
+  const text=`Hello Beniya Cricket Arena,\n\nI have made the UPI payment for my booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nPlease verify the payment and confirm my booking.`;
+  window.open(`https://wa.me/${number}?text=${encodeURIComponent(text)}`,"_blank");
+};
 $("checkStatusBtn").onclick=checkStatus;
 
 async function checkStatus(){
@@ -323,15 +305,11 @@ async function checkStatus(){
   }catch(e){msg("pendingMessage",e.message)}
 }
 function showConfirmed(){
-  if(statusPollTimer){clearInterval(statusPollTimer);statusPollTimer=null;}
-  $("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("bookingFlow").classList.add("hidden");$("confirmedCard").classList.remove("hidden");
-  $("confirmedDetails").innerHTML=`<div class="status"><p><b>Booking ID:</b> ${esc(currentBooking.bookingId)}</p><p><b>Date:</b> ${esc(currentBooking.date)}</p><p><b>Slot(s):</b> ${esc((currentBooking.slots||[]).join(", "))}</p><p><b>Amount paid:</b> ${money(currentBooking.amount)}</p></div>`;
-  localStorage.removeItem("beniyaCurrentBooking");selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
+  $("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("bookingFlow").classList.remove("hidden");
+  clearBooking();selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
   if(customerToken)loadCustomerAccount().catch(()=>{});
+  alert("✅ Booking confirmed! You can see it in ACCOUNT → Current Booking / Booking History.");
 }
-document.addEventListener("visibilitychange",()=>{
-  if(!document.hidden&&currentBooking&&String(currentBooking.status).toUpperCase()==="PAYMENT PENDING")checkStatus();
-});
 $("receiptBtn").onclick=()=>{
   const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
   const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.customerName)}</p><p><b>Phone:</b> ${esc(b.phone)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount Paid:</b> ${money(b.amount)}</p><p><b>Payment:</b> PAID</p><p><b>Booking Status:</b> CONFIRMED</p></div>`;
