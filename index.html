@@ -181,6 +181,8 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
 
 <div class="adminAccess"><a href="admin.html">🔐 ADMIN LOGIN</a></div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 const $=id=>document.getElementById(id);
@@ -197,6 +199,11 @@ async function get(action,params={}){
 async function post(action,extra={}){
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...extra})});
   const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response.")}
+}
+function makeOwnerReviewUrl(data){
+  if(data.ownerReviewUrl)return data.ownerReviewUrl;
+  if(!data.ownerReviewToken||!data.bookingId)return "";
+  return `${API_URL}?action=review&bookingId=${encodeURIComponent(data.bookingId)}&token=${encodeURIComponent(data.ownerReviewToken)}`;
 }
 
 
@@ -277,8 +284,9 @@ $("paidBtn").onclick=async()=>{
     if(!d.success)throw Error(d.message||"Could not submit payment.");
     // Keep the slots, date and amount selected by this customer. The payment
     // response is only used for the new status and secure owner-review link.
-    currentBooking={...currentBooking,status:d.status||"PAYMENT PENDING",paymentStatus:d.paymentStatus||"CUSTOMER CLAIMED PAID",ownerReviewUrl:d.ownerReviewUrl||""};saveBooking();showPending();
-    openOwnerPaymentWhatsApp(d.ownerReviewUrl,whatsappWindow);
+    const ownerReviewUrl=makeOwnerReviewUrl(d);
+    currentBooking={...currentBooking,status:d.status||"PAYMENT PENDING",paymentStatus:d.paymentStatus||"CUSTOMER CLAIMED PAID",ownerReviewUrl};saveBooking();showPending();
+    openOwnerPaymentWhatsApp(ownerReviewUrl,whatsappWindow);
   }catch(e){if(whatsappWindow)whatsappWindow.close();msg("paymentMessage",e.message)}
   finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
 };
@@ -294,7 +302,8 @@ function openOwnerPaymentWhatsApp(reviewUrl,targetWindow){
   const b=currentBooking;if(!b)return;
   const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
   if(!number)return;
-  const text=`Hello Beniya Cricket Arena,\n\nA customer has clicked I HAVE PAID. Please verify the payment and approve or reject the booking using the secure link below.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nApprove / Reject: ${reviewUrl||"Please open the admin dashboard to review this booking."}`;
+  const adminLoginUrl="https://beniya-cricket-arena.github.io/admin.html";
+  const text=`Hello Beniya Cricket Arena,\n\nA customer has clicked I HAVE PAID. Please verify the payment and approve or reject the booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nAdmin login: ${adminLoginUrl}\n${reviewUrl?"\nDirect approve / reject link: "+reviewUrl:"\nPlease log in to the admin dashboard above to approve or reject this booking."}`;
   const url=`https://wa.me/${number}?text=${encodeURIComponent(text)}`;
   if(targetWindow)targetWindow.location.href=url;else window.open(url,"_blank");
 }
@@ -322,8 +331,9 @@ function showConfirmed(){
 }
 $("receiptBtn").onclick=()=>{
   const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
-  const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.customerName)}</p><p><b>Phone:</b> ${esc(b.phone)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount Paid:</b> ${money(b.amount)}</p><p><b>Payment:</b> PAID</p><p><b>Booking Status:</b> CONFIRMED</p></div>`;
-  const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  const jsPDF=window.jspdf&&window.jspdf.jsPDF;if(!jsPDF)return alert("PDF generator is loading. Please wait a moment and try again.");
+  const doc=new jsPDF(),lines=["Beniya Cricket Arena","Booking Receipt","","Booking ID: "+b.bookingId,"Customer: "+b.customerName,"Phone: "+b.phone,"Date: "+b.date,"Slot(s): "+(b.slots||[]).join(", "),"Amount Paid: Rs. "+Number(b.amount||0).toLocaleString("en-IN"),"Payment: PAID","Booking Status: CONFIRMED"];
+  doc.setFontSize(20);doc.text(lines[0],20,22);doc.setFontSize(14);doc.text(lines[1],20,34);doc.setFontSize(11);doc.text(lines.slice(3),20,52,{maxWidth:170,lineHeightFactor:1.6});doc.save(`Beniya-Receipt-${b.bookingId}.pdf`);
 };
 function saveBooking(){localStorage.setItem("beniyaCurrentBooking",JSON.stringify(currentBooking))}
 function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentBooking=null}
