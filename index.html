@@ -275,7 +275,9 @@ $("paidBtn").onclick=async()=>{
     $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
     const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
     if(!d.success)throw Error(d.message||"Could not submit payment.");
-    currentBooking={...currentBooking,...d,status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
+    // Keep the slots, date and amount selected by this customer. The payment
+    // response is only used for the new status and secure owner-review link.
+    currentBooking={...currentBooking,status:d.status||"PAYMENT PENDING",paymentStatus:d.paymentStatus||"CUSTOMER CLAIMED PAID",ownerReviewUrl:d.ownerReviewUrl||""};saveBooking();showPending();
     openOwnerPaymentWhatsApp(d.ownerReviewUrl,whatsappWindow);
   }catch(e){if(whatsappWindow)whatsappWindow.close();msg("paymentMessage",e.message)}
   finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
