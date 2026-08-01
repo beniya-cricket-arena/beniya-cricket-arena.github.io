@@ -37,7 +37,7 @@ input,select,textarea{background:#07110d;color:white}textarea{min-height:150px;r
     <div class="card">
       <h2>Bookings awaiting payment verification</h2>
       <p class="muted">New customer payments appear here automatically. Verify your UPI/bank app, then confirm or reject. Pending payments are always shown first.</p>
-      <div class="actions"><button id="exportBookingsBtn" class="gold">EXPORT BOOKINGS</button></div><div id="bookings">Loading…</div>
+      <div id="bookings">Loading…</div>
     </div>
     <div class="card">
       <h2>🔐 Admin Security</h2>
@@ -410,18 +410,11 @@ $("blockDate").onchange=loadBlockSlots;
 
 async function loadBookings(){
   const d=await api("adminlistbookings");if(!d.success){msg("bookings",d.message);return}
-  const today=todayKey();
-  const list=(d.bookings||[]).filter(b=>{
-    const bookingDate=String(b.date||"").trim();
-    return /^\d{4}-\d{2}-\d{2}$/.test(bookingDate)&&bookingDate>=today;
-  }).sort((a,b)=>{
+  const list=(d.bookings||[]).slice().sort((a,b)=>{
     const aPending=String(a.status||"").toUpperCase()==="PAYMENT PENDING"?0:1;
     const bPending=String(b.status||"").toUpperCase()==="PAYMENT PENDING"?0:1;
-    return aPending-bPending||String(a.date||"").localeCompare(String(b.date||""))||Number(a.slotIndex||0)-Number(b.slotIndex||0);
+    return aPending-bPending||String(b.date||"").localeCompare(String(a.date||""))||Number(a.slotIndex||0)-Number(b.slotIndex||0);
   });
-  $("totalBookings").textContent=list.length;
-  $("pendingBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="PAYMENT PENDING").length;
-  $("confirmedBookings").textContent=list.filter(x=>String(x.status).toUpperCase()==="CONFIRMED").length;
   $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking">
     <p><b>${esc(b.bookingId)}</b> <span class="badge">${esc(b.status||"-")}</span></p>
     <p><b>${esc(b.name||"-")}</b> · ${esc(b.phone||"-")}</p><p>${esc(b.date||"-")} · ${esc(b.slot||"-")}</p>
@@ -464,7 +457,6 @@ function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function js(x){return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
 if(token)showDashboard();
 
-$("exportBookingsBtn").onclick=()=>{const text=$("bookings").innerText||"";const blob=new Blob([text],{type:"text/plain;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="beniya-bookings-"+todayKey()+".txt";a.click();URL.revokeObjectURL(u)};
 </script>
 </body>
 </html>
