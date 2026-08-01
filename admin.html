@@ -127,6 +127,7 @@ input,select,textarea{background:#07110d;color:white}textarea{min-height:150px;r
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
 let token=sessionStorage.getItem("beniyaAdminToken")||"";
@@ -450,6 +451,9 @@ async function deleteBookingRecord(id){
   }catch(e){alert(e.message)}
 }
 function downloadAdminReceipt(b){
+  const jsPDF=window.jspdf&&window.jspdf.jsPDF;if(!jsPDF)return alert("PDF generator is loading. Please wait a moment and try again.");
+  const doc=new jsPDF(),lines=["Beniya Cricket Arena","Booking Receipt","","Booking ID: "+b.bookingId,"Customer: "+(b.name||"-"),"Phone: "+(b.phone||"-"),"Date: "+(b.date||"-"),"Slot: "+(b.slot||"-"),"Amount: Rs. "+Number(b.amount||0).toLocaleString("en-IN"),"Payment method: "+(b.paymentMethod||"-"),"Payment status: "+(b.paymentStatus||"-"),"Booking status: "+(b.status||"-")];
+  doc.setFontSize(20);doc.text(lines[0],20,22);doc.setFontSize(14);doc.text(lines[1],20,34);doc.setFontSize(11);doc.text(lines.slice(3),20,52,{maxWidth:170,lineHeightFactor:1.6});doc.save(`Beniya-Receipt-${b.bookingId}.pdf`);return;
   const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.name||"-")}</p><p><b>Phone:</b> ${esc(b.phone||"-")}</p><p><b>Date:</b> ${esc(b.date||"-")}</p><p><b>Slot:</b> ${esc(b.slot||"-")}</p><p><b>Amount:</b> ₹${Number(b.amount||0).toLocaleString("en-IN")}</p><p><b>Payment method:</b> ${esc(b.paymentMethod||"-")}</p><p><b>Payment status:</b> ${esc(b.paymentStatus||"-")}</p><p><b>Booking status:</b> ${esc(b.status||"-")}</p></div>`;
   const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
