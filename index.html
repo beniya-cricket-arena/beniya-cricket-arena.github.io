@@ -93,7 +93,7 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
   <div id="paymentCard" class="card hidden">
     <h2>4. Pay by UPI</h2>
     <div class="paybox">
-      <p>Scan the QR code or pay to the UPI ID below.</p>
+      <p><b>Scan this QR or send the payment on this UPI ID or number.</b></p>
       <div id="qr" class="qr"></div>
       <div id="upiText" class="upi"></div>
       <p><b id="payAmount"></b></p>
@@ -107,8 +107,8 @@ button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49
   <div id="pendingCard" class="card hidden">
     <h2>Payment submitted</h2>
     <div class="status"><b>Status: <span id="currentStatus">PAYMENT PENDING</span></b></div>
-    <p>Your slot is reserved while the arena verifies the payment. Please send the prepared booking message to the admin on WhatsApp.</p>
-    <button id="whatsappBtn">SEND BOOKING DETAILS ON WHATSAPP</button>
+    <p>Your slot is reserved while the arena verifies the payment. A WhatsApp message with the owner’s secure approval link has been opened.</p>
+    <button id="whatsappBtn">OPEN WHATSAPP PAYMENT MESSAGE AGAIN</button>
     <button id="checkStatusBtn" class="secondary">CHECK BOOKING STATUS</button>
     <div id="pendingMessage" class="message"></div>
   </div>
@@ -270,12 +270,14 @@ $("cancelBeforePaymentBtn").onclick=async()=>{
 };
 $("paidBtn").onclick=async()=>{
   if(!currentBooking)return;
+  const whatsappWindow=window.open("about:blank","_blank");
   try{
     $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
     const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
     if(!d.success)throw Error(d.message||"Could not submit payment.");
     currentBooking={...currentBooking,...d,status:d.status||"PAYMENT PENDING"};saveBooking();showPending();
-  }catch(e){msg("paymentMessage",e.message)}
+    openOwnerPaymentWhatsApp(d.ownerReviewUrl,whatsappWindow);
+  }catch(e){if(whatsappWindow)whatsappWindow.close();msg("paymentMessage",e.message)}
   finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
 };
 
@@ -284,11 +286,16 @@ function showPending(){
   $("currentStatus").textContent=currentBooking.status||"PAYMENT PENDING";
 }
 $("whatsappBtn").onclick=()=>{
+  openOwnerPaymentWhatsApp(currentBooking&&currentBooking.ownerReviewUrl);
+};
+function openOwnerPaymentWhatsApp(reviewUrl,targetWindow){
   const b=currentBooking;if(!b)return;
   const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
-  const text=`Hello Beniya Cricket Arena,\n\nI have made the UPI payment for my booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nPlease verify the payment and confirm my booking.`;
-  window.open(`https://wa.me/${number}?text=${encodeURIComponent(text)}`,"_blank");
-};
+  if(!number)return;
+  const text=`Hello Beniya Cricket Arena,\n\nA customer has clicked I HAVE PAID. Please verify the payment and approve or reject the booking using the secure link below.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nApprove / Reject: ${reviewUrl||"Please open the admin dashboard to review this booking."}`;
+  const url=`https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  if(targetWindow)targetWindow.location.href=url;else window.open(url,"_blank");
+}
 $("checkStatusBtn").onclick=checkStatus;
 
 async function checkStatus(){
@@ -305,10 +312,11 @@ async function checkStatus(){
   }catch(e){msg("pendingMessage",e.message)}
 }
 function showConfirmed(){
-  $("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("bookingFlow").classList.remove("hidden");
-  clearBooking();selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
+  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.remove("hidden");
+  const b=currentBooking;
+  $("confirmedDetails").innerHTML=b?`<p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount paid:</b> ${money(b.amount)}</p>`:"";
+  saveBooking();selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
   if(customerToken)loadCustomerAccount().catch(()=>{});
-  alert("✅ Booking confirmed! You can see it in ACCOUNT → Current Booking / Booking History.");
 }
 $("receiptBtn").onclick=()=>{
   const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
@@ -321,7 +329,8 @@ function restoreBooking(){
   try{
     const b=JSON.parse(localStorage.getItem("beniyaCurrentBooking")||"null");if(!b||!b.bookingId)return;
     const s=String(b.status||"").toUpperCase();
-    if(s==="CONFIRMED"||s==="CANCELLED"){clearBooking();$("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");return}
+    if(s==="CONFIRMED"){currentBooking=b;showConfirmed();return}
+    if(s==="CANCELLED"){clearBooking();$("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");return}
     currentBooking=b;
     if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
   }catch(e){}
