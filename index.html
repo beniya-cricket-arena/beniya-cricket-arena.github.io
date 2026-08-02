@@ -3,51 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beniya Cricket Arena - Booking</title>
+  <title>Beniya Cricket Arena - Turf Booking</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #198754;
-      --primary-hover: #146c43;
-      --bg-gradient: linear-gradient(135deg, #0f5132, #198754);
-    }
+    :root { --primary: #198754; --primary-dark: #146c43; }
     body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .header-banner { background: var(--bg-gradient); color: white; padding: 25px 0; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .slot-btn { width: 100%; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; border-radius: 8px; padding: 10px 5px; transition: all 0.2s; }
+    .hero-banner { background: linear-gradient(135deg, #0f5132, #198754); color: white; padding: 30px 15px; border-radius: 0 0 24px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .action-icon-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 8px 16px; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .action-icon-btn:hover { background: rgba(255,255,255,0.3); color: white; }
+    .slot-btn { width: 100%; margin-bottom: 8px; font-weight: 600; font-size: 0.8rem; border-radius: 8px; padding: 10px 4px; transition: all 0.2s; }
     .slot-available { background-color: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-    .slot-available:hover { background-color: #c8e6c9; transform: translateY(-1px); }
-    .slot-selected { background-color: var(--primary-color) !important; color: white !important; border-color: var(--primary-hover) !important; box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3); }
+    .slot-available:hover { background-color: #c8e6c9; }
+    .slot-selected { background-color: var(--primary) !important; color: white !important; border-color: var(--primary-dark) !important; box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3); }
     .slot-booked { background-color: #ffebee; color: #c62828; border: 1.5px solid #ef9a9a; cursor: not-allowed; opacity: 0.8; }
     .slot-blocked { background-color: #e0e0e0; color: #616161; border: 1.5px solid #bdbdbd; cursor: not-allowed; opacity: 0.7; }
-    .card-select { cursor: pointer; transition: all 0.2s; border: 2px solid #dee2e6; }
-    .card-select:hover { border-color: var(--primary-color) !important; }
-    .card-select input:checked + label { color: var(--primary-color); }
-    .carousel-item img { height: 220px; object-fit: cover; border-radius: 12px; }
+    .carousel-item img { height: 240px; object-fit: cover; border-radius: 12px; }
+    footer { background: #212529; color: #adb5bd; padding: 25px 0; border-top: 1px solid #343a40; }
   </style>
 </head>
 <body>
 
-  <!-- Header Banner -->
-  <header class="header-banner text-center mb-4">
+  <!-- Hero Header Banner with Action Icons -->
+  <header class="hero-banner text-center">
     <div class="container">
-      <h2 class="fw-bold mb-1">🏏 BENIYA CRICKET ARENA</h2>
-      <p class="small text-light mb-0"><i class="fa-solid fa-location-dot me-1"></i> Premium Turf Booking Platform</p>
+      <h2 class="fw-bold mb-1"><i class="fa-solid fa-cricket-bat-ball me-2"></i>BENIYA CRICKET ARENA</h2>
+      <p class="small text-light mb-3">Premium Turf Booking & Sports Facility</p>
+      
+      <div class="d-flex justify-content-center flex-wrap gap-2 mb-2">
+        <a href="#aboutSection" class="action-icon-btn"><i class="fa-solid fa-circle-info"></i> About Us</a>
+        <a id="btnNavWhatsapp" href="https://wa.me/919978546348" target="_blank" class="action-icon-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        <a id="btnNavLocation" href="https://maps.google.com" target="_blank" class="action-icon-btn"><i class="fa-solid fa-location-dot"></i> Locate Arena</a>
+        <button onclick="shareArena()" class="action-icon-btn"><i class="fa-solid fa-share-nodes"></i> Share Arena</button>
+      </div>
     </div>
   </header>
 
-  <div class="container mb-5" style="max-width: 680px;">
+  <div class="container my-4" style="max-width: 680px;">
     
-    <!-- Image Slider / Gallery -->
+    <!-- Image Gallery Carousel -->
     <div id="arenaCarousel" class="carousel slide mb-4 shadow-sm rounded-3 overflow-hidden" data-bs-ride="carousel">
       <div class="carousel-inner" id="carouselInner">
         <div class="carousel-item active">
-          <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1000&q=80" class="d-block w-100" alt="Arena Photo">
+          <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1000&q=80" class="d-block w-100" alt="Turf Ground">
         </div>
       </div>
     </div>
 
-    <!-- Date Picker Section -->
+    <!-- Date Selection -->
     <div class="card shadow-sm mb-4 border-0 rounded-3">
       <div class="card-body">
         <label class="form-label fw-bold text-secondary"><i class="fa-regular fa-calendar-days me-2"></i>Select Booking Date</label>
@@ -55,54 +58,47 @@
       </div>
     </div>
 
-    <!-- Slots Matrix -->
+    <!-- Slot Selection Grid -->
     <div class="card shadow-sm mb-4 border-0 rounded-3">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold mb-0 text-dark"><i class="fa-regular fa-clock me-2"></i>Select Time Slots</h5>
+          <h5 class="fw-bold mb-0 text-dark"><i class="fa-regular fa-clock me-2"></i>Available Time Slots</h5>
           <small class="text-muted" id="slotStatusInfo">Loading...</small>
         </div>
-        
         <div id="slotsContainer" class="row row-cols-2 row-cols-sm-3 g-2">
           <div class="text-center w-100 py-4"><div class="spinner-border text-success"></div></div>
         </div>
       </div>
     </div>
 
-    <!-- Booking Summary & Payment Details -->
+    <!-- Customer Form & Payment Card -->
     <div id="bookingDetailsCard" class="card shadow-sm mb-4 border-0 rounded-3 d-none">
       <div class="card-header bg-white fw-bold py-3 border-bottom-0"><i class="fa-solid fa-user-check me-2 text-success"></i>Customer & Payment Details</div>
       <div class="card-body pt-0">
         
-        <!-- Live Selected Summary Info Bar -->
         <div class="alert alert-success d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <i class="fa-solid fa-stopwatch me-2"></i><strong>Duration:</strong> <span id="summaryDuration">0 hrs</span>
-          </div>
-          <div>
-            <i class="fa-solid fa-tags me-2"></i><strong>Rate:</strong> ₹<span id="summaryRate">1000</span>/hr
-          </div>
+          <div><i class="fa-solid fa-stopwatch me-1"></i> <strong>Duration:</strong> <span id="summaryDuration">0 hrs</span></div>
+          <div><i class="fa-solid fa-chart-line me-1"></i> <strong>Rate Type:</strong> <span id="summaryRateType">Dynamic</span></div>
         </div>
 
         <div class="row g-2 mb-3">
           <div class="col-md-6">
             <label class="form-label small fw-bold">Full Name *</label>
-            <input type="text" id="custName" class="form-control" placeholder="Enter your full name">
+            <input type="text" id="custName" class="form-control" placeholder="Enter full name">
           </div>
           <div class="col-md-6">
-            <label class="form-label small fw-bold">Mobile Number (WhatsApp) *</label>
-            <input type="tel" id="custPhone" class="form-control" placeholder="10-digit mobile number" maxlength="10">
+            <label class="form-label small fw-bold">WhatsApp Number *</label>
+            <input type="tel" id="custPhone" class="form-control" placeholder="10-digit phone number" maxlength="10">
           </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label small fw-bold">Special Requests / Notes (Optional)</label>
-          <input type="text" id="custNotes" class="form-control" placeholder="e.g. Need extra bats, tournament setup">
+          <input type="text" id="custNotes" class="form-control" placeholder="e.g. Need extra bats">
         </div>
 
-        <!-- Coupon Code Promo Feature -->
         <div class="mb-3">
-          <label class="form-label small fw-bold">Discount / Promo Code</label>
+          <label class="form-label small fw-bold">Promo / Discount Code</label>
           <div class="input-group">
             <input type="text" id="couponCode" class="form-control text-uppercase" placeholder="e.g. BENIYA10">
             <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">Apply</button>
@@ -110,52 +106,30 @@
           <small id="couponMessage" class="form-text"></small>
         </div>
 
-        <!-- Payment Plan Selection -->
         <label class="form-label small fw-bold">Select Payment Plan</label>
         <div class="d-flex gap-2 mb-3">
-          <div class="form-check card-select flex-fill p-3 rounded-3 bg-white">
+          <div class="form-check border p-3 flex-fill rounded bg-white">
             <input class="form-check-input" type="radio" name="payType" id="payFull" value="FULL" checked onchange="calculateAmounts()">
-            <label class="form-check-label w-100 fw-semibold cursor-pointer" for="payFull">
-              Full Payment<br><span class="text-success fs-5 fw-bold" id="fullLabel">₹0</span>
-            </label>
+            <label class="form-check-label fw-bold" for="payFull">Full Payment<br><span class="text-success fs-5" id="fullLabel">₹0</span></label>
           </div>
-          <div class="form-check card-select flex-fill p-3 rounded-3 bg-white">
+          <div class="form-check border p-3 flex-fill rounded bg-white">
             <input class="form-check-input" type="radio" name="payType" id="payAdvance" value="ADVANCE" onchange="calculateAmounts()">
-            <label class="form-check-label w-100 fw-semibold cursor-pointer" for="payAdvance">
-              50% Advance<br><span class="text-warning fs-5 fw-bold" id="advanceLabel">₹0</span>
-            </label>
+            <label class="form-check-label fw-bold" for="payAdvance">50% Advance<br><span class="text-warning fs-5" id="advanceLabel">₹0</span></label>
           </div>
         </div>
 
-        <!-- Detailed Breakdown -->
-        <div class="bg-light p-3 rounded-3 mb-3 border">
-          <div class="d-flex justify-content-between mb-2">
-            <span class="text-secondary">Subtotal Amount:</span>
-            <span class="fw-bold text-dark" id="lblSubtotal">₹0</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2 text-danger d-none" id="discountRow">
-            <span>Coupon Discount:</span>
-            <span class="fw-bold" id="lblDiscount">-₹0</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2 border-top pt-2">
-            <span class="fw-bold">Total Booking Amount:</span>
-            <span class="fw-bold text-dark" id="lblTotal">₹0</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2 text-success">
-            <span class="fw-bold">Payable Now via UPI:</span>
-            <span class="fw-bold fs-5" id="lblPayNow">₹0</span>
-          </div>
-          <div class="d-flex justify-content-between text-danger small border-top pt-2">
-            <span>Remaining Due at Turf:</span>
-            <span class="fw-bold" id="lblPending">₹0</span>
-          </div>
+        <div class="bg-light p-3 rounded mb-3 border">
+          <div class="d-flex justify-content-between mb-2"><span>Calculated Subtotal:</span><span class="fw-bold" id="lblSubtotal">₹0</span></div>
+          <div class="d-flex justify-content-between mb-2 text-danger d-none" id="discountRow"><span>Discount:</span><span class="fw-bold" id="lblDiscount">-₹0</span></div>
+          <div class="d-flex justify-content-between mb-2 border-top pt-2"><span class="fw-bold">Total Amount:</span><span class="fw-bold" id="lblTotal">₹0</span></div>
+          <div class="d-flex justify-content-between mb-2 text-success"><span class="fw-bold">Payable Now via UPI:</span><span class="fw-bold fs-5" id="lblPayNow">₹0</span></div>
+          <div class="d-flex justify-content-between text-danger small border-top pt-2"><span>Remaining Due at Turf:</span><span class="fw-bold" id="lblPending">₹0</span></div>
         </div>
 
-        <!-- Dynamic QR Display -->
-        <div class="text-center border p-3 rounded-3 mb-3 bg-white">
-          <p class="small text-muted mb-2"><i class="fa-solid fa-qrcode me-1"></i>Scan UPI QR Code to Pay Exact Amount</p>
+        <div class="text-center border p-3 rounded mb-3 bg-white">
+          <p class="small text-muted mb-2"><i class="fa-solid fa-qrcode me-1"></i>Scan UPI QR Code to Pay</p>
           <img id="qrCodeImg" src="" alt="UPI QR Code" class="img-fluid rounded shadow-sm" style="max-height: 220px;">
-          <div class="small text-muted mt-2">UPI ID: <strong id="displayUpiId">beniya@upi</strong></div>
+          <div class="small text-muted mt-2">UPI ID: <strong id="displayUpiId">loading...</strong></div>
         </div>
 
         <button id="btnSubmit" class="btn btn-success btn-lg w-100 fw-bold py-3 shadow" onclick="submitBooking()">
@@ -164,16 +138,34 @@
       </div>
     </div>
 
+    <!-- About Us Section -->
+    <div id="aboutSection" class="card shadow-sm border-0 rounded-3 mb-4">
+      <div class="card-body">
+        <h5 class="fw-bold text-dark mb-2"><i class="fa-solid fa-circle-info me-2 text-success"></i>About Beniya Cricket Arena</h5>
+        <p class="text-secondary small mb-0">Welcome to Beniya Cricket Arena! We offer premier box cricket turf facilities with professional floodlighting, synthetic grass, and top-quality gear.</p>
+      </div>
+    </div>
+
   </div>
+
+  <footer class="text-center">
+    <div class="container">
+      <p class="small mb-2">© Beniya Cricket Arena. All rights reserved.</p>
+      <a href="admin.html" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="fa-solid fa-lock me-1"></i> Admin Portal Login</a>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuR1AlE3gTETgZPeL9B7FStYFmCUwpABkHzm4ReUumvZ2TADoVbN55t6iOdlkU24oB/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuR1AlE3gTETgZPeL9B7FStYFmCUwpABkHzm4ReUumvZ2TADoVbN55t6iOdlkU24oB/exec";
 
     let selectedSlots = [];
-    let pricePerHour = 1000;
     let discountAmount = 0;
-    let configData = {};
+    let configData = {
+      pricePerHour: 1000,
+      peakPricePerHour: 1200,
+      weekendPricePerHour: 1200
+    };
 
     const timeSlots = [
       "06:00 AM - 07:00 AM", "07:00 AM - 08:00 AM", "08:00 AM - 09:00 AM",
@@ -195,61 +187,65 @@
     function loadConfig() {
       fetch(`${SCRIPT_URL}?action=getConfig`)
         .then(res => res.json())
-        .then(data => {
-          configData = data;
-          if (data.pricePerHour) pricePerHour = Number(data.pricePerHour);
-          document.getElementById("summaryRate").innerText = pricePerHour;
-          if (data.upiId) document.getElementById("displayUpiId").innerText = data.upiId;
+        .then(res => {
+          configData = res.data || configData;
+          if (configData.upiId) document.getElementById("displayUpiId").innerText = configData.upiId;
+          if (configData.whatsappNumber) document.getElementById("btnNavWhatsapp").href = `https://wa.me/${configData.whatsappNumber.replace(/\D/g, '')}`;
 
-          if (data.sliderImages && data.sliderImages.length > 0) {
+          if (configData.sliderImages && configData.sliderImages.length > 0) {
             const inner = document.getElementById("carouselInner");
-            inner.innerHTML = data.sliderImages.map((img, idx) => `
+            inner.innerHTML = configData.sliderImages.map((img, idx) => `
               <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                <img src="${img}" class="d-block w-100" alt="Turf Image ${idx+1}">
+                <img src="${img}" class="d-block w-100" alt="Arena Image ${idx+1}">
               </div>
             `).join('');
           }
-        })
-        .catch(err => console.error("Config Load Error:", err));
+        });
+    }
+
+    function getSlotRate(slotStr, dateStr) {
+      const dateObj = new Date(dateStr);
+      const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6); // Sun or Sat
+      const isPeakSlot = slotStr.includes("PM") && !slotStr.startsWith("12:") && !slotStr.startsWith("01:") && !slotStr.startsWith("02:") && !slotStr.startsWith("03:") && !slotStr.startsWith("04:") && !slotStr.startsWith("05:");
+
+      if (isPeakSlot) return Number(configData.peakPricePerHour || 1200);
+      if (isWeekend) return Number(configData.weekendPricePerHour || 1200);
+      return Number(configData.pricePerHour || 1000);
     }
 
     function loadSlots() {
       selectedSlots = [];
       discountAmount = 0;
       document.getElementById("discountRow").classList.add("d-none");
-      document.getElementById("couponMessage").innerText = "";
-      document.getElementById("couponCode").value = "";
       document.getElementById("bookingDetailsCard").classList.add("d-none");
       
       const date = document.getElementById("bookingDate").value;
       const container = document.getElementById("slotsContainer");
       const statusInfo = document.getElementById("slotStatusInfo");
       
-      statusInfo.innerText = "Fetching slots...";
+      statusInfo.innerText = "Loading...";
       container.innerHTML = `<div class="text-center w-100 py-4"><div class="spinner-border text-success"></div></div>`;
 
       fetch(`${SCRIPT_URL}?action=getSlots&date=${date}`)
         .then(res => res.json())
-        .then(data => {
+        .then(res => {
+          const data = res.data || {};
           container.innerHTML = "";
           statusInfo.innerText = `${data.bookedSlots ? data.bookedSlots.length : 0} Booked`;
 
           timeSlots.forEach(slot => {
             const isBooked = (data.bookedSlots || []).includes(slot);
             const isBlocked = (data.blockedSlots || []).includes(slot);
+            const rate = getSlotRate(slot, date);
             
             let btnClass = "slot-available";
             let disabled = "";
-            let displayLabel = slot;
+            let displayLabel = `${slot}<br><small>₹${rate}/hr</small>`;
 
             if (isBooked) {
-              btnClass = "slot-booked";
-              disabled = "disabled";
-              displayLabel += " <small>(Booked)</small>";
+              btnClass = "slot-booked"; disabled = "disabled"; displayLabel = `${slot}<br><small>(Booked)</small>`;
             } else if (isBlocked) {
-              btnClass = "slot-blocked";
-              disabled = "disabled";
-              displayLabel += " <small>(Blocked)</small>";
+              btnClass = "slot-blocked"; disabled = "disabled"; displayLabel = `${slot}<br><small>(Blocked)</small>`;
             }
 
             const col = document.createElement("div");
@@ -257,9 +253,6 @@
             col.innerHTML = `<button class="btn slot-btn ${btnClass}" ${disabled} onclick="toggleSlot('${slot}', this)">${displayLabel}</button>`;
             container.appendChild(col);
           });
-        })
-        .catch(err => {
-          container.innerHTML = `<div class="text-center text-danger w-100 py-3">Error loading slots. Please check network.</div>`;
         });
     }
 
@@ -282,25 +275,23 @@
       }
     }
 
+    function calculateSubtotal() {
+      const date = document.getElementById("bookingDate").value;
+      return selectedSlots.reduce((sum, slot) => sum + getSlotRate(slot, date), 0);
+    }
+
     function applyCoupon() {
       const code = document.getElementById("couponCode").value.trim().toUpperCase();
       const msg = document.getElementById("couponMessage");
-      const subtotal = selectedSlots.length * pricePerHour;
+      const subtotal = calculateSubtotal();
 
       if (code === "BENIYA10" || code === "TURF10") {
         discountAmount = Math.round(subtotal * 0.10);
-        msg.className = "form-text text-success fw-bold";
-        msg.innerText = "Coupon applied! 10% Discount given.";
-        document.getElementById("discountRow").classList.remove("d-none");
-      } else if (code === "PLAY200") {
-        discountAmount = Math.min(200, subtotal);
-        msg.className = "form-text text-success fw-bold";
-        msg.innerText = "Coupon applied! ₹200 OFF.";
+        msg.className = "form-text text-success fw-bold"; msg.innerText = "10% Discount Applied!";
         document.getElementById("discountRow").classList.remove("d-none");
       } else {
         discountAmount = 0;
-        msg.className = "form-text text-danger";
-        msg.innerText = "Invalid coupon code.";
+        msg.className = "form-text text-danger"; msg.innerText = "Invalid coupon code.";
         document.getElementById("discountRow").classList.add("d-none");
       }
       calculateAmounts();
@@ -310,9 +301,8 @@
       const durationHours = selectedSlots.length;
       document.getElementById("summaryDuration").innerText = `${durationHours} ${durationHours === 1 ? 'hr' : 'hrs'}`;
 
-      const subtotal = durationHours * pricePerHour;
+      const subtotal = calculateSubtotal();
       const finalTotal = Math.max(0, subtotal - discountAmount);
-
       const isAdvance = document.getElementById("payAdvance").checked;
       const payNow = isAdvance ? Math.ceil(finalTotal / 2) : finalTotal;
       const pending = Math.max(0, finalTotal - payNow);
@@ -320,10 +310,8 @@
       document.getElementById("lblSubtotal").innerText = `₹${subtotal}`;
       document.getElementById("lblDiscount").innerText = `-₹${discountAmount}`;
       document.getElementById("lblTotal").innerText = `₹${finalTotal}`;
-
       document.getElementById("fullLabel").innerText = `₹${finalTotal}`;
       document.getElementById("advanceLabel").innerText = `₹${Math.ceil(finalTotal / 2)}`;
-
       document.getElementById("lblPayNow").innerText = `₹${payNow}`;
       document.getElementById("lblPending").innerText = `₹${pending}`;
 
@@ -339,20 +327,12 @@
       const date = document.getElementById("bookingDate").value;
       const payType = document.querySelector('input[name="payType"]:checked').value;
 
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-      if (!phone || phone.length < 10) {
-        alert("Please enter a valid 10-digit mobile number.");
-        return;
-      }
-      if (selectedSlots.length === 0) {
-        alert("Please select at least one slot.");
+      if (!name || !phone || phone.length < 10) {
+        alert("Please provide valid name and phone number.");
         return;
       }
 
-      const subtotal = selectedSlots.length * pricePerHour;
+      const subtotal = calculateSubtotal();
       const finalAmount = Math.max(0, subtotal - discountAmount);
 
       const payload = {
@@ -368,7 +348,7 @@
 
       const btn = document.getElementById("btnSubmit");
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Processing Booking...`;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Submitting...`;
 
       fetch(SCRIPT_URL, {
         method: "POST",
@@ -376,22 +356,25 @@
       })
       .then(res => res.json())
       .then(res => {
-        if (res.status === "success") {
+        const data = res.data || {};
+        if (data.status === "success") {
           const waNumber = (configData.whatsappNumber || "919978546348").replace(/\D/g, "");
-          const noteText = notes ? `\n📌 Note: ${notes}` : "";
-          const encodedMsg = encodeURIComponent(`Hello Beniya Cricket Arena,\nI have completed my booking online!\n\nBooking ID: ${res.bookingId}${noteText}\n\n${res.receiptText}`);
+          const encodedMsg = encodeURIComponent(`Hello Beniya Cricket Arena,\nI have completed my booking!\n\nBooking ID: ${data.bookingId}\n${data.receiptText}`);
           window.location.href = `https://wa.me/${waNumber}?text=${encodedMsg}`;
         } else {
-          alert("Error: " + (res.message || "Failed to place booking"));
+          alert("Booking failed. Please try again.");
           btn.disabled = false;
-          btn.innerHTML = `<i class="fa-brands fa-whatsapp me-2"></i>I HAVE PAID — VERIFY BOOKING`;
         }
-      })
-      .catch(err => {
-        alert("Network Error. Please try again.");
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-brands fa-whatsapp me-2"></i>I HAVE PAID — VERIFY BOOKING`;
       });
+    }
+
+    function shareArena() {
+      if (navigator.share) {
+        navigator.share({ title: 'Beniya Cricket Arena', url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Arena URL copied to clipboard!");
+      }
     }
   </script>
 </body>
