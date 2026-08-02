@@ -20,7 +20,7 @@
 </head>
 <body>
 
-  <!-- Top Navigation Bar with Settings Button -->
+  <!-- Top Navigation Bar -->
   <nav class="navbar navbar-dark bg-dark px-3 shadow-sm sticky-top">
     <span class="navbar-brand fw-bold"><i class="fa-solid fa-shield-halved me-2"></i>Beniya Admin Panel</span>
     <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#settingsMenu">
@@ -28,72 +28,68 @@
     </button>
   </nav>
 
-  <!-- Offcanvas Right Menu for System Configurations -->
+  <!-- Offcanvas Right Settings -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="settingsMenu">
     <div class="offcanvas-header bg-dark text-white">
       <h5 class="offcanvas-title fw-bold"><i class="fa-solid fa-gears me-2"></i>System Settings</h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-      
       <form id="configForm" onsubmit="event.preventDefault(); saveSettings();">
         <div class="mb-3">
           <label class="form-label fw-bold small text-secondary">UPI ID for Payments</label>
           <input type="text" id="cfgUpi" class="form-control" placeholder="e.g. beniya@upi">
         </div>
-        
         <div class="mb-3">
           <label class="form-label fw-bold small text-secondary">Owner WhatsApp Number</label>
           <input type="text" id="cfgPhone" class="form-control" placeholder="e.g. 919978546348">
         </div>
-        
         <div class="mb-3">
           <label class="form-label fw-bold small text-secondary">Default Price Per Hour (₹)</label>
           <input type="number" id="cfgPrice" class="form-control" placeholder="1000">
         </div>
-
         <div class="mb-4">
-          <label class="form-label fw-bold small text-secondary">Banner Slider Images (Comma Separated URLs)</label>
+          <label class="form-label fw-bold small text-secondary">Banner Slider Images (Comma Separated)</label>
           <textarea id="cfgImages" class="form-control" rows="4" placeholder="https://image1.jpg, https://image2.jpg"></textarea>
         </div>
-
         <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow-sm">
           <i class="fa-solid fa-floppy-disk me-2"></i>Save Configuration
         </button>
       </form>
-
     </div>
   </div>
 
-  <div class="container my-4" style="max-width: 950px;">
+  <div class="container my-4" style="max-width: 980px;">
 
-    <!-- Analytics Dashboard Header -->
+    <!-- Complete Analytics Summary Header -->
     <div class="row g-3 mb-4">
-      <div class="col-6 col-md-6">
+      <div class="col-6 col-md-3">
         <div class="card stat-card bg-success text-white p-3 shadow-sm">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-white-50 fw-semibold text-uppercase">Today's Bookings</small>
-              <h2 id="cardTodayCount" class="fw-bold mb-0">0</h2>
-            </div>
-            <i class="fa-solid fa-calendar-check fa-2x text-white-50"></i>
-          </div>
+          <small class="text-white-50 fw-semibold text-uppercase">Today's Bookings</small>
+          <h3 id="cardTodayCount" class="fw-bold mb-0">0</h3>
         </div>
       </div>
-      <div class="col-6 col-md-6">
+      <div class="col-6 col-md-3">
         <div class="card stat-card bg-primary text-white p-3 shadow-sm">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <small class="text-white-50 fw-semibold text-uppercase">Last 7 Days Revenue</small>
-              <h2 id="cardRevenue" class="fw-bold mb-0">₹0</h2>
-            </div>
-            <i class="fa-solid fa-indian-rupee-sign fa-2x text-white-50"></i>
-          </div>
+          <small class="text-white-50 fw-semibold text-uppercase">7-Day Revenue</small>
+          <h3 id="cardRevenue" class="fw-bold mb-0">₹0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card bg-warning text-dark p-3 shadow-sm">
+          <small class="text-dark-50 fw-semibold text-uppercase">Pending Approvals</small>
+          <h3 id="cardPending" class="fw-bold mb-0">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card stat-card bg-info text-white p-3 shadow-sm">
+          <small class="text-white-50 fw-semibold text-uppercase">Total Bookings</small>
+          <h3 id="cardTotal" class="fw-bold mb-0">0</h3>
         </div>
       </div>
     </div>
 
-    <!-- Main Operational Tabs -->
+    <!-- Main Navigation Tabs -->
     <ul class="nav nav-pills mb-3 bg-white p-2 rounded-3 border shadow-sm" id="adminTabs">
       <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#overviewTab"><i class="fa-solid fa-chart-line me-2"></i>Overview</a></li>
       <li class="nav-item"><a class="nav-link position-relative" data-bs-toggle="pill" href="#approvalsTab"><i class="fa-solid fa-clock-rotate-left me-2"></i>Approvals <span id="pendingBadge" class="badge bg-danger rounded-pill d-none">0</span></a></li>
@@ -105,28 +101,26 @@
       
       <!-- Overview Tab -->
       <div class="tab-pane fade show active" id="overviewTab">
-        
         <h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-calendar-day me-2"></i>Today's Bookings</h5>
         <div class="list-group mb-4 shadow-sm" id="listToday"></div>
 
-        <h5 class="fw-bold text-primary mb-2"><i class="fa-solid fa-calendar-week me-2"></i>Upcoming Bookings (Next 30 Days)</h5>
+        <h5 class="fw-bold text-primary mb-2"><i class="fa-solid fa-calendar-week me-2"></i>Upcoming Bookings</h5>
         <div class="list-group mb-4 shadow-sm" id="listUpcoming"></div>
 
-        <h5 class="fw-bold text-secondary mb-2"><i class="fa-solid fa-history me-2"></i>Past Bookings (Last 7 Days)</h5>
+        <h5 class="fw-bold text-secondary mb-2"><i class="fa-solid fa-history me-2"></i>Past Bookings</h5>
         <div class="list-group mb-4 shadow-sm" id="listPast"></div>
-
       </div>
 
       <!-- Approvals Tab -->
       <div class="tab-pane fade" id="approvalsTab">
-        <h5 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-triangle-exclamation me-2"></i>Pending Payment Verifications</h5>
+        <h5 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-triangle-exclamation me-2"></i>Pending Verifications</h5>
         <div class="list-group shadow-sm" id="listPending"></div>
       </div>
 
       <!-- Manual Booking Tab -->
       <div class="tab-pane fade" id="manualTab">
         <div class="card p-4 shadow-sm border-0 rounded-3" style="max-width: 550px;">
-          <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen-to-square me-2 text-primary"></i>Add Manual Offline Booking</h5>
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen-to-square me-2 text-primary"></i>Add Offline / Phone Booking</h5>
           <div class="mb-3">
             <label class="form-label small fw-bold">Customer Name</label>
             <input type="text" id="mbName" class="form-control" placeholder="Name">
@@ -144,7 +138,7 @@
             <input type="text" id="mbSlot" class="form-control" placeholder="e.g. 06:00 AM - 07:00 AM">
           </div>
           <div class="mb-3">
-            <label class="form-label small fw-bold">Collected Amount (₹)</label>
+            <label class="form-label small fw-bold">Amount Collected (₹)</label>
             <input type="number" id="mbAmount" class="form-control" placeholder="1000">
           </div>
           <button class="btn btn-primary w-100 fw-bold py-2" onclick="submitManualBooking()">Confirm Manual Booking</button>
@@ -154,13 +148,13 @@
       <!-- Block/Unblock Tab -->
       <div class="tab-pane fade" id="blockTab">
         <div class="card p-4 shadow-sm border-0 rounded-3" style="max-width: 550px;">
-          <h5 class="fw-bold mb-3"><i class="fa-solid fa-lock me-2 text-danger"></i>Block or Unblock Time Slot</h5>
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-lock me-2 text-danger"></i>Block or Unblock Slot</h5>
           <div class="mb-3">
-            <label class="form-label small fw-bold">Select Date</label>
+            <label class="form-label small fw-bold">Date</label>
             <input type="date" id="blkDate" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label small fw-bold">Select Slot String</label>
+            <label class="form-label small fw-bold">Slot Time</label>
             <input type="text" id="blkSlot" class="form-control" placeholder="e.g. 02:00 PM - 03:00 PM">
           </div>
           <div class="d-flex gap-2">
@@ -171,21 +165,18 @@
       </div>
 
     </div>
-
   </div>
 
-  <!-- Customer Detail Pop-up Modal -->
+  <!-- Detailed Booking Information Modal -->
   <div class="modal fade" id="detailModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-receipt me-2"></i>Full Booking Details</h5>
+          <h5 class="modal-title fw-bold"><i class="fa-solid fa-receipt me-2"></i>Full Booking Receipt</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="modalBody"></div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light" id="modalFooter"></div>
       </div>
     </div>
   </div>
@@ -259,7 +250,7 @@
           </div>
           <div class="text-end">
             <span class="badge ${b.status === 'APPROVED' ? 'bg-success' : b.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-danger'} mb-1">${b.status}</span>
-            <div class="small fw-bold text-primary">₹${b.paidAmount || b.amount}</div>
+            <div class="small fw-bold text-primary">Paid: ₹${b.paidAmount || b.amount}</div>
           </div>
         `;
 
@@ -291,12 +282,14 @@
       });
 
       if (listToday.children.length === 0) listToday.innerHTML = `<div class="list-group-item text-muted text-center py-3">No bookings for today</div>`;
-      if (listUpcoming.children.length === 0) listUpcoming.innerHTML = `<div class="list-group-item text-muted text-center py-3">No upcoming bookings in next 30 days</div>`;
+      if (listUpcoming.children.length === 0) listUpcoming.innerHTML = `<div class="list-group-item text-muted text-center py-3">No upcoming bookings</div>`;
       if (listPast.children.length === 0) listPast.innerHTML = `<div class="list-group-item text-muted text-center py-3">No past bookings found</div>`;
       if (listPending.children.length === 0) listPending.innerHTML = `<div class="list-group-item text-muted text-center py-3">No pending approvals</div>`;
 
       document.getElementById("cardTodayCount").innerText = todayCount;
       document.getElementById("cardRevenue").innerText = `₹${rev7Days}`;
+      document.getElementById("cardPending").innerText = pendingCount;
+      document.getElementById("cardTotal").innerText = allBookings.length;
 
       const badge = document.getElementById("pendingBadge");
       if (pendingCount > 0) {
@@ -322,20 +315,29 @@
         <div class="mb-1"><strong>Payment Type:</strong> ${b.paymentType || 'FULL'}</div>
         <div class="mb-1"><strong>Total Amount:</strong> ₹${total}</div>
         <div class="mb-1 text-success"><strong>Paid Amount:</strong> ₹${paid}</div>
-        <div class="mb-2 text-danger"><strong>Pending Amount:</strong> ₹${pending}</div>
+        <div class="mb-2 text-danger"><strong>Pending Due Amount:</strong> ₹${pending}</div>
         <hr>
         <div><strong>Status:</strong> <span class="badge ${b.status === 'APPROVED' ? 'bg-success' : b.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-danger'}">${b.status}</span></div>
       `;
+
+      document.getElementById("modalFooter").innerHTML = `
+        <button class="btn btn-outline-success btn-sm fw-bold" onclick="sendWhatsAppReceipt('${b.phone}', '${b.bookingId}', '${b.customerName}', '${b.date}', '${(b.slots||[]).join(", ")}', '${total}', '${paid}', '${pending}')">
+          <i class="fa-brands fa-whatsapp me-1"></i> Send Receipt
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Close</button>
+      `;
+
       new bootstrap.Modal(document.getElementById("detailModal")).show();
     }
 
-    function approve(id) {
-      postData({ action: "approveBooking", bookingId: id });
+    function sendWhatsAppReceipt(phone, id, name, date, slots, total, paid, pending) {
+      const waPhone = phone.replace(/\D/g, "");
+      const text = encodeURIComponent(`📋 Booking Receipt - Beniya Cricket Arena\n────────────────────\nBooking ID: ${id}\nName: ${name}\nDate: ${date}\nSlots: ${slots}\n\nTotal: ₹${total}\nPaid: ₹${paid}\nPending: ₹${pending}\n\nThank you for booking with us!`);
+      window.open(`https://wa.me/${waPhone}?text=${text}`, '_blank');
     }
 
-    function reject(id) {
-      postData({ action: "rejectBooking", bookingId: id });
-    }
+    function approve(id) { postData({ action: "approveBooking", bookingId: id }); }
+    function reject(id) { postData({ action: "rejectBooking", bookingId: id }); }
 
     function saveSettings() {
       const imagesRaw = document.getElementById("cfgImages").value;
@@ -359,7 +361,7 @@
       const amount = Number(document.getElementById("mbAmount").value);
 
       if (!name || !phone || !date || !slot) {
-        alert("Please fill in all manual booking details.");
+        alert("Please fill in all details.");
         return;
       }
 
@@ -379,7 +381,7 @@
       const slot = document.getElementById("blkSlot").value.trim();
 
       if (!date || !slot) {
-        alert("Please select a date and slot string.");
+        alert("Please select date and slot.");
         return;
       }
 
