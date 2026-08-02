@@ -1,381 +1,445 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beniya Cricket Arena - Turf Booking</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    :root { --primary: #198754; --primary-dark: #146c43; }
-    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .hero-banner { background: linear-gradient(135deg, #0f5132, #198754); color: white; padding: 30px 15px; border-radius: 0 0 24px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-    .action-icon-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 8px 16px; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-    .action-icon-btn:hover { background: rgba(255,255,255,0.3); color: white; }
-    .slot-btn { width: 100%; margin-bottom: 8px; font-weight: 600; font-size: 0.8rem; border-radius: 8px; padding: 10px 4px; transition: all 0.2s; }
-    .slot-available { background-color: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-    .slot-available:hover { background-color: #c8e6c9; }
-    .slot-selected { background-color: var(--primary) !important; color: white !important; border-color: var(--primary-dark) !important; box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3); }
-    .slot-booked { background-color: #ffebee; color: #c62828; border: 1.5px solid #ef9a9a; cursor: not-allowed; opacity: 0.8; }
-    .slot-blocked { background-color: #e0e0e0; color: #616161; border: 1.5px solid #bdbdbd; cursor: not-allowed; opacity: 0.7; }
-    .carousel-item img { height: 240px; object-fit: cover; border-radius: 12px; }
-    footer { background: #212529; color: #adb5bd; padding: 25px 0; border-top: 1px solid #343a40; }
-  </style>
+<meta charset="utf-8">
+<meta name="google-site-verification" content="X2tDA9TlVgHUObbvvEvJ-EGfzRuP2AYIP2wRL-dQbG0" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07110d">
+<title>Cricket Turf in Varanasi | Box Cricket & 24/7 Booking | Beniya Cricket Arena</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#07110d;--card:#0d1b14;--gold:#f5b82e;--text:#f7f4e8;--muted:#a9b6ae;--green:#35d07f;--red:#ef6262;--line:#294b3a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:var(--text);font-family:Arial,sans-serif}button,input{font:inherit}
+.hero,.wrap{max-width:760px;margin:auto}.hero{padding:18px 18px 0}.slider{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line)}.slides{display:flex;transition:transform .45s ease}.slide{min-width:100%;height:360px;object-fit:cover;display:block}.sliderBtn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;border-radius:50%;margin:0;background:rgba(0,0,0,.55);color:white;font-size:24px;z-index:2}.sliderPrev{left:10px}.sliderNext{right:10px}.sliderDots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:7px}.sliderDot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.5)}.sliderDot.active{background:var(--gold)}.albumGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.albumGrid img{width:100%;height:170px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.wrap{padding:18px 18px 80px}h1{color:var(--gold);margin:10px 0 5px}.sub{color:var(--muted);margin-bottom:20px}
+.card{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+.dates{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}.dateBtn{min-width:105px;background:#10251b;color:white}.dateBtn.selected,.slot.selected{background:var(--gold);color:#111}
+.slots{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.slot{background:#10251b;color:white}.slot:disabled{opacity:.42;cursor:not-allowed}
+button,input{width:100%;padding:13px;border-radius:11px;border:1px solid #365d49;margin:5px 0 10px}button{background:var(--green);color:#06120b;font-weight:bold;cursor:pointer}input{background:#07110d;color:white}.gold{background:var(--gold)}.danger{background:var(--red);color:white}.secondary{background:#345545;color:white}.hidden{display:none!important}
+.summary p{display:flex;justify-content:space-between;gap:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;color:var(--gold);margin-top:8px}
+.paybox{text-align:center}.qr{display:flex;justify-content:center;background:white;padding:14px;width:max-content;margin:14px auto;border-radius:14px}.upi{font-size:18px;word-break:break-all;color:var(--gold)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.status{padding:12px;border:1px solid var(--line);border-radius:12px;background:#10251b}
+.bookingItem{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;background:#091710}.bookingItem p{margin:7px 0}.bookingTop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#244b37;font-size:12px}
+.biggestTurfBadge{max-width:760px;margin:12px auto 16px;padding:0 18px}.biggestTurfInner{text-align:center;padding:18px 16px;border-radius:18px;border:2px solid var(--gold);background:linear-gradient(135deg,#0d1b14,#183b28);box-shadow:0 10px 30px rgba(0,0,0,.28)}.biggestTurfInner .crown{font-size:30px}.biggestTurfInner .bigText{display:block;color:var(--gold);font-size:28px;font-weight:900;margin-top:5px}.biggestTurfInner .sizeText{display:block;color:white;font-size:18px;font-weight:800;margin-top:4px}.featureGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}.featureItem{background:#091710;border:1px solid var(--line);border-radius:13px;padding:13px;font-weight:bold}@media(max-width:560px){.biggestTurfInner .bigText{font-size:23px}.featureGrid{grid-template-columns:1fr}}
+@media(max-width:560px){.slots,.actions{grid-template-columns:1fr}.hero{padding:0}.slider{border-radius:0}.slide{height:260px}.albumGrid{grid-template-columns:1fr}.albumGrid img{height:230px}}
+
+.topbar{max-width:760px;margin:auto;padding:14px 18px 0;display:flex;justify-content:flex-end}.accountBtn{width:auto;min-width:145px;margin:0;background:var(--gold);color:#111}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:center;justify-content:center;padding:18px}.modalPanel{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}.modalHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.closeBtn{width:44px;margin:0;background:#345545;color:white}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.accountBooking{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#091710}.adminAccess{max-width:760px;margin:0 auto;padding:0 18px 28px}.adminAccess a{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:12px;background:#345545;color:white;text-decoration:none;font-weight:bold;border:1px solid #4d7863}
+
+
+.premiumActions{max-width:760px;margin:0 auto;padding:0 18px 18px;display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.premiumActions button{background:#10251b;color:white;border:1px solid var(--line)}
+.accountHero{padding:16px;border-radius:16px;background:linear-gradient(135deg,#183b28,#10251b);border:1px solid var(--line);margin-bottom:14px}.accountHero h3{margin:0;color:var(--gold)}
+.accountStats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0 18px}.accountStat{padding:13px;border-radius:13px;background:#091710;border:1px solid var(--line)}.accountStat strong{display:block;color:var(--gold);font-size:22px}
+.visitGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.visitCard{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px}.reviewQuote{padding:12px;border-left:3px solid var(--gold);background:#091710;border-radius:8px;margin:10px 0}
+@media(max-width:560px){.premiumActions{grid-template-columns:1fr}.visitGrid{grid-template-columns:1fr}}
+</style>
+<meta name="description" content="Beniya Cricket Arena is a 24/7 cricket turf and box cricket ground in Beniya Bagh, Varanasi. Book cricket turf slots online for practice, friendly matches and group games near Godowlia, Chetganj and Chowk.">
+<meta name="keywords" content="cricket turf in Varanasi, cricket turf near me, best cricket turf in Varanasi, cricket ground in Varanasi, cricket ground near me, box cricket in Varanasi, box cricket near me, cricket practice ground in Varanasi, cricket net practice in Varanasi, 24 hour cricket turf in Varanasi, 24/7 cricket turf in Varanasi, cricket turf booking in Varanasi, online cricket turf booking Varanasi, cricket ground booking Varanasi, cricket turf in Beniya Bagh, cricket ground in Beniya Bagh, Beniya Cricket Arena, tallest cricket turf in Varanasi, 35 feet high cricket turf in Varanasi, cricket turf near Godowlia, cricket turf near Chetganj, cricket turf near Chowk Varanasi">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://beniya-cricket-arena.github.io/">
+<meta name="geo.region" content="IN-UP"><meta name="geo.placename" content="Beniya Bagh, Varanasi">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Beniya Cricket Arena">
+<meta property="og:title" content="Beniya Cricket Arena | 24/7 Cricket Booking in Beniya Bagh, Varanasi"><meta property="og:description" content="Book cricket slots online at Beniya Cricket Arena in Beniya Bagh, Varanasi, Uttar Pradesh. Open 24/7 with online slot availability, UPI payment and easy booking.">
+<meta property="og:url" content="https://beniya-cricket-arena.github.io/"><meta property="og:image" content="https://beniya-cricket-arena.github.io/beniya-arena-hero.png">
+<meta property="og:image:alt" content="Beniya Cricket Arena in Beniya Bagh, Varanasi">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Beniya Cricket Arena | 24/7 Cricket Booking in Beniya Bagh, Varanasi">
+<meta name="twitter:description" content="Book cricket slots online at Beniya Cricket Arena in Beniya Bagh, Varanasi, Uttar Pradesh. Open 24/7 with online slot availability, UPI payment and easy booking."><meta name="twitter:image" content="https://beniya-cricket-arena.github.io/beniya-arena-hero.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":["SportsActivityLocation","LocalBusiness"],"@id":"https://beniya-cricket-arena.github.io/#business","name":"Beniya Cricket Arena","alternateName":["Beniya Cricket","Benia Cricket","Beniya Cricket Arena Varanasi"],"url":"https://beniya-cricket-arena.github.io/","image":["https://beniya-cricket-arena.github.io/beniya-arena-hero.png"],"description":"Beniya Cricket Arena is a 24/7 cricket turf, box cricket ground and cricket practice venue in Beniya Bagh, Varanasi. The 60 × 120 ft arena has a 35 ft high net and offers online cricket turf booking for practice sessions, friendly matches and group games.","address":{"@type":"PostalAddress","streetAddress":"Beniya Bagh","addressLocality":"Varanasi","addressRegion":"Uttar Pradesh","postalCode":"221001","addressCountry":"IN"},"areaServed":{"@type":"City","name":"Varanasi"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"00:00","closes":"23:59"}],"hasMap":"https://www.google.com/maps/search/?api=1&query=Beniya+Bagh+Varanasi+221001","keywords":["cricket turf in Varanasi","cricket turf near me","best cricket turf in Varanasi","cricket ground in Varanasi","cricket ground near me","box cricket in Varanasi","box cricket near me","cricket practice ground in Varanasi","cricket net practice in Varanasi","24 hour cricket turf in Varanasi","24/7 cricket turf in Varanasi","cricket turf booking in Varanasi","online cricket turf booking Varanasi","cricket ground booking Varanasi","cricket turf in Beniya Bagh","cricket ground in Beniya Bagh","Beniya Cricket Arena","tallest cricket turf in Varanasi","35 feet high cricket turf in Varanasi","cricket turf near Godowlia","cricket turf near Chetganj","cricket turf near Chowk Varanasi"],"amenityFeature":[{"@type":"LocationFeatureSpecification","name":"Open 24 hours","value":true},{"@type":"LocationFeatureSpecification","name":"Online cricket turf booking","value":true},{"@type":"LocationFeatureSpecification","name":"35 feet high safety net","value":true},{"@type":"LocationFeatureSpecification","name":"60 × 120 ft cricket turf","value":true}]}</script>
 </head>
 <body>
+<div class="topbar"><button id="accountBtn" class="accountBtn">👤 ACCOUNT</button></div>
+<div class="hero"><div class="slider" id="homeSlider"><div class="slides" id="slides"><img class="slide" src="beniya-arena-hero.png" alt="Beniya Cricket Arena in Beniya Bagh, Varanasi"></div><button class="sliderBtn sliderPrev" id="sliderPrev">‹</button><button class="sliderBtn sliderNext" id="sliderNext">›</button><div class="sliderDots" id="sliderDots"></div></div></div>
+<div class="biggestTurfBadge"><div class="biggestTurfInner"><div class="crown">👑</div><span class="bigText">VARANASI'S BIGGEST TURF</span><span class="sizeText">🏏 60 × 120 FT CRICKET TURF</span></div></div>
+<div class="premiumActions"><button id="quickBookBtn">🏏 BOOK A SLOT</button><button id="quickWhatsappBtn">💬 WHATSAPP</button><button id="shareArenaBtn">📤 SHARE ARENA</button><button id="aboutUsBtn">ℹ️ ABOUT US</button></div>
+<section id="aboutUsSection" class="wrap hidden" style="padding-top:0;padding-bottom:18px">
+  <div class="card" style="margin-bottom:0">
+    <h2 style="color:var(--gold);margin-top:0">ℹ️ About Beniya Cricket Arena</h2>
+    <p style="font-size:18px"><b>📏 Tallest Cricket Turf in Varanasi with a height of 35 feet</b></p>
+    <p>Beniya Cricket Arena is a 24/7 cricket turf in Beniya Bagh, Varanasi, built for practice sessions, friendly matches and competitive cricket.</p>
+    <p><b>🏏 Turf size:</b> 60 × 120 ft &nbsp; · &nbsp; <b>🕐 Open:</b> 24 hours, 7 days a week</p>
+    <p><b>📍 Location:</b> Beniya Bagh, Varanasi, Uttar Pradesh 221001</p>
+    <p><b>📞 Phone / WhatsApp:</b> +91 79855 01992<br><b>✉️ Email:</b> beniyacricketarena@gmail.com</p>
+  </div>
+</section>
 
-  <!-- Hero Header Banner with Action Icons -->
-  <header class="hero-banner text-center">
-    <div class="container">
-      <h2 class="fw-bold mb-1"><i class="fa-solid fa-cricket-bat-ball me-2"></i>BENIYA CRICKET ARENA</h2>
-      <p class="small text-light mb-3">Premium Turf Booking & Sports Facility</p>
-      
-      <div class="d-flex justify-content-center flex-wrap gap-2 mb-2">
-        <a href="#aboutSection" class="action-icon-btn"><i class="fa-solid fa-circle-info"></i> About Us</a>
-        <a id="btnNavWhatsapp" href="https://wa.me/919978546348" target="_blank" class="action-icon-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-        <a id="btnNavLocation" href="https://maps.google.com" target="_blank" class="action-icon-btn"><i class="fa-solid fa-location-dot"></i> Locate Arena</a>
-        <button onclick="shareArena()" class="action-icon-btn"><i class="fa-solid fa-share-nodes"></i> Share Arena</button>
-      </div>
-    </div>
-  </header>
-
-  <div class="container my-4" style="max-width: 680px;">
-    
-    <!-- Image Gallery Carousel -->
-    <div id="arenaCarousel" class="carousel slide mb-4 shadow-sm rounded-3 overflow-hidden" data-bs-ride="carousel">
-      <div class="carousel-inner" id="carouselInner">
-        <div class="carousel-item active">
-          <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=1000&q=80" class="d-block w-100" alt="Turf Ground">
-        </div>
-      </div>
+<div class="wrap">
+  <h1>🏏 Beniya Cricket Arena</h1>
+  <div class="sub">Choose an available date and time. Past dates and already-started slots are automatically unavailable.</div>
+  <div id="bookingFlow">
+    <div class="card">
+      <h2>1. Select date</h2>
+      <div id="dates" class="dates"></div>
     </div>
 
-    <!-- Date Selection -->
-    <div class="card shadow-sm mb-4 border-0 rounded-3">
-      <div class="card-body">
-        <label class="form-label fw-bold text-secondary"><i class="fa-regular fa-calendar-days me-2"></i>Select Booking Date</label>
-        <input type="date" id="bookingDate" class="form-control form-control-lg border-2" onchange="loadSlots()">
-      </div>
+    <div class="card">
+      <h2>2. Select time slot</h2>
+      <div id="slots" class="slots"><p class="muted">Loading slots…</p></div>
     </div>
 
-    <!-- Slot Selection Grid -->
-    <div class="card shadow-sm mb-4 border-0 rounded-3">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold mb-0 text-dark"><i class="fa-regular fa-clock me-2"></i>Available Time Slots</h5>
-          <small class="text-muted" id="slotStatusInfo">Loading...</small>
-        </div>
-        <div id="slotsContainer" class="row row-cols-2 row-cols-sm-3 g-2">
-          <div class="text-center w-100 py-4"><div class="spinner-border text-success"></div></div>
-        </div>
+    <div class="card">
+      <h2>3. Your details</h2>
+      <label>Name</label><input id="customerName" placeholder="Customer name" autocomplete="name">
+      <label>Mobile number</label><input id="phone" placeholder="10-digit mobile number" inputmode="numeric" autocomplete="tel">
+      <div class="summary">
+        <p><span>Selected slots</span><b id="selectedCount">0</b></p>
+        <p><span>Total amount</span><b id="totalAmount">₹0</b></p>
       </div>
+      <button id="continueBtn" class="gold">CONTINUE TO PAYMENT</button>
+      <div id="bookingMessage" class="message"></div>
     </div>
-
-    <!-- Customer Form & Payment Card -->
-    <div id="bookingDetailsCard" class="card shadow-sm mb-4 border-0 rounded-3 d-none">
-      <div class="card-header bg-white fw-bold py-3 border-bottom-0"><i class="fa-solid fa-user-check me-2 text-success"></i>Customer & Payment Details</div>
-      <div class="card-body pt-0">
-        
-        <div class="alert alert-success d-flex justify-content-between align-items-center mb-3">
-          <div><i class="fa-solid fa-stopwatch me-1"></i> <strong>Duration:</strong> <span id="summaryDuration">0 hrs</span></div>
-          <div><i class="fa-solid fa-chart-line me-1"></i> <strong>Rate Type:</strong> <span id="summaryRateType">Dynamic</span></div>
-        </div>
-
-        <div class="row g-2 mb-3">
-          <div class="col-md-6">
-            <label class="form-label small fw-bold">Full Name *</label>
-            <input type="text" id="custName" class="form-control" placeholder="Enter full name">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label small fw-bold">WhatsApp Number *</label>
-            <input type="tel" id="custPhone" class="form-control" placeholder="10-digit phone number" maxlength="10">
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Special Requests / Notes (Optional)</label>
-          <input type="text" id="custNotes" class="form-control" placeholder="e.g. Need extra bats">
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Promo / Discount Code</label>
-          <div class="input-group">
-            <input type="text" id="couponCode" class="form-control text-uppercase" placeholder="e.g. BENIYA10">
-            <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">Apply</button>
-          </div>
-          <small id="couponMessage" class="form-text"></small>
-        </div>
-
-        <label class="form-label small fw-bold">Select Payment Plan</label>
-        <div class="d-flex gap-2 mb-3">
-          <div class="form-check border p-3 flex-fill rounded bg-white">
-            <input class="form-check-input" type="radio" name="payType" id="payFull" value="FULL" checked onchange="calculateAmounts()">
-            <label class="form-check-label fw-bold" for="payFull">Full Payment<br><span class="text-success fs-5" id="fullLabel">₹0</span></label>
-          </div>
-          <div class="form-check border p-3 flex-fill rounded bg-white">
-            <input class="form-check-input" type="radio" name="payType" id="payAdvance" value="ADVANCE" onchange="calculateAmounts()">
-            <label class="form-check-label fw-bold" for="payAdvance">50% Advance<br><span class="text-warning fs-5" id="advanceLabel">₹0</span></label>
-          </div>
-        </div>
-
-        <div class="bg-light p-3 rounded mb-3 border">
-          <div class="d-flex justify-content-between mb-2"><span>Calculated Subtotal:</span><span class="fw-bold" id="lblSubtotal">₹0</span></div>
-          <div class="d-flex justify-content-between mb-2 text-danger d-none" id="discountRow"><span>Discount:</span><span class="fw-bold" id="lblDiscount">-₹0</span></div>
-          <div class="d-flex justify-content-between mb-2 border-top pt-2"><span class="fw-bold">Total Amount:</span><span class="fw-bold" id="lblTotal">₹0</span></div>
-          <div class="d-flex justify-content-between mb-2 text-success"><span class="fw-bold">Payable Now via UPI:</span><span class="fw-bold fs-5" id="lblPayNow">₹0</span></div>
-          <div class="d-flex justify-content-between text-danger small border-top pt-2"><span>Remaining Due at Turf:</span><span class="fw-bold" id="lblPending">₹0</span></div>
-        </div>
-
-        <div class="text-center border p-3 rounded mb-3 bg-white">
-          <p class="small text-muted mb-2"><i class="fa-solid fa-qrcode me-1"></i>Scan UPI QR Code to Pay</p>
-          <img id="qrCodeImg" src="" alt="UPI QR Code" class="img-fluid rounded shadow-sm" style="max-height: 220px;">
-          <div class="small text-muted mt-2">UPI ID: <strong id="displayUpiId">loading...</strong></div>
-        </div>
-
-        <button id="btnSubmit" class="btn btn-success btn-lg w-100 fw-bold py-3 shadow" onclick="submitBooking()">
-          <i class="fa-brands fa-whatsapp me-2"></i>I HAVE PAID — VERIFY BOOKING
-        </button>
-      </div>
-    </div>
-
-    <!-- About Us Section -->
-    <div id="aboutSection" class="card shadow-sm border-0 rounded-3 mb-4">
-      <div class="card-body">
-        <h5 class="fw-bold text-dark mb-2"><i class="fa-solid fa-circle-info me-2 text-success"></i>About Beniya Cricket Arena</h5>
-        <p class="text-secondary small mb-0">Welcome to Beniya Cricket Arena! We offer premier box cricket turf facilities with professional floodlighting, synthetic grass, and top-quality gear.</p>
-      </div>
-    </div>
-
   </div>
 
-  <footer class="text-center">
-    <div class="container">
-      <p class="small mb-2">© Beniya Cricket Arena. All rights reserved.</p>
-      <a href="admin.html" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="fa-solid fa-lock me-1"></i> Admin Portal Login</a>
+  <div id="paymentCard" class="card hidden">
+    <h2>4. Pay by UPI</h2>
+    <div class="paybox">
+      <p><b>Scan this QR or send the payment on this UPI ID or number.</b></p>
+      <div id="qr" class="qr"></div>
+      <div id="upiText" class="upi"></div>
+      <p><b id="payAmount"></b></p>
+      <p class="muted">After completing payment in your UPI app, tap <b>I HAVE PAID</b>. No UTR entry is required.</p>
     </div>
-  </footer>
+    <button id="paidBtn">I HAVE PAID</button>
+    <button id="cancelBeforePaymentBtn" class="danger">CANCEL BOOKING</button>
+    <div id="paymentMessage" class="message"></div>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuR1AlE3gTETgZPeL9B7FStYFmCUwpABkHzm4ReUumvZ2TADoVbN55t6iOdlkU24oB/exec";
+  <div id="pendingCard" class="card hidden">
+    <h2>Payment submitted</h2>
+    <div class="status"><b>Status: <span id="currentStatus">PAYMENT PENDING</span></b></div>
+    <p>Your slot is reserved while the arena verifies the payment. A WhatsApp message with the owner’s secure approval link has been opened.</p>
+    <button id="whatsappBtn">OPEN WHATSAPP PAYMENT MESSAGE AGAIN</button>
+    <button id="checkStatusBtn" class="secondary">CHECK BOOKING STATUS</button>
+    <div id="pendingMessage" class="message"></div>
+  </div>
 
-    let selectedSlots = [];
-    let discountAmount = 0;
-    let configData = {
-      pricePerHour: 1000,
-      peakPricePerHour: 1200,
-      weekendPricePerHour: 1200
-    };
+  <div id="confirmedCard" class="card hidden">
+    <h2>✅ Booking Confirmed</h2>
+    <div id="confirmedDetails"></div>
+    <button id="receiptBtn" class="gold">DOWNLOAD RECEIPT</button>
+    <p class="muted">Confirmed bookings cannot be cancelled from the customer website. Please contact the arena if you need help.</p>
+  </div>
+<section class="card" aria-labelledby="cricket-turf-varanasi">
+  <h2 id="cricket-turf-varanasi">🏏 Cricket Turf & Box Cricket in Varanasi</h2>
+  <p>Looking for a <b>cricket turf in Varanasi</b>, <b>cricket ground in Varanasi</b> or <b>box cricket in Varanasi</b>? Beniya Cricket Arena is a 24/7 cricket turf in Beniya Bagh for cricket practice, net practice, friendly matches and group games.</p>
+  <p>Players searching for a <b>cricket turf near me</b>, <b>cricket ground near me</b> or <b>box cricket near me</b> can book available slots online. Our central Beniya Bagh location is convenient for players looking for a cricket turf near Godowlia, Chetganj and Chowk, Varanasi.</p>
+  <div class="featureGrid"><div class="featureItem">👑 Tallest Cricket Turf in Varanasi</div><div class="featureItem">📏 35 Feet High Cricket Turf</div><div class="featureItem">📐 60 × 120 Feet Playing Area</div><div class="featureItem">🕐 24/7 Cricket Turf</div><div class="featureItem">🏏 Cricket Practice Ground</div><div class="featureItem">🥅 Cricket Net Practice</div><div class="featureItem">🌱 Premium Artificial Turf</div><div class="featureItem">💡 Powerful LED Floodlights</div><div class="featureItem">🌙 Day & Night Matches</div><div class="featureItem">📲 Online Cricket Turf Booking</div><div class="featureItem">👥 Group Bookings Available</div><div class="featureItem">📍 Beniya Bagh, Varanasi</div></div>
+  <h3>Frequently Asked Questions</h3>
+  <p><b>Where can I book a cricket turf in Varanasi?</b><br>You can book available cricket turf slots online at Beniya Cricket Arena in Beniya Bagh, Varanasi.</p>
+  <p><b>Is there a 24 hour cricket turf in Varanasi?</b><br>Yes. Beniya Cricket Arena is open 24 hours a day, 7 days a week, subject to slot availability.</p>
+  <p><b>Can I play box cricket and practice cricket here?</b><br>Yes. The arena is suitable for box cricket, cricket practice, net practice, friendly matches and group games.</p>
+  <p><b>Is the cricket turf near Godowlia, Chetganj and Chowk?</b><br>Beniya Cricket Arena is located in Beniya Bagh, a central Varanasi location convenient for players coming from Godowlia, Chetganj and Chowk.</p>
+  <p><b>How do I book a cricket ground in Varanasi online?</b><br>Choose an available date and time slot on this website, enter your details and continue to payment to submit your booking.</p>
+</section>
+  <div id="galleryCard" class="card hidden"><h2>📸 Gallery</h2><div id="customerAlbums"></div></div>
+  <div class="visitGrid"><div class="visitCard"><h2>📍 Find Us</h2><p>Beniya Bagh, Varanasi 221001, Uttar Pradesh</p><button id="directionsBtn" class="gold">GET DIRECTIONS</button></div><div class="visitCard"><h2>⭐ Player Reviews</h2><div class="reviewQuote">“A simple, fast way to reserve your cricket slot.”</div><div class="reviewQuote">“Great for practice sessions and matches with friends.”</div></div></div>
+</div>
 
-    const timeSlots = [
-      "06:00 AM - 07:00 AM", "07:00 AM - 08:00 AM", "08:00 AM - 09:00 AM",
-      "09:00 AM - 10:00 AM", "10:00 AM - 11:00 AM", "11:00 AM - 12:00 PM",
-      "12:00 PM - 01:00 PM", "01:00 PM - 02:00 PM", "02:00 PM - 03:00 PM",
-      "03:00 PM - 04:00 PM", "04:00 PM - 05:00 PM", "05:00 PM - 06:00 PM",
-      "06:00 PM - 07:00 PM", "07:00 PM - 08:00 PM", "08:00 PM - 09:00 PM",
-      "09:00 PM - 10:00 PM", "10:00 PM - 11:00 PM", "11:00 PM - 12:00 AM"
-    ];
+<div id="accountModal" class="modal hidden">
+  <div class="modalPanel">
+    <div class="modalHead"><h2 id="accountTitle">👤 My Account</h2><button id="closeAccountBtn" class="closeBtn">✕</button></div>
 
-    window.onload = function() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById("bookingDate").value = today;
-      document.getElementById("bookingDate").min = today;
-      loadConfig();
-      loadSlots();
-    };
+    <div id="accountLoggedOut">
+      <div class="tabs"><button id="showLoginBtn" class="gold">LOGIN</button><button id="showRegisterBtn" class="secondary">CREATE ACCOUNT</button></div>
 
-    function loadConfig() {
-      fetch(`${SCRIPT_URL}?action=getConfig`)
-        .then(res => res.json())
-        .then(res => {
-          configData = res.data || configData;
-          if (configData.upiId) document.getElementById("displayUpiId").innerText = configData.upiId;
-          if (configData.whatsappNumber) document.getElementById("btnNavWhatsapp").href = `https://wa.me/${configData.whatsappNumber.replace(/\D/g, '')}`;
+      <div id="loginPane">
+        <h3>Welcome back</h3>
+        <label>Mobile number</label><input id="accountLoginPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
+        <label>4-digit PIN</label><input id="accountLoginPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <button id="customerLoginBtn" class="gold">LOGIN</button>
 
-          if (configData.sliderImages && configData.sliderImages.length > 0) {
-            const inner = document.getElementById("carouselInner");
-            inner.innerHTML = configData.sliderImages.map((img, idx) => `
-              <div class="carousel-item ${idx === 0 ? 'active' : ''}">
-                <img src="${img}" class="d-block w-100" alt="Arena Image ${idx+1}">
-              </div>
-            `).join('');
-          }
-        });
-    }
+      </div>
 
-    function getSlotRate(slotStr, dateStr) {
-      const dateObj = new Date(dateStr);
-      const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6); // Sun or Sat
-      const isPeakSlot = slotStr.includes("PM") && !slotStr.startsWith("12:") && !slotStr.startsWith("01:") && !slotStr.startsWith("02:") && !slotStr.startsWith("03:") && !slotStr.startsWith("04:") && !slotStr.startsWith("05:");
+      <div id="registerPane" class="hidden">
+        <h3>Create your account</h3>
+        <label>Name</label><input id="accountRegisterName" autocomplete="name" placeholder="Your name">
+        <label>Mobile number</label><input id="accountRegisterPhone" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number">
+        <label>Create 4-digit PIN</label><input id="accountRegisterPin" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <label>Confirm 4-digit PIN</label><input id="accountRegisterPin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <button id="customerRegisterBtn" class="gold">CREATE ACCOUNT</button>
+      </div>
+      <div id="accountAuthMessage" class="message"></div>
+    </div>
 
-      if (isPeakSlot) return Number(configData.peakPricePerHour || 1200);
-      if (isWeekend) return Number(configData.weekendPricePerHour || 1200);
-      return Number(configData.pricePerHour || 1000);
-    }
+    <div id="accountLoggedIn" class="hidden">
+      <div class="accountHero"><h3>🏏 Beniya Player Profile</h3><p><b id="accountName"></b></p><p class="muted" id="accountPhone"></p></div>
+      <div class="accountStats"><div class="accountStat"><strong id="statTotalBookings">0</strong>Total bookings</div><div class="accountStat"><strong id="statHoursPlayed">0</strong>Hours booked</div><div class="accountStat"><strong id="statTotalSpent">₹0</strong>Total spent</div><div class="accountStat"><strong id="statMemberSince">—</strong>Member since</div></div>
+      <h3>🏏 Current Booking</h3><div id="accountCurrentBookings"></div>
+      <h3>📋 Booking History</h3><div id="accountBookingHistory"></div>
+      <details>
+        <summary><b>🔒 Change 4-digit PIN</b></summary>
+        <label>Current PIN</label><input id="currentPin" type="password" inputmode="numeric" maxlength="4">
+        <label>New 4-digit PIN</label><input id="newPin" type="password" inputmode="numeric" maxlength="4">
+        <button id="changePinBtn" class="secondary">CHANGE PIN</button>
+      </details>
 
-    function loadSlots() {
-      selectedSlots = [];
-      discountAmount = 0;
-      document.getElementById("discountRow").classList.add("d-none");
-      document.getElementById("bookingDetailsCard").classList.add("d-none");
-      
-      const date = document.getElementById("bookingDate").value;
-      const container = document.getElementById("slotsContainer");
-      const statusInfo = document.getElementById("slotStatusInfo");
-      
-      statusInfo.innerText = "Loading...";
-      container.innerHTML = `<div class="text-center w-100 py-4"><div class="spinner-border text-success"></div></div>`;
+      <button id="customerLogoutBtn" class="danger">LOGOUT</button>
+      <div id="accountMessage" class="message"></div>
+    </div>
+  </div>
+</div>
 
-      fetch(`${SCRIPT_URL}?action=getSlots&date=${date}`)
-        .then(res => res.json())
-        .then(res => {
-          const data = res.data || {};
-          container.innerHTML = "";
-          statusInfo.innerText = `${data.bookedSlots ? data.bookedSlots.length : 0} Booked`;
+<div class="adminAccess"><a href="admin.html">🔐 ADMIN LOGIN</a></div>
 
-          timeSlots.forEach(slot => {
-            const isBooked = (data.bookedSlots || []).includes(slot);
-            const isBlocked = (data.blockedSlots || []).includes(slot);
-            const rate = getSlotRate(slot, date);
-            
-            let btnClass = "slot-available";
-            let disabled = "";
-            let displayLabel = `${slot}<br><small>₹${rate}/hr</small>`;
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
+const $=id=>document.getElementById(id);
+let config=null,selectedDate="",selectedSlots=new Set(),currentBooking=null,currentSlotData=[];
 
-            if (isBooked) {
-              btnClass = "slot-booked"; disabled = "disabled"; displayLabel = `${slot}<br><small>(Booked)</small>`;
-            } else if (isBlocked) {
-              btnClass = "slot-blocked"; disabled = "disabled"; displayLabel = `${slot}<br><small>(Blocked)</small>`;
-            }
+function localDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function msg(id,t){$(id).textContent=t||""}
+async function get(action,params={}){
+  const u=new URL(API_URL);u.searchParams.set("action",action);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u);const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response.")}
+}
+async function post(action,extra={}){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...extra})});
+  const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response.")}
+}
+function makeOwnerReviewUrl(data){
+  if(data.ownerReviewUrl)return data.ownerReviewUrl;
+  if(!data.ownerReviewToken||!data.bookingId)return "";
+  return `${API_URL}?action=review&bookingId=${encodeURIComponent(data.bookingId)}&token=${encodeURIComponent(data.ownerReviewToken)}`;
+}
 
-            const col = document.createElement("div");
-            col.className = "col";
-            col.innerHTML = `<button class="btn slot-btn ${btnClass}" ${disabled} onclick="toggleSlot('${slot}', this)">${displayLabel}</button>`;
-            container.appendChild(col);
-          });
-        });
-    }
 
-    function toggleSlot(slot, btn) {
-      if (selectedSlots.includes(slot)) {
-        selectedSlots = selectedSlots.filter(s => s !== slot);
-        btn.classList.remove("slot-selected");
-        btn.classList.add("slot-available");
-      } else {
-        selectedSlots.push(slot);
-        btn.classList.remove("slot-available");
-        btn.classList.add("slot-selected");
-      }
+let sliderIndex=0,sliderTimer=null,sliderTouchX=0;
+function showSlide(i){const n=$("slides").children.length;if(!n)return;sliderIndex=(i+n)%n;$("slides").style.transform=`translateX(-${sliderIndex*100}%)`;[...$("sliderDots").children].forEach((d,j)=>d.classList.toggle("active",j===sliderIndex))}
+function renderSlider(items){const all=[{src:"beniya-arena-hero.png",alt:"Beniya Cricket Arena"}].concat(items||[]);$("slides").innerHTML=all.map(x=>`<img class="slide" src="${x.src}" alt="${esc(x.alt||"Beniya Cricket Arena")}">`).join("");$("sliderDots").innerHTML=all.map((_,i)=>`<span class="sliderDot ${i===0?"active":""}"></span>`).join("");$("sliderPrev").classList.toggle("hidden",all.length<2);$("sliderNext").classList.toggle("hidden",all.length<2);showSlide(0);clearInterval(sliderTimer);if(all.length>1)sliderTimer=setInterval(()=>showSlide(sliderIndex+1),5000)}
+$("sliderPrev").onclick=()=>showSlide(sliderIndex-1);$("sliderNext").onclick=()=>showSlide(sliderIndex+1);
+$("homeSlider").addEventListener("touchstart",e=>sliderTouchX=e.changedTouches[0].clientX,{passive:true});$("homeSlider").addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sliderTouchX;if(Math.abs(dx)>45)showSlide(sliderIndex+(dx<0?1:-1))},{passive:true});
+async function loadGallery(){try{const g=await get("gallery");if(!g.success)return;renderSlider((g.photos||[]).filter(p=>p.showInSlider&&p.imageData).map(p=>({src:p.imageData,alt:p.fileName})));const albums=(g.albums||[]).map(a=>({...a,photos:(g.photos||[]).filter(p=>p.albumId===a.albumId&&p.imageData)})).filter(a=>a.photos.length);if(albums.length){$("galleryCard").classList.remove("hidden");$("customerAlbums").innerHTML=albums.map(a=>`<section><h3>${esc(a.albumName)}</h3><div class="albumGrid">${a.photos.map(p=>`<img loading="lazy" src="${p.imageData}" alt="${esc(a.albumName)}">`).join("")}</div></section>`).join("")}}catch(e){console.warn(e)}}
+async function init(){
+  try{
+    config=await get("config");if(!config.success)throw Error(config.message||"Could not load booking settings.");loadGallery();
+    buildDates();selectedDate=config.today||localDateKey(new Date());await loadSlots();restoreBooking();
+    await restoreCustomerSession();
+  }catch(e){msg("bookingMessage",e.message)}
+}
+function buildDates(){
+  $("dates").innerHTML="";const start=new Date((config.today||localDateKey(new Date()))+"T00:00:00");
+  const days=Math.max(1,Number(config.bookingDaysAhead||30));
+  for(let i=0;i<days;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const key=localDateKey(d);
+    const b=document.createElement("button");b.className="dateBtn"+(i===0?" selected":"");
+    b.innerHTML=`${i===0?"Today<br>":""}<b>${d.toLocaleDateString("en-IN",{weekday:"short"})}</b><br>${d.toLocaleDateString("en-IN",{day:"2-digit",month:"short"})}`;
+    b.onclick=async()=>{selectedDate=key;selectedSlots.clear();document.querySelectorAll(".dateBtn").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");updateTotal();await loadSlots()};
+    $("dates").appendChild(b);
+  }
+}
+async function loadSlots(){
+  $("slots").innerHTML='<p class="muted">Loading slots…</p>';
+  const d=await get("availability",{date:selectedDate});if(!d.success){$("slots").innerHTML=`<p>${esc(d.message)}</p>`;return}
+  $("slots").innerHTML="";currentSlotData=d.slots||[];
+  d.slots.forEach(s=>{
+    const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
+    b.innerHTML=`<b>${esc(s.label)}</b><br><small>${esc(s.available?money(s.price):s.status)}</small>`;
+    b.onclick=()=>{selectedSlots.has(s.index)?selectedSlots.delete(s.index):selectedSlots.add(s.index);b.classList.toggle("selected");updateTotal()};
+    $("slots").appendChild(b);
+  });
+}
+function updateTotal(){
+  $("selectedCount").textContent=selectedSlots.size;
+  const total=[...selectedSlots].reduce((sum,i)=>sum+Number((currentSlotData.find(s=>s.index===i)||{}).price||config?.pricePerHour||0),0);
+  $("totalAmount").textContent=money(total);
+}
 
-      if (selectedSlots.length > 0) {
-        document.getElementById("bookingDetailsCard").classList.remove("d-none");
-        calculateAmounts();
-      } else {
-        document.getElementById("bookingDetailsCard").classList.add("d-none");
-      }
-    }
+$("continueBtn").onclick=async()=>{
+  try{
+    msg("bookingMessage","");
+    const name=$("customerName").value.trim(),phone=$("phone").value.replace(/\D/g,"");
+    if(name.length<2)throw Error("Please enter your name.");
+    if(phone.length<10||phone.length>15)throw Error("Please enter a valid mobile number.");
+    if(!selectedSlots.size)throw Error("Please select at least one slot.");
+    $("continueBtn").disabled=true;$("continueBtn").textContent="PREPARING PAYMENT…";
+    const d=await post("createbooking",{date:selectedDate,slotIndexes:[...selectedSlots],customerName:name,phone});
+    if(!d.success)throw Error(d.message||"Could not prepare payment.");
+    currentBooking=d;localStorage.setItem("beniyaCustomerPhone",phone);saveBooking();showPayment();
+  }catch(e){msg("bookingMessage",e.message)}
+  finally{$("continueBtn").disabled=false;$("continueBtn").textContent="CONTINUE TO PAYMENT"}
+};
 
-    function calculateSubtotal() {
-      const date = document.getElementById("bookingDate").value;
-      return selectedSlots.reduce((sum, slot) => sum + getSlotRate(slot, date), 0);
-    }
+function showPayment(){
+  $("bookingFlow").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("paymentCard").classList.remove("hidden");
+  $("upiText").textContent=currentBooking.upiId;$("payAmount").textContent="Amount to pay: "+money(currentBooking.amount);
+  $("qr").innerHTML="";
+  const upi=`upi://pay?pa=${encodeURIComponent(currentBooking.upiId)}&pn=${encodeURIComponent(currentBooking.arenaName||"Beniya Cricket Arena")}&am=${encodeURIComponent(currentBooking.amount)}&cu=INR&tn=${encodeURIComponent("Booking "+currentBooking.bookingId)}`;
+  if(window.QRCode)new QRCode($("qr"),{text:upi,width:220,height:220});
+  else $("qr").textContent="QR could not load. Pay using the UPI ID shown below.";
+}
+$("cancelBeforePaymentBtn").onclick=async()=>{
+  if(!currentBooking||!confirm("Cancel this unpaid booking?"))return;
+  try{const d=await post("cancelbooking",{bookingId:currentBooking.bookingId});if(!d.success)throw Error(d.message);clearBooking();location.reload()}catch(e){msg("paymentMessage",e.message)}
+};
+$("paidBtn").onclick=async()=>{
+  if(!currentBooking)return;
+  const whatsappWindow=window.open("about:blank","_blank");
+  try{
+    $("paidBtn").disabled=true;$("paidBtn").textContent="SUBMITTING…";
+    const d=await post("submitpayment",{bookingId:currentBooking.bookingId});
+    if(!d.success)throw Error(d.message||"Could not submit payment.");
+    // Keep the slots, date and amount selected by this customer. The payment
+    // response is only used for the new status and secure owner-review link.
+    const ownerReviewUrl=makeOwnerReviewUrl(d);
+    currentBooking={...currentBooking,status:d.status||"PAYMENT PENDING",paymentStatus:d.paymentStatus||"CUSTOMER CLAIMED PAID",ownerReviewUrl};saveBooking();showPending();
+    openOwnerPaymentWhatsApp(ownerReviewUrl,whatsappWindow);
+  }catch(e){if(whatsappWindow)whatsappWindow.close();msg("paymentMessage",e.message)}
+  finally{$("paidBtn").disabled=false;$("paidBtn").textContent="I HAVE PAID"}
+};
 
-    function applyCoupon() {
-      const code = document.getElementById("couponCode").value.trim().toUpperCase();
-      const msg = document.getElementById("couponMessage");
-      const subtotal = calculateSubtotal();
+function showPending(){
+  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");$("pendingCard").classList.remove("hidden");
+  $("currentStatus").textContent=currentBooking.status||"PAYMENT PENDING";
+}
+$("whatsappBtn").onclick=()=>{
+  openOwnerPaymentWhatsApp(currentBooking&&currentBooking.ownerReviewUrl);
+};
+function openOwnerPaymentWhatsApp(reviewUrl,targetWindow){
+  const b=currentBooking;if(!b)return;
+  const number=String(b.whatsappNumber||config.whatsappNumber||"").replace(/\D/g,"");
+  if(!number)return;
+  const adminLoginUrl="https://beniya-cricket-arena.github.io/admin.html";
+  const text=`Hello Beniya Cricket Arena,\n\nA customer has clicked I HAVE PAID. Please verify the payment and approve or reject the booking.\n\nBooking ID: ${b.bookingId}\nName: ${b.customerName}\nPhone: ${b.phone}\nDate: ${b.date}\nSlot(s): ${(b.slots||[]).join(", ")}\nAmount: ${money(b.amount)}\n\nAdmin login: ${adminLoginUrl}\n${reviewUrl?"\nDirect approve / reject link: "+reviewUrl:"\nPlease log in to the admin dashboard above to approve or reject this booking."}`;
+  const url=`https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  if(targetWindow)targetWindow.location.href=url;else window.open(url,"_blank");
+}
+$("checkStatusBtn").onclick=checkStatus;
 
-      if (code === "BENIYA10" || code === "TURF10") {
-        discountAmount = Math.round(subtotal * 0.10);
-        msg.className = "form-text text-success fw-bold"; msg.innerText = "10% Discount Applied!";
-        document.getElementById("discountRow").classList.remove("d-none");
-      } else {
-        discountAmount = 0;
-        msg.className = "form-text text-danger"; msg.innerText = "Invalid coupon code.";
-        document.getElementById("discountRow").classList.add("d-none");
-      }
-      calculateAmounts();
-    }
+async function checkStatus(){
+  if(!currentBooking)return;
+  try{
+    msg("pendingMessage","Checking…");
+    const d=await post("bookingstatus",{bookingId:currentBooking.bookingId,phone:currentBooking.phone});
+    if(!d.success)throw Error(d.message||"Could not check status.");
+    currentBooking={...currentBooking,...d};saveBooking();
+    const status=String(d.status||"").toUpperCase();$("currentStatus").textContent=status;
+    if(status==="CONFIRMED")showConfirmed();
+    else if(status==="CANCELLED"){msg("pendingMessage","This booking was cancelled or payment was rejected. Please contact the arena if money was deducted.");}
+    else msg("pendingMessage","Current status: "+status);
+  }catch(e){msg("pendingMessage",e.message)}
+}
+function showConfirmed(){
+  $("bookingFlow").classList.add("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.remove("hidden");
+  const b=currentBooking;
+  $("confirmedDetails").innerHTML=b?`<p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount paid:</b> ${money(b.amount)}</p>`:"";
+  saveBooking();selectedSlots.clear();updateTotal();loadSlots().catch(()=>{});
+  if(customerToken)loadCustomerAccount().catch(()=>{});
+}
+$("receiptBtn").onclick=()=>{
+  const b=currentBooking;if(!b||String(b.status).toUpperCase()!=="CONFIRMED")return;
+  const jsPDF=window.jspdf&&window.jspdf.jsPDF;if(!jsPDF)return alert("PDF generator is loading. Please wait a moment and try again.");
+  const doc=new jsPDF(),lines=["Beniya Cricket Arena","Booking Receipt","","Booking ID: "+b.bookingId,"Customer: "+b.customerName,"Phone: "+b.phone,"Date: "+b.date,"Slot(s): "+(b.slots||[]).join(", "),"Amount Paid: Rs. "+Number(b.amount||0).toLocaleString("en-IN"),"Payment: PAID","Booking Status: CONFIRMED"];
+  doc.setFontSize(20);doc.text(lines[0],20,22);doc.setFontSize(14);doc.text(lines[1],20,34);doc.setFontSize(11);doc.text(lines.slice(3),20,52,{maxWidth:170,lineHeightFactor:1.6});doc.save(`Beniya-Receipt-${b.bookingId}.pdf`);
+};
+function saveBooking(){localStorage.setItem("beniyaCurrentBooking",JSON.stringify(currentBooking))}
+function clearBooking(){localStorage.removeItem("beniyaCurrentBooking");currentBooking=null}
+function restoreBooking(){
+  try{
+    const b=JSON.parse(localStorage.getItem("beniyaCurrentBooking")||"null");if(!b||!b.bookingId)return;
+    const s=String(b.status||"").toUpperCase();
+    if(s==="CONFIRMED"){currentBooking=b;showConfirmed();return}
+    if(s==="CANCELLED"){clearBooking();$("bookingFlow").classList.remove("hidden");$("paymentCard").classList.add("hidden");$("pendingCard").classList.add("hidden");$("confirmedCard").classList.add("hidden");return}
+    currentBooking=b;
+    if(s==="PAYMENT PENDING")showPending();else if(s==="PAYMENT STARTED")showPayment();
+  }catch(e){}
+}
 
-    function calculateAmounts() {
-      const durationHours = selectedSlots.length;
-      document.getElementById("summaryDuration").innerText = `${durationHours} ${durationHours === 1 ? 'hr' : 'hrs'}`;
+let customerToken=localStorage.getItem("beniyaCustomerToken")||"";
+let customerProfile=null;
 
-      const subtotal = calculateSubtotal();
-      const finalTotal = Math.max(0, subtotal - discountAmount);
-      const isAdvance = document.getElementById("payAdvance").checked;
-      const payNow = isAdvance ? Math.ceil(finalTotal / 2) : finalTotal;
-      const pending = Math.max(0, finalTotal - payNow);
+function accountBookingHtml(b){
+  const s=String(b.status||"").toUpperCase();
+  const label=s==="CONFIRMED"?(b.isCurrent?"CURRENT":"COMPLETED"):(s||"UNKNOWN");
+  return `<div class="accountBooking"><div class="bookingTop"><b>${esc(b.bookingId)}</b><span class="badge">${esc(label)}</span></div><p><b>Date:</b> ${esc(b.date)}</p><p><b>Slot(s):</b> ${esc((b.slots||[]).join(", "))}</p><p><b>Amount:</b> ${money(b.amount)}</p><p><b>Payment:</b> ${esc(b.paymentStatus||"")}</p></div>`;
+}
+function openAccount(){$("accountModal").classList.remove("hidden");if(customerToken)loadCustomerAccount()}
+function closeAccount(){$("accountModal").classList.add("hidden")}
+$("accountBtn").onclick=openAccount;$("closeAccountBtn").onclick=closeAccount;
+$("accountModal").addEventListener("click",e=>{if(e.target===$("accountModal"))closeAccount()});
+$("showLoginBtn").onclick=()=>{$("loginPane").classList.remove("hidden");$("registerPane").classList.add("hidden")};
+$("showRegisterBtn").onclick=()=>{$("registerPane").classList.remove("hidden");$("loginPane").classList.add("hidden")};
 
-      document.getElementById("lblSubtotal").innerText = `₹${subtotal}`;
-      document.getElementById("lblDiscount").innerText = `-₹${discountAmount}`;
-      document.getElementById("lblTotal").innerText = `₹${finalTotal}`;
-      document.getElementById("fullLabel").innerText = `₹${finalTotal}`;
-      document.getElementById("advanceLabel").innerText = `₹${Math.ceil(finalTotal / 2)}`;
-      document.getElementById("lblPayNow").innerText = `₹${payNow}`;
-      document.getElementById("lblPending").innerText = `₹${pending}`;
+async function restoreCustomerSession(){
+  if(!customerToken)return;
+  try{await loadCustomerAccount()}catch(e){customerToken="";customerProfile=null;localStorage.removeItem("beniyaCustomerToken");updateAccountButton()}
+}
+function updateAccountButton(){
+  $("accountBtn").textContent=customerProfile?`👤 ${customerProfile.name.split(" ")[0]}`:"👤 ACCOUNT";
+}
+async function loadCustomerAccount(){
+  const d=await post("customeraccount",{token:customerToken});
+  if(!d.success)throw Error(d.message||"Could not load account.");
+  customerProfile=d.customer;
+  $("accountLoggedOut").classList.add("hidden");$("accountLoggedIn").classList.remove("hidden");
+  $("accountName").textContent=customerProfile.name;$("accountPhone").textContent=customerProfile.phone;
+  const stats=d.stats||{};$("statTotalBookings").textContent=stats.totalBookings||0;$("statHoursPlayed").textContent=stats.hoursPlayed||0;$("statTotalSpent").textContent=money(stats.totalSpent||0);$("statMemberSince").textContent=stats.memberSince||"—";
+  $("customerName").value=customerProfile.name;$("phone").value=customerProfile.phone;
+  const all=d.bookings||[],current=all.filter(b=>b.isCurrent);
+  $("accountCurrentBookings").innerHTML=current.length?current.map(accountBookingHtml).join(""):'<p class="muted">No current or upcoming bookings.</p>';
+  $("accountBookingHistory").innerHTML=all.length?all.map(accountBookingHtml).join(""):'<p class="muted">No booking history yet.</p>';
+  updateAccountButton();
+}
+$("customerLoginBtn").onclick=async()=>{
+  try{
+    msg("accountAuthMessage","Logging in…");
+    const phone=$("accountLoginPhone").value.replace(/\D/g,""),pin=$("accountLoginPin").value;
+    const d=await post("customerlogin",{phone,pin});if(!d.success)throw Error(d.message);
+    customerToken=d.token;customerProfile=d.customer;localStorage.setItem("beniyaCustomerToken",customerToken);
+    msg("accountAuthMessage","");await loadCustomerAccount();
+  }catch(e){msg("accountAuthMessage",e.message)}
+};
+$("customerRegisterBtn").onclick=async()=>{
+  try{
+    const name=$("accountRegisterName").value.trim(),phone=$("accountRegisterPhone").value.replace(/\D/g,"");
+    const pin=$("accountRegisterPin").value,pin2=$("accountRegisterPin2").value;
+    if(!/^\d{4}$/.test(pin))throw Error("PIN must be exactly 4 digits.");
+    if(pin!==pin2)throw Error("PINs do not match.");
+    msg("accountAuthMessage","Creating account…");
+    const d=await post("customerregister",{name,phone,pin});if(!d.success)throw Error(d.message);
+    customerToken=d.token;customerProfile=d.customer;localStorage.setItem("beniyaCustomerToken",customerToken);
+    msg("accountAuthMessage","");await loadCustomerAccount();
+  }catch(e){msg("accountAuthMessage",e.message)}
+};
 
-      const upiId = configData.upiId || "beniya@upi";
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=BeniyaCricketArena&am=${payNow}&cu=INR`;
-      document.getElementById("qrCodeImg").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
-    }
+$("changePinBtn").onclick=async()=>{
+  try{
+    const currentPin=$("currentPin").value,newPin=$("newPin").value;
+    const d=await post("customerchangepin",{token:customerToken,currentPin,newPin});if(!d.success)throw Error(d.message);
+    $("currentPin").value="";$("newPin").value="";msg("accountMessage",d.message);
+  }catch(e){msg("accountMessage",e.message)}
+};
+$("customerLogoutBtn").onclick=async()=>{
+  try{if(customerToken)await post("customerlogout",{token:customerToken})}catch(e){}
+  customerToken="";customerProfile=null;localStorage.removeItem("beniyaCustomerToken");
+  $("accountLoggedIn").classList.add("hidden");$("accountLoggedOut").classList.remove("hidden");updateAccountButton();closeAccount();
+};
 
-    function submitBooking() {
-      const name = document.getElementById("custName").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
-      const notes = document.getElementById("custNotes").value.trim();
-      const date = document.getElementById("bookingDate").value;
-      const payType = document.querySelector('input[name="payType"]:checked').value;
+$("quickBookBtn").onclick=async()=>{
+  $("paymentCard").classList.add("hidden");
+  $("pendingCard").classList.add("hidden");
+  $("confirmedCard").classList.add("hidden");
+  $("bookingFlow").classList.remove("hidden");
+  selectedSlots.clear();
+  updateTotal();
+  try{await loadSlots()}catch(e){msg("bookingMessage",e.message||"Could not load slots.");}
+  requestAnimationFrame(()=>$("bookingFlow").scrollIntoView({behavior:"smooth",block:"start"}));
+};
+$("quickWhatsappBtn").onclick=()=>{const n=String(config?.whatsappNumber||"").replace(/\D/g,"");if(n)window.open(`https://wa.me/${n}?text=${encodeURIComponent("Hello Beniya Cricket Arena, I have an enquiry about booking a cricket slot.")}`,"_blank")};
+$("shareArenaBtn").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"Beniya Cricket Arena",text:"Book your cricket slot at Beniya Cricket Arena, Beniya Bagh, Varanasi.",url:location.href});else{await navigator.clipboard.writeText(location.href);alert("Website link copied.")}}catch(e){}};
 
-      if (!name || !phone || phone.length < 10) {
-        alert("Please provide valid name and phone number.");
-        return;
-      }
+$("aboutUsBtn").onclick=()=>{
+  const section=$("aboutUsSection");
+  const opening=section.classList.contains("hidden");
+  section.classList.toggle("hidden");
+  if(opening)section.scrollIntoView({behavior:"smooth",block:"start"});
+};
 
-      const subtotal = calculateSubtotal();
-      const finalAmount = Math.max(0, subtotal - discountAmount);
-
-      const payload = {
-        action: "createBooking",
-        customerName: name,
-        phone: phone,
-        notes: notes,
-        date: date,
-        slots: selectedSlots,
-        amount: finalAmount,
-        paymentType: payType
-      };
-
-      const btn = document.getElementById("btnSubmit");
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Submitting...`;
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(res => {
-        const data = res.data || {};
-        if (data.status === "success") {
-          const waNumber = (configData.whatsappNumber || "919978546348").replace(/\D/g, "");
-          const encodedMsg = encodeURIComponent(`Hello Beniya Cricket Arena,\nI have completed my booking!\n\nBooking ID: ${data.bookingId}\n${data.receiptText}`);
-          window.location.href = `https://wa.me/${waNumber}?text=${encodedMsg}`;
-        } else {
-          alert("Booking failed. Please try again.");
-          btn.disabled = false;
-        }
-      });
-    }
-
-    function shareArena() {
-      if (navigator.share) {
-        navigator.share({ title: 'Beniya Cricket Arena', url: window.location.href });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert("Arena URL copied to clipboard!");
-      }
-    }
-  </script>
+$("directionsBtn").onclick=()=>window.open("https://www.google.com/maps/search/?api=1&query=Beniya+Bagh+Varanasi+221001","_blank");
+init();
+</script>
 </body>
 </html>
