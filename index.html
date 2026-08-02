@@ -36,7 +36,7 @@
     </div>
   </header>
 
-  <div class="container mb-5" style="max-width: 650px;">
+  <div class="container mb-5" style="max-width: 680px;">
     
     <!-- Image Slider / Gallery -->
     <div id="arenaCarousel" class="carousel slide mb-4 shadow-sm rounded-3 overflow-hidden" data-bs-ride="carousel">
@@ -73,16 +73,44 @@
     <div id="bookingDetailsCard" class="card shadow-sm mb-4 border-0 rounded-3 d-none">
       <div class="card-header bg-white fw-bold py-3 border-bottom-0"><i class="fa-solid fa-user-check me-2 text-success"></i>Customer & Payment Details</div>
       <div class="card-body pt-0">
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Full Name *</label>
-          <input type="text" id="custName" class="form-control" placeholder="Enter your full name">
-        </div>
-        <div class="mb-3">
-          <label class="form-label small fw-bold">Mobile Number (WhatsApp) *</label>
-          <input type="tel" id="custPhone" class="form-control" placeholder="10-digit mobile number" maxlength="10">
+        
+        <!-- Live Selected Summary Info Bar -->
+        <div class="alert alert-success d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <i class="fa-solid fa-stopwatch me-2"></i><strong>Duration:</strong> <span id="summaryDuration">0 hrs</span>
+          </div>
+          <div>
+            <i class="fa-solid fa-tags me-2"></i><strong>Rate:</strong> ₹<span id="summaryRate">1000</span>/hr
+          </div>
         </div>
 
-        <!-- 50% Advance vs Full Payment Toggle -->
+        <div class="row g-2 mb-3">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Full Name *</label>
+            <input type="text" id="custName" class="form-control" placeholder="Enter your full name">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Mobile Number (WhatsApp) *</label>
+            <input type="tel" id="custPhone" class="form-control" placeholder="10-digit mobile number" maxlength="10">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Special Requests / Notes (Optional)</label>
+          <input type="text" id="custNotes" class="form-control" placeholder="e.g. Need extra bats, tournament setup">
+        </div>
+
+        <!-- Coupon Code Promo Feature -->
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Discount / Promo Code</label>
+          <div class="input-group">
+            <input type="text" id="couponCode" class="form-control text-uppercase" placeholder="e.g. BENIYA10">
+            <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">Apply</button>
+          </div>
+          <small id="couponMessage" class="form-text"></small>
+        </div>
+
+        <!-- Payment Plan Selection -->
         <label class="form-label small fw-bold">Select Payment Plan</label>
         <div class="d-flex gap-2 mb-3">
           <div class="form-check card-select flex-fill p-3 rounded-3 bg-white">
@@ -99,10 +127,18 @@
           </div>
         </div>
 
-        <!-- Payment Breakdown Box -->
+        <!-- Detailed Breakdown -->
         <div class="bg-light p-3 rounded-3 mb-3 border">
           <div class="d-flex justify-content-between mb-2">
-            <span class="text-secondary">Total Slot Amount:</span>
+            <span class="text-secondary">Subtotal Amount:</span>
+            <span class="fw-bold text-dark" id="lblSubtotal">₹0</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 text-danger d-none" id="discountRow">
+            <span>Coupon Discount:</span>
+            <span class="fw-bold" id="lblDiscount">-₹0</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 border-top pt-2">
+            <span class="fw-bold">Total Booking Amount:</span>
             <span class="fw-bold text-dark" id="lblTotal">₹0</span>
           </div>
           <div class="d-flex justify-content-between mb-2 text-success">
@@ -115,14 +151,14 @@
           </div>
         </div>
 
-        <!-- QR Code Display -->
+        <!-- Dynamic QR Display -->
         <div class="text-center border p-3 rounded-3 mb-3 bg-white">
           <p class="small text-muted mb-2"><i class="fa-solid fa-qrcode me-1"></i>Scan UPI QR Code to Pay Exact Amount</p>
           <img id="qrCodeImg" src="" alt="UPI QR Code" class="img-fluid rounded shadow-sm" style="max-height: 220px;">
           <div class="small text-muted mt-2">UPI ID: <strong id="displayUpiId">beniya@upi</strong></div>
         </div>
 
-        <button class="btn btn-success btn-lg w-100 fw-bold py-3 shadow" onclick="submitBooking()">
+        <button id="btnSubmit" class="btn btn-success btn-lg w-100 fw-bold py-3 shadow" onclick="submitBooking()">
           <i class="fa-brands fa-whatsapp me-2"></i>I HAVE PAID — VERIFY BOOKING
         </button>
       </div>
@@ -136,6 +172,7 @@
 
     let selectedSlots = [];
     let pricePerHour = 1000;
+    let discountAmount = 0;
     let configData = {};
 
     const timeSlots = [
@@ -161,6 +198,7 @@
         .then(data => {
           configData = data;
           if (data.pricePerHour) pricePerHour = Number(data.pricePerHour);
+          document.getElementById("summaryRate").innerText = pricePerHour;
           if (data.upiId) document.getElementById("displayUpiId").innerText = data.upiId;
 
           if (data.sliderImages && data.sliderImages.length > 0) {
@@ -177,7 +215,12 @@
 
     function loadSlots() {
       selectedSlots = [];
+      discountAmount = 0;
+      document.getElementById("discountRow").classList.add("d-none");
+      document.getElementById("couponMessage").innerText = "";
+      document.getElementById("couponCode").value = "";
       document.getElementById("bookingDetailsCard").classList.add("d-none");
+      
       const date = document.getElementById("bookingDate").value;
       const container = document.getElementById("slotsContainer");
       const statusInfo = document.getElementById("slotStatusInfo");
@@ -239,15 +282,48 @@
       }
     }
 
-    function calculateAmounts() {
-      const total = selectedSlots.length * pricePerHour;
-      const isAdvance = document.getElementById("payAdvance").checked;
-      const payNow = isAdvance ? Math.ceil(total / 2) : total;
-      const pending = Math.max(0, total - payNow);
+    function applyCoupon() {
+      const code = document.getElementById("couponCode").value.trim().toUpperCase();
+      const msg = document.getElementById("couponMessage");
+      const subtotal = selectedSlots.length * pricePerHour;
 
-      document.getElementById("fullLabel").innerText = `₹${total}`;
-      document.getElementById("advanceLabel").innerText = `₹${Math.ceil(total / 2)}`;
-      document.getElementById("lblTotal").innerText = `₹${total}`;
+      if (code === "BENIYA10" || code === "TURF10") {
+        discountAmount = Math.round(subtotal * 0.10);
+        msg.className = "form-text text-success fw-bold";
+        msg.innerText = "Coupon applied! 10% Discount given.";
+        document.getElementById("discountRow").classList.remove("d-none");
+      } else if (code === "PLAY200") {
+        discountAmount = Math.min(200, subtotal);
+        msg.className = "form-text text-success fw-bold";
+        msg.innerText = "Coupon applied! ₹200 OFF.";
+        document.getElementById("discountRow").classList.remove("d-none");
+      } else {
+        discountAmount = 0;
+        msg.className = "form-text text-danger";
+        msg.innerText = "Invalid coupon code.";
+        document.getElementById("discountRow").classList.add("d-none");
+      }
+      calculateAmounts();
+    }
+
+    function calculateAmounts() {
+      const durationHours = selectedSlots.length;
+      document.getElementById("summaryDuration").innerText = `${durationHours} ${durationHours === 1 ? 'hr' : 'hrs'}`;
+
+      const subtotal = durationHours * pricePerHour;
+      const finalTotal = Math.max(0, subtotal - discountAmount);
+
+      const isAdvance = document.getElementById("payAdvance").checked;
+      const payNow = isAdvance ? Math.ceil(finalTotal / 2) : finalTotal;
+      const pending = Math.max(0, finalTotal - payNow);
+
+      document.getElementById("lblSubtotal").innerText = `₹${subtotal}`;
+      document.getElementById("lblDiscount").innerText = `-₹${discountAmount}`;
+      document.getElementById("lblTotal").innerText = `₹${finalTotal}`;
+
+      document.getElementById("fullLabel").innerText = `₹${finalTotal}`;
+      document.getElementById("advanceLabel").innerText = `₹${Math.ceil(finalTotal / 2)}`;
+
       document.getElementById("lblPayNow").innerText = `₹${payNow}`;
       document.getElementById("lblPending").innerText = `₹${pending}`;
 
@@ -259,6 +335,7 @@
     function submitBooking() {
       const name = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
+      const notes = document.getElementById("custNotes").value.trim();
       const date = document.getElementById("bookingDate").value;
       const payType = document.querySelector('input[name="payType"]:checked').value;
 
@@ -275,19 +352,21 @@
         return;
       }
 
-      const totalAmount = selectedSlots.length * pricePerHour;
+      const subtotal = selectedSlots.length * pricePerHour;
+      const finalAmount = Math.max(0, subtotal - discountAmount);
 
       const payload = {
         action: "createBooking",
         customerName: name,
         phone: phone,
+        notes: notes,
         date: date,
         slots: selectedSlots,
-        amount: totalAmount,
+        amount: finalAmount,
         paymentType: payType
       };
 
-      const btn = event.target;
+      const btn = document.getElementById("btnSubmit");
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Processing Booking...`;
 
@@ -299,7 +378,8 @@
       .then(res => {
         if (res.status === "success") {
           const waNumber = (configData.whatsappNumber || "919978546348").replace(/\D/g, "");
-          const encodedMsg = encodeURIComponent(`Hello Beniya Cricket Arena,\nI have completed my booking online!\n\nBooking ID: ${res.bookingId}\n\n${res.receiptText}`);
+          const noteText = notes ? `\n📌 Note: ${notes}` : "";
+          const encodedMsg = encodeURIComponent(`Hello Beniya Cricket Arena,\nI have completed my booking online!\n\nBooking ID: ${res.bookingId}${noteText}\n\n${res.receiptText}`);
           window.location.href = `https://wa.me/${waNumber}?text=${encodedMsg}`;
         } else {
           alert("Error: " + (res.message || "Failed to place booking"));
