@@ -1,335 +1,466 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beniya Admin Portal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .nav-pills .nav-link.active { background-color: #198754; }
-    .nav-pills .nav-link { color: #198754; font-weight: 600; }
-    .booking-card { cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
-    .booking-card.status-APPROVED { border-left-color: #198754; }
-    .booking-card.status-PENDING { border-left-color: #ffc107; }
-    .booking-card.status-REJECTED { border-left-color: #dc3545; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07110d">
+<title>Beniya Cricket Arena — Admin</title>
+<style>
+:root{--bg:#07110d;--card:#0d1b14;--gold:#f5b82e;--text:#f7f4e8;--muted:#a9b6ae;--green:#35d07f;--red:#ef6262;--line:#294b3a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#183b28 0,transparent 32%),var(--bg);color:var(--text);font-family:Arial,sans-serif}button,input,select,textarea{font:inherit}
+.hero{max-width:1000px;margin:auto;padding:18px 18px 0}.hero img{width:100%;max-height:360px;object-fit:cover;border-radius:20px;border:1px solid var(--line);display:block}
+header,.container{max-width:1000px;margin:auto;padding:18px}header h1{color:var(--gold);margin:4px 0}header p{color:var(--muted)}
+.card{background:rgba(13,27,20,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#10251b;border:1px solid var(--line);border-radius:14px;padding:18px}.stat strong{display:block;font-size:30px;color:var(--green)}
+label{display:block;color:var(--muted);margin:6px 0}input,select,textarea,button{width:100%;padding:12px;border-radius:10px;border:1px solid #365d49;margin:4px 0 10px}
+input,select,textarea{background:#07110d;color:white}textarea{min-height:150px;resize:vertical}button{background:var(--green);color:#06120b;font-weight:bold;cursor:pointer}.gold{background:var(--gold)}.danger{background:var(--red);color:white}.secondary{background:#345545;color:white}.hidden{display:none!important}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{width:auto;min-width:140px}.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}.slot{background:#10251b;color:white}.slot.selected{background:var(--gold);color:#111}.slot.blocked{background:#7b3030}.slot:disabled{opacity:.45;cursor:not-allowed}
+.booking{background:#091710;border:1px solid var(--line);padding:14px;border-radius:12px;margin-top:10px}.galleryPhoto{background:#091710;border:1px solid var(--line);padding:10px;border-radius:12px;margin-top:10px;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center}.galleryPhoto img{width:120px;height:90px;object-fit:cover;border-radius:10px}.albumBox{background:#091710;border:1px solid var(--line);padding:12px;border-radius:12px;margin-top:10px}.pricingRule{background:#091710;border:1px solid var(--line);padding:12px;border-radius:12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}.pricingRule button{width:auto;margin:0}.booking p{margin:5px 0}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#20382a;font-size:12px}.muted{color:var(--muted)}.message{white-space:pre-wrap;margin-top:8px;color:var(--gold)}
+@media(max-width:650px){.stats{grid-template-columns:1fr}.hero{padding:0}.hero img{border-radius:0;max-height:260px}.actions button{width:100%}}
+
+.stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.filterBar{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px}.popularChip{display:inline-block;padding:8px 11px;margin:4px;border-radius:999px;background:#10251b;border:1px solid var(--line)}
+@media(max-width:650px){.filterBar{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-
-  <!-- Top Header with Visible Admin Info -->
-  <nav class="navbar navbar-dark bg-dark px-3 shadow-sm sticky-top">
-    <span class="navbar-brand fw-bold"><i class="fa-solid fa-shield-halved me-2"></i>Beniya Admin Panel</span>
-    <div class="d-flex align-items-center gap-3">
-      <div class="text-light small d-none d-md-block">
-        <i class="fa-solid fa-phone me-1 text-success"></i><span id="hdrPhone">...</span> | 
-        <i class="fa-solid fa-qrcode me-1 text-warning"></i><span id="hdrUpi">...</span>
-      </div>
-      <button class="btn btn-outline-light btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#settingsMenu">
-        <i class="fa-solid fa-gear me-1"></i> Settings
-      </button>
-    </div>
-  </nav>
-
-  <!-- Offcanvas Settings Drawer with Dynamic Pricing Controls -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="settingsMenu">
-    <div class="offcanvas-header bg-dark text-white">
-      <h5 class="offcanvas-title fw-bold"><i class="fa-solid fa-gears me-2"></i>Arena Settings</h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <form id="configForm" onsubmit="event.preventDefault(); saveSettings();">
-        <div class="mb-3">
-          <label class="form-label fw-bold small">UPI ID for Payment QR</label>
-          <input type="text" id="cfgUpi" class="form-control" placeholder="e.g. beniya@upi" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label fw-bold small">Owner WhatsApp Number</label>
-          <input type="text" id="cfgPhone" class="form-control" placeholder="e.g. 919978546348" required>
-        </div>
-
-        <!-- Dynamic Pricing Section -->
-        <hr>
-        <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-chart-line me-1"></i> Dynamic Pricing Rules</h6>
-
-        <div class="mb-2">
-          <label class="form-label fw-bold small">Weekday Day Rate (₹/hr)</label>
-          <input type="number" id="cfgPrice" class="form-control" placeholder="1000" required>
-          <small class="text-muted">6:00 AM - 6:00 PM (Mon-Fri)</small>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label fw-bold small">Peak / Night Floodlight Rate (₹/hr)</label>
-          <input type="number" id="cfgPeakPrice" class="form-control" placeholder="1200" required>
-          <small class="text-muted">6:00 PM - 12:00 AM (Everyday)</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-bold small">Weekend Day Rate (₹/hr)</label>
-          <input type="number" id="cfgWeekendPrice" class="form-control" placeholder="1200" required>
-          <small class="text-muted">6:00 AM - 6:00 PM (Sat-Sun)</small>
-        </div>
-
-        <hr>
-        
-        <!-- Image Upload Feature -->
-        <div class="mb-3">
-          <label class="form-label fw-bold small">Upload Banner Image (File or URL)</label>
-          <input type="file" id="cfgFile" class="form-control mb-2" accept="image/*" onchange="convertImageToBase64()">
-          <textarea id="cfgImages" class="form-control" rows="3" placeholder="Image URLs separated by commas"></textarea>
-        </div>
-
-        <button type="submit" id="btnSaveCfg" class="btn btn-success w-100 fw-bold py-2 shadow-sm">
-          <i class="fa-solid fa-floppy-disk me-2"></i>Save Settings
-        </button>
-      </form>
-    </div>
+<div class="hero"><img src="beniya-arena-hero.png" alt="Beniya Cricket Arena"></div>
+<header><h1>🏏 Beniya Cricket Arena</h1><p>Private Admin Dashboard · 24/7 Booking Management</p></header>
+<div class="container">
+  <div id="loginCard" class="card">
+    <h2>Admin Login</h2>
+    <input type="password" id="password" placeholder="Admin password">
+    <button id="loginBtn">LOGIN</button><button id="forgotPasswordBtn" class="secondary">FORGOT PASSWORD? CONTACT ON WHATSAPP</button><div id="loginMessage" class="message"></div>
   </div>
 
-  <div class="container my-4" style="max-width: 980px;">
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2>Bookings awaiting payment verification</h2>
+      <p class="muted">New customer payments appear here automatically. Verify your UPI/bank app, then confirm or reject. Pending payments are always shown first.</p>
+      <div id="bookings">Loading…</div>
+    </div>
+    <div class="card">
+      <h2>🔐 Admin Security</h2>
+      <p class="muted">For security, the admin password can only be changed after you are logged in.</p>
+      <div class="grid">
+        <div><label>Current password</label><input id="currentAdminPassword" type="password"></div>
+        <div><label>New password</label><input id="newAdminPassword" type="password" placeholder="At least 8 characters"></div>
+        <div><label>Confirm new password</label><input id="confirmAdminPassword" type="password"></div>
+      </div>
+      <button id="changeAdminPasswordBtn" class="gold">CHANGE ADMIN PASSWORD</button>
+      <div id="adminSecurityMessage" class="message"></div>
+    </div>
+    <div class="card actions"><button id="refreshBtn">REFRESH DASHBOARD</button><button id="logoutBtn" class="danger">LOGOUT</button></div><div class="card">
+      <h2>📢 Customer Email Notifications</h2>
+      <p class="muted">Send tournaments, offers, timing changes, closures, events or any future announcement to all customer accounts with a registered email address.</p>
+      <p class="muted"><b id="notificationAudience">Loading email audience…</b></p>
+      <label>Email subject</label><input id="notificationSubject" maxlength="150" placeholder="Example: Weekend Cricket Tournament — Registrations Open">
+      <label>Notification title</label><input id="notificationTitle" maxlength="150" placeholder="Example: 🏆 Tournament Registrations Are Open">
+      <label>Message</label><textarea id="notificationMessage" placeholder="Write the complete notification here..."></textarea>
+      <button id="sendNotificationBtn" class="gold">SEND TO ALL CUSTOMER EMAILS</button>
+      <div id="notificationMessageStatus" class="message"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong id="todayBookings">0</strong>Today's bookings</div><div class="stat"><strong id="todayRevenue">₹0</strong>Today's revenue</div><div class="stat"><strong id="upcomingBookings">0</strong>Upcoming</div><div class="stat"><strong id="monthBookings">0</strong>This month</div><div class="stat"><strong id="monthRevenue">₹0</strong>Month revenue</div><div class="stat"><strong id="cancelledRejected">0</strong>Cancelled / rejected</div>
+    </div><div class="card"><h2>🔥 Popular Booking Times</h2><div id="popularTimes" class="muted">Calculated from confirmed bookings.</div></div>
 
-    <!-- Analytics Dashboard -->
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="card bg-success text-white p-3 shadow-sm border-0">
-          <small class="text-white-50 fw-semibold">TODAY'S BOOKINGS</small>
-          <h3 id="cardTodayCount" class="fw-bold mb-0">0</h3>
-        </div>
+    <div class="card">
+      <h2>⚙️ Arena & Payment Settings</h2>
+      <p class="muted">The arena is now fixed at 24/7. Changing the UPI ID changes the customer payment QR automatically. Enter WhatsApp number with country code, for example 9198XXXXXXXX.</p>
+      <div class="grid">
+        <div><label>Arena name</label><input id="arenaName"></div>
+        <div><label>Price per hour (₹)</label><input id="pricePerHour" type="number" min="1"></div>
+        <div><label>UPI ID</label><input id="upiId" placeholder="name@bank"></div>
+        <div><label>Contact number</label><input id="contactNumber"></div>
+        <div><label>Admin WhatsApp number</label><input id="whatsappNumber" placeholder="9198XXXXXXXX"></div>
+        <div><label>Booking days ahead</label><input id="bookingDaysAhead" type="number" min="1"></div>
       </div>
-      <div class="col-6 col-md-3">
-        <div class="card bg-primary text-white p-3 shadow-sm border-0">
-          <small class="text-white-50 fw-semibold">REVENUE</small>
-          <h3 id="cardRevenue" class="fw-bold mb-0">₹0</h3>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card bg-warning text-dark p-3 shadow-sm border-0">
-          <small class="text-dark-50 fw-semibold">PENDING APPROVALS</small>
-          <h3 id="cardPending" class="fw-bold mb-0">0</h3>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card bg-info text-white p-3 shadow-sm border-0">
-          <small class="text-white-50 fw-semibold">TOTAL BOOKINGS</small>
-          <h3 id="cardTotal" class="fw-bold mb-0">0</h3>
-        </div>
-      </div>
+      <button id="saveSettingsBtn" class="gold">SAVE SETTINGS</button><div id="settingsMessage" class="message"></div>
     </div>
 
-    <!-- Main Navigation Tabs -->
-    <ul class="nav nav-pills mb-3 bg-white p-2 rounded-3 border shadow-sm">
-      <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#overviewTab">Overview</a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#approvalsTab">Approvals <span id="pendingBadge" class="badge bg-danger rounded-pill d-none">0</span></a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#manualTab">Manual Booking</a></li>
-      <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#blockTab">Block Slots</a></li>
-    </ul>
-
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="overviewTab">
-        <h6 class="fw-bold text-success mb-2">Today's Bookings</h6>
-        <div class="list-group mb-4 shadow-sm" id="listToday"></div>
-
-        <h6 class="fw-bold text-primary mb-2">Upcoming Bookings</h6>
-        <div class="list-group mb-4 shadow-sm" id="listUpcoming"></div>
-
-        <h6 class="fw-bold text-secondary mb-2">Past Bookings</h6>
-        <div class="list-group mb-4 shadow-sm" id="listPast"></div>
+    <div class="card">
+      <h2>💰 Time-Based Pricing</h2>
+      <p class="muted">Set different hourly charges for different times. Any hour not covered by a rule uses the default “Price per hour” above. Overnight ranges are supported, for example 22:00 to 06:00.</p>
+      <div class="grid">
+        <div><label>Start time</label><input id="priceStartTime" type="time" step="3600" value="06:00"></div>
+        <div><label>End time</label><input id="priceEndTime" type="time" step="3600" value="10:00"></div>
+        <div><label>Price per hour (₹)</label><input id="rulePrice" type="number" min="1" placeholder="1000"></div>
       </div>
-
-      <div class="tab-pane fade" id="approvalsTab">
-        <h6 class="fw-bold mb-3 text-warning">Pending Payment Verifications</h6>
-        <div class="list-group shadow-sm" id="listPending"></div>
-      </div>
-
-      <div class="tab-pane fade" id="manualTab">
-        <div class="card p-4 shadow-sm border-0" style="max-width: 500px;">
-          <h6 class="fw-bold mb-3">Add Offline Booking</h6>
-          <input type="text" id="mbName" class="form-control mb-2" placeholder="Customer Name">
-          <input type="tel" id="mbPhone" class="form-control mb-2" placeholder="Phone Number">
-          <input type="date" id="mbDate" class="form-control mb-2">
-          <input type="text" id="mbSlot" class="form-control mb-2" placeholder="e.g. 06:00 AM - 07:00 AM">
-          <input type="number" id="mbAmount" class="form-control mb-3" placeholder="Amount (₹)">
-          <button class="btn btn-primary fw-bold w-100" onclick="submitManualBooking()">Add Booking</button>
-        </div>
-      </div>
-
-      <div class="tab-pane fade" id="blockTab">
-        <div class="card p-4 shadow-sm border-0" style="max-width: 500px;">
-          <h6 class="fw-bold mb-3">Block / Unblock Slots</h6>
-          <input type="date" id="blkDate" class="form-control mb-2">
-          <input type="text" id="blkSlot" class="form-control mb-3" placeholder="e.g. 02:00 PM - 03:00 PM">
-          <div class="d-flex gap-2">
-            <button class="btn btn-danger flex-fill fw-bold" onclick="blockSlotAction(true)">Block</button>
-            <button class="btn btn-secondary flex-fill fw-bold" onclick="blockSlotAction(false)">Unblock</button>
-          </div>
-        </div>
-      </div>
+      <button id="addPricingRuleBtn" class="gold">ADD PRICE RULE</button>
+      <div id="pricingMessage" class="message"></div>
+      <div id="pricingRules"></div>
     </div>
+
+    <div class="card">
+      <h2>📸 Gallery & Albums</h2>
+      <p class="muted">Create custom albums and upload JPEG, PNG or WebP photos up to 15 MB. Mark photos for the homepage slider. The main arena image always stays first.</p>
+      <div class="grid"><div><label>New album name</label><input id="newAlbumName" placeholder="Night Matches"></div></div>
+      <button id="createAlbumBtn" class="gold">CREATE ALBUM</button>
+      <div class="grid"><div><label>Choose album</label><select id="uploadAlbum"></select></div><div><label>Choose photo</label><input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp"></div></div>
+      <button id="uploadPhotoBtn">UPLOAD PHOTO</button><div id="galleryMessage" class="message"></div><div id="galleryManager"></div>
+    </div>
+
+    <div class="card">
+      <h2>➕ Create Manual Booking</h2>
+      <p class="muted">For walk-in, phone, cash or admin-assisted bookings. Selected slots are confirmed immediately.</p>
+      <div class="grid">
+        <div><label>Date</label><input type="date" id="manualDate"></div>
+        <div><label>Customer name</label><input id="manualName"></div>
+        <div><label>Phone</label><input id="manualPhone" inputmode="numeric"></div>
+        <div><label>Payment method</label><select id="manualMethod"><option>CASH</option><option>UPI</option><option>OTHER</option></select></div>
+        <div><label>Payment reference (optional)</label><input id="manualReference"></div>
+      </div>
+      <h3>24-hour slots</h3><div id="manualSlots" class="slots"></div>
+      <button id="manualBookBtn" class="gold">BOOK & CONFIRM SELECTED SLOT(S)</button><div id="manualMessage" class="message"></div>
+    </div>
+
+    <div class="card">
+      <h2>🚫 Block / Unblock Slots</h2>
+      <div class="grid">
+        <div><label>Date</label><input type="date" id="blockDate"></div>
+        <div><label>Reason</label><input id="blockReason" placeholder="Maintenance / private event"></div>
+      </div>
+      <p class="muted">Tap an available slot to block it. Tap a BLOCKED slot to unblock it.</p>
+      <div id="blockSlots" class="slots"></div><div id="blockMessage" class="message"></div>
+    </div>
+
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxuR1AlE3gTETgZPeL9B7FStYFmCUwpABkHzm4ReUumvZ2TADoVbN55t6iOdlkU24oB/exec";
-    let allBookings = [];
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbxsanXjRk3npiLNaUKLjdTpgWUSw47bBo5HK3wNQ8wQFS5GAT6b50Wh72cTIcKzhq8p3g/exec";
+let token=sessionStorage.getItem("beniyaAdminToken")||"";
+let manualSelected=new Set();
+const $=id=>document.getElementById(id);
+const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const msg=(id,text)=>$(id).textContent=text||"";
 
-    window.onload = function() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById("mbDate").value = today;
-      document.getElementById("blkDate").value = today;
-      fetchAdminData();
-    };
+async function api(action,extra={}){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token,...extra})});
+  const text=await r.text();try{return JSON.parse(text)}catch(e){throw Error("Invalid server response: "+text)}
+}
 
-    function fetchAdminData() {
-      fetch(`${SCRIPT_URL}?action=getAdminData`)
-        .then(res => res.json())
-        .then(res => {
-          const data = res.data || {};
-          allBookings = data.bookings || [];
-          populateSettings(data.config || {});
-          renderDashboard();
-        });
-    }
+$("forgotPasswordBtn").onclick=async()=>{
+  try{
+    const u=new URL(API_URL);u.searchParams.set("action","config");
+    const r=await fetch(u),d=await r.json();
+    const number=String(d.whatsappNumber||d.contactNumber||"").replace(/\D/g,"");
+    if(!number)throw Error("Recovery WhatsApp number is not configured.");
+    const text="Hello Beniya Cricket Arena, I am the admin and I forgot the admin-panel password. Please help me with manual password recovery.";
+    window.open(`https://wa.me/${number}?text=${encodeURIComponent(text)}`,"_blank");
+  }catch(e){msg("loginMessage",e.message)}
+};
+$("changeAdminPasswordBtn").onclick=async()=>{
+  try{
+    const currentPassword=$("currentAdminPassword").value;
+    const newPassword=$("newAdminPassword").value;
+    const confirmPassword=$("confirmAdminPassword").value;
+    if(newPassword!==confirmPassword)throw Error("New passwords do not match.");
+    if(newPassword.length<8)throw Error("New password must be at least 8 characters.");
+    msg("adminSecurityMessage","Changing password…");
+    const d=await api("adminchangepassword",{currentPassword,newPassword});
+    if(!d.success)throw Error(d.message);
+    alert(d.message);
+    sessionStorage.removeItem("beniyaAdminToken");token="";location.reload();
+  }catch(e){msg("adminSecurityMessage",e.message)}
+};
 
-    function populateSettings(cfg) {
-      document.getElementById("cfgUpi").value = cfg.upiId || "";
-      document.getElementById("cfgPhone").value = cfg.whatsappNumber || "";
-      document.getElementById("cfgPrice").value = cfg.pricePerHour || 1000;
-      document.getElementById("cfgPeakPrice").value = cfg.peakPricePerHour || 1200;
-      document.getElementById("cfgWeekendPrice").value = cfg.weekendPricePerHour || 1200;
-      document.getElementById("cfgImages").value = (cfg.sliderImages || []).join(", ");
-      
-      document.getElementById("hdrUpi").innerText = cfg.upiId || "Not set";
-      document.getElementById("hdrPhone").innerText = cfg.whatsappNumber || "Not set";
-    }
+$("loginBtn").onclick=async()=>{
+  try{
+    const password=$("password").value.trim();
+    if(!password)return msg("loginMessage","Enter the admin password.");
+    msg("loginMessage","Logging in…");
+    const d=await api("adminlogin",{password});
+    if(!d.success)return msg("loginMessage",d.message||"Login failed.");
+    token=d.token;
+    sessionStorage.setItem("beniyaAdminToken",token);
+    msg("loginMessage","");
+    showDashboard();
+  }catch(e){msg("loginMessage",e.message)}
+};
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
+$("logoutBtn").onclick=()=>{sessionStorage.removeItem("beniyaAdminToken");location.reload()};
+$("refreshBtn").onclick=refreshAll;
 
-    function convertImageToBase64() {
-      const file = document.getElementById("cfgFile").files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const existing = document.getElementById("cfgImages").value.trim();
-        document.getElementById("cfgImages").value = existing ? `${e.target.result}, ${existing}` : e.target.result;
+async function showDashboard(){
+  $("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden");
+  const today=todayKey();$("manualDate").min=today;$("blockDate").min=today;
+  if(!$("manualDate").value)$("manualDate").value=today;if(!$("blockDate").value)$("blockDate").value=today;
+  await refreshAll();
+}
+async function refreshAll(){await Promise.all([loadBookings(),loadSettings(),loadPricingRules(),loadGalleryManager(),loadManualSlots(),loadBlockSlots(),loadNotificationAudience()])}
+
+
+async function loadNotificationAudience(){
+  try{
+    const d=await api("adminnotificationaudience");
+    if(!d.success)throw Error(d.message||"Could not load email audience.");
+    $("notificationAudience").textContent=`${d.recipients||0} customer email(s) available · Daily email quota remaining: ${d.remainingDailyQuota||0}`;
+  }catch(e){$("notificationAudience").textContent=e.message}
+}
+$("sendNotificationBtn").onclick=async()=>{
+  try{
+    const subject=$("notificationSubject").value.trim();
+    const title=$("notificationTitle").value.trim();
+    const message=$("notificationMessage").value.trim();
+    if(subject.length<3)throw Error("Enter an email subject.");
+    if(title.length<2)throw Error("Enter a notification title.");
+    if(message.length<3)throw Error("Enter the notification message.");
+    if(!confirm("Send this notification by email to ALL customer accounts with an email address?"))return;
+    $("sendNotificationBtn").disabled=true;
+    msg("notificationMessageStatus","Sending notification emails… Please keep this page open.");
+    const d=await api("adminsendnotification",{subject,title,message});
+    if(!d.success)throw Error(d.message||"Could not send notification.");
+    msg("notificationMessageStatus",d.message);
+    await loadNotificationAudience();
+  }catch(e){msg("notificationMessageStatus",e.message)}
+  finally{$("sendNotificationBtn").disabled=false}
+};
+
+async function loadSettings(){
+  const d=await api("admingetsettings");if(!d.success)return msg("settingsMessage",d.message);
+  const s=d.settings||{};$("arenaName").value=s.arenaName||"";$("pricePerHour").value=s.pricePerHour||"";
+  $("upiId").value=s.upiId||"";$("contactNumber").value=s.contactNumber||"";
+  $("whatsappNumber").value=s.whatsappNumber||"";$("bookingDaysAhead").value=s.bookingDaysAhead||30;
+}
+$("saveSettingsBtn").onclick=async()=>{try{
+  const d=await api("adminsavesettings",{settings:{
+    arenaName:$("arenaName").value,pricePerHour:Number($("pricePerHour").value),upiId:$("upiId").value.trim(),
+    contactNumber:$("contactNumber").value,whatsappNumber:$("whatsappNumber").value,bookingDaysAhead:Number($("bookingDaysAhead").value)
+  }});
+  msg("settingsMessage",d.message||"Done");if(d.success)await loadSettings();
+}catch(e){msg("settingsMessage",e.message)}};
+
+
+async function loadPricingRules(){
+  try{
+    const d=await api("admingetpricingrules");
+    if(!d.success)throw Error(d.message||"Could not load pricing rules.");
+    const rules=d.rules||[];
+    $("pricingRules").innerHTML=rules.length?rules.map(r=>`<div class="pricingRule">
+      <div><b>${esc(r.startTime)} → ${esc(r.endTime)}</b><br><span class="muted">₹${Number(r.price||0).toLocaleString("en-IN")} per hour</span></div>
+      <button class="danger" onclick="deletePricingRule('${js(r.ruleId)}')">DELETE</button>
+    </div>`).join(""):'<p class="muted">No special pricing rules. The default hourly price applies all day.</p>';
+  }catch(e){msg("pricingMessage",e.message)}
+}
+$("addPricingRuleBtn").onclick=async()=>{try{
+  const startTime=$("priceStartTime").value,endTime=$("priceEndTime").value,price=Number($("rulePrice").value);
+  if(!startTime||!endTime)throw Error("Choose start and end times.");
+  if(!price||price<=0)throw Error("Enter a valid price.");
+  const d=await api("adminaddpricingrule",{startTime,endTime,price});
+  if(!d.success)throw Error(d.message||"Could not add pricing rule.");
+  msg("pricingMessage",d.message);$("rulePrice").value="";
+  await Promise.all([loadPricingRules(),loadManualSlots(),loadBlockSlots()]);
+}catch(e){msg("pricingMessage",e.message)}};
+async function deletePricingRule(ruleId){
+  if(!confirm("Delete this pricing rule?"))return;
+  try{
+    const d=await api("admindeletepricingrule",{ruleId});
+    if(!d.success)throw Error(d.message||"Could not delete pricing rule.");
+    msg("pricingMessage",d.message);
+    await Promise.all([loadPricingRules(),loadManualSlots(),loadBlockSlots()]);
+  }catch(e){msg("pricingMessage",e.message)}
+}
+
+
+let galleryAlbums=[],galleryPhotos=[];
+async function loadGalleryManager(){try{const d=await api("admingetgallery");if(!d.success)throw Error(d.message);galleryAlbums=d.albums||[];galleryPhotos=d.photos||[];$("uploadAlbum").innerHTML=galleryAlbums.map(a=>`<option value="${esc(a.albumId)}">${esc(a.albumName)}</option>`).join("");$("galleryManager").innerHTML=galleryAlbums.map(a=>{const photos=galleryPhotos.filter(p=>p.albumId===a.albumId);return `<div class="albumBox"><h3>${esc(a.albumName)} <span class="muted">(${photos.length})</span></h3>${a.albumId!=="UNCATEGORIZED"?`<div class="actions"><button class="secondary" onclick="renameAlbum('${js(a.albumId)}','${js(a.albumName)}')">RENAME ALBUM</button><button class="danger" onclick="deleteAlbum('${js(a.albumId)}')">DELETE ALBUM</button></div>`:""}${photos.map(p=>`<div class="galleryPhoto"><img src="${p.imageData||""}" alt="${esc(p.fileName)}"><div><b>${esc(p.fileName)}</b><p class="muted">${p.showInSlider?"Shown in homepage slider":"Not in homepage slider"}</p><div class="actions"><button class="${p.showInSlider?"secondary":"gold"}" onclick="togglePhotoSlider('${js(p.photoId)}',${p.showInSlider?"false":"true"})">${p.showInSlider?"REMOVE FROM SLIDER":"SHOW IN SLIDER"}</button><button class="danger" onclick="deletePhoto('${js(p.photoId)}')">DELETE PHOTO</button></div></div></div>`).join("")||'<p class="muted">No photos in this album.</p>'}</div>`}).join("")}catch(e){msg("galleryMessage",e.message)}}
+$("createAlbumBtn").onclick=async()=>{try{const albumName=$("newAlbumName").value.trim();if(!albumName)throw Error("Enter an album name.");const d=await api("admincreatealbum",{albumName});if(!d.success)throw Error(d.message);$("newAlbumName").value="";msg("galleryMessage",d.message);await loadGalleryManager()}catch(e){msg("galleryMessage",e.message)}};
+
+function readFileAsDataURL_(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(String(r.result||""));
+    r.onerror=()=>reject(new Error("Could not read the selected photo."));
+    r.readAsDataURL(file);
+  });
+}
+function loadImage_(dataUrl){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error("The selected image could not be opened."));
+    img.src=dataUrl;
+  });
+}
+function canvasToBlob_(canvas,type,quality){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Could not prepare the image for upload.")),type,quality);
+  });
+}
+async function prepareGalleryPhoto_(file){
+  const MAX_INPUT=15*1024*1024;
+  const TARGET_UPLOAD=4.5*1024*1024;
+  const MAX_DIMENSION=3000;
+  if(file.size>MAX_INPUT)throw Error("Photo must be 15 MB or smaller.");
+
+  // Small images are sent unchanged.
+  if(file.size<=TARGET_UPLOAD)return {blob:file,fileName:file.name,mimeType:file.type,compressed:false};
+
+  msg("galleryMessage","Preparing and compressing photo…");
+  const dataUrl=await readFileAsDataURL_(file);
+  const img=await loadImage_(dataUrl);
+  let width=img.naturalWidth,height=img.naturalHeight;
+  const scale=Math.min(1,MAX_DIMENSION/Math.max(width,height));
+  width=Math.max(1,Math.round(width*scale));
+  height=Math.max(1,Math.round(height*scale));
+
+  const canvas=document.createElement("canvas");
+  canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext("2d");
+  if(!ctx)throw Error("Your browser could not prepare this image.");
+  ctx.drawImage(img,0,0,width,height);
+
+  // JPEG is used for large uploads to keep the request reliable on mobile/Apps Script.
+  let quality=.88;
+  let blob=await canvasToBlob_(canvas,"image/jpeg",quality);
+  while(blob.size>TARGET_UPLOAD&&quality>.5){
+    quality-=.08;
+    blob=await canvasToBlob_(canvas,"image/jpeg",quality);
+  }
+  if(blob.size>TARGET_UPLOAD)throw Error("The image is still too large after compression. Please choose a smaller image.");
+
+  const base=(file.name||"photo").replace(/\.[^.]+$/,"");
+  return {blob,fileName:base+".jpg",mimeType:"image/jpeg",compressed:true};
+}
+
+$("uploadPhotoBtn").onclick=async()=>{
+  const btn=$("uploadPhotoBtn");
+  try{
+    const file=$("galleryFile").files[0];
+    if(!file)throw Error("Choose a photo first.");
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("Only JPEG, PNG and WebP images are allowed.");
+    if(file.size>15*1024*1024)throw Error("Photo must be 15 MB or smaller.");
+    if(!$("uploadAlbum").value)throw Error("Choose an album first.");
+
+    btn.disabled=true;
+    btn.textContent="PREPARING…";
+    msg("galleryMessage","Preparing photo…");
+
+    const prepared=await prepareGalleryPhoto_(file);
+    btn.textContent="UPLOADING…";
+    msg("galleryMessage",prepared.compressed?"Photo compressed. Uploading…":"Uploading photo…");
+
+    const base64=await new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>{
+        const result=String(r.result||"");
+        const comma=result.indexOf(",");
+        if(comma<0)return reject(new Error("Could not encode the selected photo."));
+        resolve(result.slice(comma+1));
       };
-      reader.readAsDataURL(file);
-    }
+      r.onerror=()=>reject(new Error("Could not read the prepared photo."));
+      r.readAsDataURL(prepared.blob);
+    });
 
-    function saveSettings() {
-      const btn = document.getElementById("btnSaveCfg");
-      btn.disabled = true;
-      btn.innerText = "Saving...";
+    msg("galleryMessage","Saving photo to gallery…");
+    const d=await api("adminuploadphoto",{
+      albumId:$("uploadAlbum").value,
+      fileName:prepared.fileName,
+      mimeType:prepared.mimeType,
+      base64
+    });
+    if(!d.success)throw Error(d.message||"Upload failed.");
 
-      const imagesRaw = document.getElementById("cfgImages").value;
-      const imagesArr = imagesRaw.split(",").map(s => s.trim()).filter(Boolean);
+    $("galleryFile").value="";
+    msg("galleryMessage",d.message+(prepared.compressed?" The large image was compressed automatically.":""));
+    await loadGalleryManager();
+  }catch(e){
+    console.error("Gallery upload failed:",e);
+    msg("galleryMessage","UPLOAD ERROR: "+(e&&e.message?e.message:String(e)));
+    alert("Photo upload failed:\n\n"+(e&&e.message?e.message:String(e)));
+  }finally{
+    btn.disabled=false;
+    btn.textContent="UPLOAD PHOTO";
+  }
+};
+async function renameAlbum(albumId,currentName){const albumName=prompt("New album name:",currentName);if(albumName===null)return;const d=await api("adminrenamealbum",{albumId,albumName});if(!d.success)return msg("galleryMessage",d.message);await loadGalleryManager()}
+async function deleteAlbum(albumId){if(!confirm("Delete this album? Its photos will move to Uncategorized."))return;const d=await api("admindeletealbum",{albumId});msg("galleryMessage",d.message);if(d.success)await loadGalleryManager()}
+async function togglePhotoSlider(photoId,showInSlider){const d=await api("admintogglephotoslider",{photoId,showInSlider});msg("galleryMessage",d.message);if(d.success)await loadGalleryManager()}
+async function deletePhoto(photoId){if(!confirm("Permanently delete this photo?"))return;const d=await api("admindeletephoto",{photoId});msg("galleryMessage",d.message);if(d.success)await loadGalleryManager()}
+async function loadManualSlots(){
+  manualSelected.clear();const date=$("manualDate").value;if(!date)return;
+  msg("manualMessage","Loading slots…");const d=await api("adminavailability",{date});if(!d.success)return msg("manualMessage",d.message);
+  msg("manualMessage","");$("manualSlots").innerHTML="";
+  d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot";b.disabled=!s.available;
+    b.innerHTML=`<b>${esc(s.label)}</b><br><span class="muted">${esc(s.available?"AVAILABLE · ₹"+Number(s.price||0).toLocaleString("en-IN"):s.status)}</span>`;
+    b.onclick=()=>{manualSelected.has(s.index)?manualSelected.delete(s.index):manualSelected.add(s.index);b.classList.toggle("selected")};
+    $("manualSlots").appendChild(b)});
+}
+$("manualDate").onchange=loadManualSlots;
+$("manualBookBtn").onclick=async()=>{try{
+  if(!manualSelected.size)throw Error("Select at least one available slot.");
+  if(!confirm("Create and immediately confirm this booking?"))return;
+  const d=await api("admincreatebooking",{date:$("manualDate").value,slotIndexes:[...manualSelected],customerName:$("manualName").value,
+    phone:$("manualPhone").value,paymentMethod:$("manualMethod").value,paymentReference:$("manualReference").value});
+  msg("manualMessage",d.message||"Done");if(d.success){$("manualName").value="";$("manualPhone").value="";$("manualReference").value="";await refreshAll()}
+}catch(e){msg("manualMessage",e.message)}};
 
-      const payload = {
-        action: "updateConfig",
-        upiId: document.getElementById("cfgUpi").value.trim(),
-        whatsappNumber: document.getElementById("cfgPhone").value.trim(),
-        pricePerHour: Number(document.getElementById("cfgPrice").value),
-        peakPricePerHour: Number(document.getElementById("cfgPeakPrice").value),
-        weekendPricePerHour: Number(document.getElementById("cfgWeekendPrice").value),
-        sliderImages: imagesArr
-      };
+async function loadBlockSlots(){
+  const date=$("blockDate").value;if(!date)return;const d=await api("adminavailability",{date});
+  if(!d.success)return msg("blockMessage",d.message);$("blockSlots").innerHTML="";msg("blockMessage","");
+  d.slots.forEach(s=>{const b=document.createElement("button");b.className="slot"+(s.status==="BLOCKED"?" blocked":"");
+    b.innerHTML=`<b>${esc(s.label)}</b><br><span>${esc(s.status==="AVAILABLE"?s.status+" · ₹"+Number(s.price||0).toLocaleString("en-IN"):s.status)}</span>`;b.disabled=!s.available&&s.status!=="BLOCKED";
+    b.onclick=async()=>{try{let x;if(s.status==="BLOCKED"){if(!confirm("Unblock "+s.label+"?"))return;x=await api("adminunblockslot",{date,slotIndex:s.index})}
+      else{if(!confirm("Block "+s.label+"?"))return;x=await api("adminblockslot",{date,slotIndex:s.index,reason:$("blockReason").value})}
+      msg("blockMessage",x.message);if(x.success)await Promise.all([loadBlockSlots(),loadManualSlots()])
+    }catch(e){msg("blockMessage",e.message)}};$("blockSlots").appendChild(b)});
+}
+$("blockDate").onchange=loadBlockSlots;
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(() => {
-        alert("Settings saved successfully!");
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk me-2"></i>Save Settings`;
-        fetchAdminData();
-      });
-    }
+async function loadBookings(){
+  const d=await api("adminlistbookings");if(!d.success){msg("bookings",d.message);return}
+  const list=(d.bookings||[]).slice().sort((a,b)=>{
+    const aPending=String(a.status||"").toUpperCase()==="PAYMENT PENDING"?0:1;
+    const bPending=String(b.status||"").toUpperCase()==="PAYMENT PENDING"?0:1;
+    return aPending-bPending||String(b.date||"").localeCompare(String(a.date||""))||Number(a.slotIndex||0)-Number(b.slotIndex||0);
+  });
+  $("bookings").innerHTML=list.length?list.map(b=>`<div class="booking">
+    <p><b>${esc(b.bookingId)}</b> <span class="badge">${esc(b.status||"-")}</span></p>
+    <p><b>${esc(b.name||"-")}</b> · ${esc(b.phone||"-")}</p><p>${esc(b.date||"-")} · ${esc(b.slot||"-")}</p>
+    <p>₹${Number(b.amount||0).toLocaleString("en-IN")} · ${esc(b.paymentMethod||"-")} · ${esc(b.bookingSource||"-")}</p>
+    <p>Payment: ${esc(b.paymentStatus||"-")}</p>
+    ${b.refundStatus?`<p>Refund: ${esc(b.refundStatus)} · ₹${Number(b.refundAmount||0).toLocaleString("en-IN")} ${b.refundReference?"· "+esc(b.refundReference):""}</p>`:""}
+    <div class="actions">
+      ${String(b.status).toUpperCase()==="PAYMENT PENDING"?`<button onclick="confirmBooking('${js(b.bookingId)}')">CONFIRM PAYMENT</button><button class="danger" onclick="rejectBooking('${js(b.bookingId)}')">REJECT PAYMENT</button>`:""}
+      ${String(b.status).toUpperCase()!=="CANCELLED"?`<button class="danger" onclick="cancelAdmin('${js(b.bookingId)}','${js(b.paymentStatus||"")}')">CANCEL / REFUND</button>`:""}
+      ${(String(b.status).toUpperCase()==="CANCELLED"||String(b.status).toUpperCase()==="REJECTED"||String(b.paymentStatus).toUpperCase()==="REJECTED"||String(b.paymentStatus).toUpperCase()==="PAYMENT REJECTED")?`<button class="danger" onclick="deleteBookingRecord('${js(b.bookingId)}')">DELETE RECORD</button>`:""}
+      <button class="secondary" onclick='downloadAdminReceipt(${JSON.stringify(b)})'>RECEIPT</button>
+    </div></div>`).join(""):"<p>No bookings found.</p>";
+}
+async function confirmBooking(id){if(!confirm("Confirm payment and booking "+id+"?"))return;const d=await api("adminconfirmbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
+async function rejectBooking(id){if(!confirm("Reject payment and release the slot?"))return;const d=await api("adminrejectbooking",{bookingId:id});alert(d.message||"Done");await refreshAll()}
+async function cancelAdmin(id,paymentStatus){
+  if(!confirm("Cancel booking "+id+"?"))return;
+  let refundStatus="NOT REQUIRED",refundAmount=0,refundReference="";
+  if(String(paymentStatus).toUpperCase()==="PAID"){
+    refundStatus=(prompt("Refund status: NOT REQUIRED, REFUND PENDING, or REFUNDED","REFUND PENDING")||"REFUND PENDING").toUpperCase();
+    refundAmount=Number(prompt("Refund amount (₹):","0")||0);
+    if(refundStatus==="REFUNDED")refundReference=prompt("Refund UTR / reference:","")||"";
+  }
+  const d=await api("admincancelbooking",{bookingId:id,refundStatus,refundAmount,refundReference});alert(d.message||"Done");await refreshAll();
+}
+async function deleteBookingRecord(id){
+  if(!confirm("Permanently delete booking "+id+"? This cannot be undone."))return;
+  try{
+    const d=await api("admindeletebooking",{bookingId:id});
+    if(!d.success)throw Error(d.message||"Could not delete booking.");
+    alert(d.message||"Booking record deleted.");
+    await refreshAll();
+  }catch(e){alert(e.message)}
+}
+function downloadAdminReceipt(b){
+  const jsPDF=window.jspdf&&window.jspdf.jsPDF;if(!jsPDF)return alert("PDF generator is loading. Please wait a moment and try again.");
+  const doc=new jsPDF(),lines=["Beniya Cricket Arena","Booking Receipt","","Booking ID: "+b.bookingId,"Customer: "+(b.name||"-"),"Phone: "+(b.phone||"-"),"Date: "+(b.date||"-"),"Slot: "+(b.slot||"-"),"Amount: Rs. "+Number(b.amount||0).toLocaleString("en-IN"),"Payment method: "+(b.paymentMethod||"-"),"Payment status: "+(b.paymentStatus||"-"),"Booking status: "+(b.status||"-")];
+  doc.setFontSize(20);doc.text(lines[0],20,22);doc.setFontSize(14);doc.text(lines[1],20,34);doc.setFontSize(11);doc.text(lines.slice(3),20,52,{maxWidth:170,lineHeightFactor:1.6});doc.save(`Beniya-Receipt-${b.bookingId}.pdf`);return;
+  const receipt=`<!doctype html><meta charset="utf-8"><title>Receipt ${esc(b.bookingId)}</title><style>body{font-family:Arial;max-width:700px;margin:40px auto;padding:20px}.box{border:1px solid #ccc;padding:24px;border-radius:12px}h1{color:#946900}</style><div class="box"><h1>Beniya Cricket Arena</h1><h2>Booking Receipt</h2><p><b>Booking ID:</b> ${esc(b.bookingId)}</p><p><b>Customer:</b> ${esc(b.name||"-")}</p><p><b>Phone:</b> ${esc(b.phone||"-")}</p><p><b>Date:</b> ${esc(b.date||"-")}</p><p><b>Slot:</b> ${esc(b.slot||"-")}</p><p><b>Amount:</b> ₹${Number(b.amount||0).toLocaleString("en-IN")}</p><p><b>Payment method:</b> ${esc(b.paymentMethod||"-")}</p><p><b>Payment status:</b> ${esc(b.paymentStatus||"-")}</p><p><b>Booking status:</b> ${esc(b.status||"-")}</p></div>`;
+  const blob=new Blob([receipt],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Beniya-Receipt-${b.bookingId}.html`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function js(x){return String(x??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+if(token)showDashboard();
 
-    function renderDashboard() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      let todayCount = 0, rev7Days = 0, pendingCount = 0;
-
-      const listToday = document.getElementById("listToday");
-      const listUpcoming = document.getElementById("listUpcoming");
-      const listPast = document.getElementById("listPast");
-      const listPending = document.getElementById("listPending");
-
-      listToday.innerHTML = ""; listUpcoming.innerHTML = ""; listPast.innerHTML = ""; listPending.innerHTML = "";
-
-      allBookings.forEach(b => {
-        if (b.status === "APPROVED") rev7Days += Number(b.paidAmount || b.amount);
-
-        const item = document.createElement("div");
-        item.className = `list-group-item d-flex justify-content-between align-items-center booking-card status-${b.status}`;
-        item.innerHTML = `
-          <div>
-            <div class="fw-bold">${b.customerName} (${b.phone})</div>
-            <small class="text-muted">${b.date} | ${(b.slots||[]).join(", ")}</small>
-          </div>
-          <div class="text-end">
-            <span class="badge ${b.status === 'APPROVED' ? 'bg-success' : b.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-danger'}">${b.status}</span>
-            <div class="small fw-bold">₹${b.paidAmount || b.amount}</div>
-          </div>
-        `;
-
-        if (b.date === todayStr) {
-          if (b.status === "APPROVED") todayCount++;
-          listToday.appendChild(item);
-        } else if (b.date > todayStr) {
-          listUpcoming.appendChild(item);
-        } else {
-          listPast.appendChild(item);
-        }
-
-        if (b.status === "PENDING") {
-          pendingCount++;
-          const pItem = document.createElement("div");
-          pItem.className = "list-group-item d-flex justify-content-between align-items-center";
-          pItem.innerHTML = `
-            <div><strong>${b.customerName}</strong> - Paid ₹${b.paidAmount}<br><small>${b.date} | ${(b.slots||[]).join(", ")}</small></div>
-            <div>
-              <button class="btn btn-sm btn-success me-1" onclick="approve('${b.bookingId}')">Approve</button>
-              <button class="btn btn-sm btn-danger" onclick="reject('${b.bookingId}')">Reject</button>
-            </div>
-          `;
-          listPending.appendChild(pItem);
-        }
-      });
-
-      document.getElementById("cardTodayCount").innerText = todayCount;
-      document.getElementById("cardRevenue").innerText = `₹${rev7Days}`;
-      document.getElementById("cardPending").innerText = pendingCount;
-      document.getElementById("cardTotal").innerText = allBookings.length;
-    }
-
-    function approve(id) { postData({ action: "approveBooking", bookingId: id }); }
-    function reject(id) { postData({ action: "rejectBooking", bookingId: id }); }
-
-    function submitManualBooking() {
-      const data = {
-        action: "manualBooking",
-        customerName: document.getElementById("mbName").value,
-        phone: document.getElementById("mbPhone").value,
-        date: document.getElementById("mbDate").value,
-        slots: [document.getElementById("mbSlot").value],
-        amount: Number(document.getElementById("mbAmount").value)
-      };
-      postData(data);
-    }
-
-    function blockSlotAction(isBlock) {
-      const data = {
-        action: isBlock ? "blockSlot" : "unblockSlot",
-        date: document.getElementById("blkDate").value,
-        slot: document.getElementById("blkSlot").value
-      };
-      postData(data);
-    }
-
-    function postData(payload) {
-      fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) })
-        .then(() => fetchAdminData());
-    }
-  </script>
+</script>
 </body>
 </html>
